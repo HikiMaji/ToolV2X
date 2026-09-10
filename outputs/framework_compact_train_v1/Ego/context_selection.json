@@ -1,0 +1,11 @@
+{
+  "context_limit": 4096,
+  "reserved_generation_tokens": 256,
+  "input_token_bound": 2212,
+  "objects_total": 8,
+  "objects_retained": 8,
+  "dropped_objects": [],
+  "numeric_decimal_places": 2,
+  "evidence_format": "compact",
+  "selection": "ascending current anchor distance; same rule for all actions"
+}

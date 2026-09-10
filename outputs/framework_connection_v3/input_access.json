@@ -1,0 +1,50 @@
+{
+  "ego_feature_paths": [
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_regression_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_classification_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_detection_box_score.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_regression_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_classification_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_detection_box_score.npy"
+  ],
+  "ego_motion_paths": [
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5526_lidar_pose.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5525_lidar_pose.npy"
+  ],
+  "window_archives": [
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/causal_windows_v1/train/no_fusion/testoutput_CAV_data_2022-03-17-16-06-11_0.pkl",
+      "selected_local_frame": 10,
+      "selected_global_frame": 5526,
+      "source": "no_fusion",
+      "contains_other_windows": true,
+      "model_receives_selected_window_only": true
+    },
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/causal_windows_v1/train/no_fusion_cav1/testoutput_CAV_data_2022-03-17-16-06-11_0.pkl",
+      "selected_local_frame": 10,
+      "selected_global_frame": 5526,
+      "source": "no_fusion_cav1",
+      "contains_other_windows": true,
+      "model_receives_selected_window_only": true
+    },
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/causal_windows_v1/train/no_fusion_cav1/testoutput_CAV_data_2022-03-17-16-06-11_0.pkl",
+      "selected_local_frame": 10,
+      "selected_global_frame": 5526,
+      "source": "no_fusion_cav1",
+      "contains_other_windows": true,
+      "model_receives_selected_window_only": true
+    },
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/causal_windows_v1/train/no_fusion_cav1/testoutput_CAV_data_2022-03-17-16-06-11_0.pkl",
+      "selected_local_frame": 10,
+      "selected_global_frame": 5526,
+      "source": "no_fusion_cav1",
+      "contains_other_windows": true,
+      "model_receives_selected_window_only": true
+    }
+  ],
+  "online_gt_fields": false,
+  "archive_selection": "causal selected window only"
+}

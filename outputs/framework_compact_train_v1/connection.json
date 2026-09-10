@@ -1,0 +1,186 @@
+{
+  "scene": "testoutput_CAV_data_2022-03-15-10-09-50_0",
+  "local_frame": 10,
+  "g": 719,
+  "physical_split": "train",
+  "research_split": "train",
+  "ego_motion": {
+    "speed_mps": 27.273101806640625,
+    "yaw_rate_rps": 1.646578311920166e-05
+  },
+  "actions": {
+    "Ego": {
+      "evidence_objects": 8,
+      "remote_archive_reads": 0,
+      "predictor_calls": 0,
+      "selected_remote_records": 0,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "input_token_bound": 2212,
+        "objects_total": 8,
+        "objects_retained": 8,
+        "dropped_objects": [],
+        "numeric_decimal_places": 2,
+        "evidence_format": "compact",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "q9_executed": true,
+      "plan_status": "parsed"
+    },
+    "P": {
+      "evidence_objects": 14,
+      "remote_archive_reads": 1,
+      "predictor_calls": 1,
+      "selected_remote_records": 4,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "input_token_bound": 3803,
+        "objects_total": 14,
+        "objects_retained": 6,
+        "dropped_objects": [
+          {
+            "source": "ego",
+            "track_id": 4
+          },
+          {
+            "source": "ego",
+            "track_id": 1
+          },
+          {
+            "source": "ego",
+            "track_id": 3
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 10
+          },
+          {
+            "source": "ego",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 12
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 1
+          }
+        ],
+        "numeric_decimal_places": 2,
+        "evidence_format": "compact",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 137,
+      "response_bytes": 12514,
+      "q9_executed": true,
+      "plan_status": "parsed"
+    },
+    "F": {
+      "evidence_objects": 14,
+      "remote_archive_reads": 1,
+      "predictor_calls": 1,
+      "selected_remote_records": 6,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "input_token_bound": 3342,
+        "objects_total": 14,
+        "objects_retained": 14,
+        "dropped_objects": [],
+        "numeric_decimal_places": 2,
+        "evidence_format": "compact",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 137,
+      "response_bytes": 11320,
+      "q9_executed": true,
+      "plan_status": "parsed"
+    },
+    "PF": {
+      "evidence_objects": 20,
+      "remote_archive_reads": 1,
+      "predictor_calls": 2,
+      "selected_remote_records": 7,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "input_token_bound": 3801,
+        "objects_total": 20,
+        "objects_retained": 9,
+        "dropped_objects": [
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 4
+          },
+          {
+            "source": "ego",
+            "track_id": 1
+          },
+          {
+            "source": "ego",
+            "track_id": 3
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 3
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 10
+          },
+          {
+            "source": "ego",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 12
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 1
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 1
+          }
+        ],
+        "numeric_decimal_places": 2,
+        "evidence_format": "compact",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 274,
+      "response_bytes": 23834,
+      "q9_executed": true,
+      "plan_status": "parsed"
+    }
+  },
+  "evidence_format": "compact",
+  "inputs_prepared": true,
+  "actual_original_cmp_executed": true,
+  "actual_original_projector_executed": true,
+  "language_model_executed": true,
+  "training": false,
+  "quality_evaluation": false,
+  "closed_loop": false,
+  "full_framework_complete": false,
+  "all_actions_parsed": true,
+  "scope": "fixed-action original-model connection; unadapted driving checkpoint, no task-quality claim"
+}

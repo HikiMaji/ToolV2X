@@ -1,0 +1,64 @@
+test_missing_or_cross_record_future_keeps_mask_without_fabricating_label (test_adaptation_data.AdaptationDataTests) ... ok
+test_native_labels_use_six_future_poses_in_fixed_current_frame (test_adaptation_data.AdaptationDataTests) ... ok
+test_runner_selects_authorized_training_frame_without_using_validation (test_adaptation_data.AdaptationDataTests) ... ok
+test_supervised_q9_uses_generated_parent_even_when_q9_prediction_failed (test_adaptation_data.AdaptationDataTests) ... ok
+test_training_tokens_mask_all_prompt_and_feature_positions (test_adaptation_data.AdaptationDataTests) ... ok
+test_centered_features_keep_context_and_mask_without_future_fields (test_cmp_adapter.CMPAdapterTests) ... ok
+test_feature_layout_matches_original_cmp_helper_with_corrected_timestamps (test_cmp_adapter.CMPAdapterTests) ... ok
+test_knn_does_not_cross_sources_or_fill_missing_neighbors_with_zero (test_cmp_adapter.CMPAdapterTests) ... ok
+test_portable_attention_handles_batch_offsets_padding_and_gradients (test_cmp_adapter.CMPAdapterTests) ... ok
+test_compact_does_not_round_or_merge_nearly_equal_modes (test_compact_evidence.CompactEvidenceTests) ... ok
+test_compact_rejects_unknown_gt_fields_and_invalid_path_reference (test_compact_evidence.CompactEvidenceTests) ... ok
+test_compact_roundtrip_preserves_modes_sources_missing_fields_and_masks (test_compact_evidence.CompactEvidenceTests) ... ok
+test_prompt_uses_decodable_compact_data_and_keeps_native_task_last (test_compact_evidence.CompactEvidenceTests) ... ok
+test_common_target_scores_exclude_new_targets_from_accuracy_delta (test_learned_probe.LearnedProbeTests) ... ok
+test_labels_keep_unmatched_targets_and_mask_missing_future (test_learned_probe.LearnedProbeTests) ... ok
+test_learned_residual_rotates_back_from_target_heading (test_learned_probe.LearnedProbeTests) ... ok
+test_masked_positions_and_identity_do_not_enter_features (test_learned_probe.LearnedProbeTests) ... ok
+test_paired_scoring_uses_common_keys_and_same_truth (test_learned_probe.LearnedProbeTests) ... ok
+test_ridge_recovers_known_mapping_with_missing_labels (test_learned_probe.LearnedProbeTests) ... ok
+test_summary_is_velocity_capable_and_excludes_history (test_learned_probe.LearnedProbeTests) ... ok
+test_zero_model_is_cv_and_same_information_survives_wire (test_learned_probe.LearnedProbeTests) ... ok
+test_boundary_does_not_copy_current_frame_into_missing_past (test_planning_inputs.PlanningInputTests) ... ok
+test_ego_motion_uses_past_localization_without_future_pose (test_planning_inputs.PlanningInputTests) ... ok
+test_missing_real_frame_and_invalid_index_fail_explicitly (test_planning_inputs.PlanningInputTests) ... ok
+test_native_answer_parsing_rejects_ambiguity_and_wrong_length (test_planning_inputs.PlanningInputTests) ... ok
+test_only_ego_past_and_current_are_loaded_with_original_axes (test_planning_inputs.PlanningInputTests) ... ok
+test_prompt_requires_generated_q8_and_rejects_extra_state_fields (test_planning_inputs.PlanningInputTests) ... ok
+test_task_question_follows_evidence_without_copyable_answer_placeholders (test_planning_inputs.PlanningInputTests) ... ok
+test_causal_window_rebases_history_into_current_ego_frame (test_protocol.ProtocolTests) ... ok
+test_cooperating_vehicle_remains_an_obstacle (test_protocol.ProtocolTests) ... ok
+test_invalid_prediction_is_not_treated_as_clear_road (test_protocol.ProtocolTests) ... ok
+test_late_ego_annotation_is_not_a_future_obstacle (test_protocol.ProtocolTests) ... ok
+test_missing_action_frame_is_rejected_before_scoring (test_protocol.ProtocolTests) ... ok
+test_multiple_evaluation_directories_are_not_silently_selected (test_protocol.ProtocolTests) ... ok
+test_raw_export_does_not_fill_a_gap_with_future_observations (test_protocol.ProtocolTests) ... ok
+test_summary_does_not_invent_bandwidth_or_four_way_ties (test_protocol.ProtocolTests) ... ok
+test_window_keeps_masked_gaps_and_remote_only_targets (test_protocol.ProtocolTests) ... ok
+test_compact_budget_admits_more_records_without_changing_retained_values (test_v2vgot_connection.V2VGoTConnectionTests) ... ok
+test_context_relations_do_not_confuse_equal_ids_from_different_sources (test_v2vgot_connection.V2VGoTConnectionTests) ... ok
+test_context_selection_reports_drops_and_reserves_space_for_both_tasks (test_v2vgot_connection.V2VGoTConnectionTests) ... ok
+test_missing_history_tokens_are_omitted_and_peer_features_rejected (test_v2vgot_connection.V2VGoTConnectionTests) ... ok
+test_real_original_projector_uses_current_then_past_ego_features (test_v2vgot_connection.V2VGoTConnectionTests) ... ok
+test_ego_result_is_invariant_to_peer_contents (test_vehicle_probe.VehicleProbeTests) ... ok
+test_empty_packet_is_valid_but_stale_or_nan_is_rejected (test_vehicle_probe.VehicleProbeTests) ... ok
+test_history_transferred_to_local_matches_remote_compute (test_vehicle_probe.VehicleProbeTests) ... ok
+test_id_collision_does_not_remove_a_remote_only_target (test_vehicle_probe.VehicleProbeTests) ... ok
+test_known_velocity_and_short_history_fallback (test_vehicle_probe.VehicleProbeTests) ... ok
+test_offline_score_on_hand_checked_stationary_target (test_vehicle_probe.VehicleProbeTests) ... ok
+test_one_to_one_geometry_and_pf_deduplication (test_vehicle_probe.VehicleProbeTests) ... ok
+test_only_ego_footprint_is_filtered (test_vehicle_probe.VehicleProbeTests) ... ok
+test_reference_uses_only_past_ego_poses (test_vehicle_probe.VehicleProbeTests) ... ok
+test_stop_candidate_is_marked_infeasible_if_all_candidates_conflict (test_vehicle_probe.VehicleProbeTests) ... ok
+test_evidence_rejects_different_record_even_with_same_frame_number (test_vehicle_tools.VehicleToolTests) ... ok
+test_full_p_history_round_trips_for_same_information_control (test_vehicle_tools.VehicleToolTests) ... ok
+test_no_remote_read_before_query_and_roi_does_not_remove_model_context (test_vehicle_tools.VehicleToolTests) ... ok
+test_provider_checks_query_and_keeps_empty_distinct_from_observed_free_space (test_vehicle_tools.VehicleToolTests) ... ok
+test_provider_never_caches_a_window_from_another_record_or_time (test_vehicle_tools.VehicleToolTests) ... ok
+test_receiver_rejects_future_mismatched_and_extra_payload_fields (test_vehicle_tools.VehicleToolTests) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 1.454s
+
+OK
+mm_scene_projector_input_size:  3072

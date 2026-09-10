@@ -1,0 +1,28 @@
+{
+  "checkpoint": "/root/autodl-tmp/V2V-GoT/LLaVA/checkpoints/llava-v1.5-7b-task-lora/llava-v1.5-7b-task-lora_v2v4real_3d_grounding_v2vgot_10ep_both_shallow_f2/checkpoint-4330",
+  "adapted_checkpoint": "/root/autodl-tmp/ToolV2X/models/llava-toolv2x-lora-ego",
+  "base": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+  "clip": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336",
+  "model_class": "LlavaLlamaForCausalLM",
+  "source": "/root/autodl-tmp/V2V-GoT/LLaVA/llava/model/language_model/llava_llama.py",
+  "my_model_config": {
+    "mm_scene_projector_input_size": 3072,
+    "scene_level_only": false,
+    "object_level_only": false,
+    "scene_feature_mode": "shallow",
+    "object_feature_mode": "shallow",
+    "num_input_frames": 2,
+    "ego_only": true,
+    "feature_source": "no_fusion_keep_all",
+    "dataset_source": "v2v4real",
+    "num_latency_frames": 0,
+    "positional_error_std": 0.0
+  },
+  "loading_seconds": 10.435056972084567,
+  "released_tokenizer_limit": 2048,
+  "context_limit": 4096,
+  "adapted_to_tool_evidence": false,
+  "training_provenance_verified": false,
+  "actual_rgb_input": false,
+  "point_cloud_feature_input": true
+}

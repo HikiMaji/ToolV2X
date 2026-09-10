@@ -1,0 +1,20 @@
+{
+  "checkpoint": "/root/autodl-tmp/CMP/MTR/output/v2v4real_multiego_no_coop/ckpt/best_model.pth",
+  "config": "/root/autodl-tmp/CMP/MTR/tools/cfgs/v2v4real/v2v4real_multiego_no_coop.yaml",
+  "model_class": "CMP MotionTransformer",
+  "state_items_loaded": 880,
+  "missing_keys": [],
+  "unexpected_keys": [],
+  "parameter_count": 68514524,
+  "checkpoint_metadata": {
+    "epoch": 1,
+    "it": 6,
+    "version": "none"
+  },
+  "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/model.py",
+  "device": "cpu",
+  "operators": "CMP layers with portable torch KNN/indexed attention reference",
+  "native_CUDA_parity_measured": false,
+  "training_provenance_verified": false,
+  "input_distribution": "causal fixed-frame history; differs from original GT-aligned moving-frame dataset"
+}

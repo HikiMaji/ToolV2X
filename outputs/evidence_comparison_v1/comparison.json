@@ -1,0 +1,73 @@
+{
+  "scope": "encoding and same-frame input coverage; no task quality claim",
+  "baseline": "/root/autodl-tmp/ToolV2X/outputs/framework_connection_v3",
+  "compact_expanded": "/root/autodl-tmp/ToolV2X/outputs/framework_compact_v1",
+  "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+  "g": 5526,
+  "actions": {
+    "Ego": {
+      "full_records": 21,
+      "baseline_records": 5,
+      "compact_expanded_records": 19,
+      "full_precision_json_tokens": 36252,
+      "full_precision_compact_tokens": 35113,
+      "rounded_json_tokens": 12375,
+      "rounded_compact_tokens": 4167,
+      "same_set_json_tokens": 3384,
+      "same_set_compact_tokens": 1641,
+      "baseline_status": "parsed",
+      "same_set_compact_status": "parsed",
+      "expanded_compact_status": "parsed",
+      "full_wire_unchanged": true,
+      "roundtrip_exact": true
+    },
+    "P": {
+      "full_records": 51,
+      "baseline_records": 4,
+      "compact_expanded_records": 9,
+      "full_precision_json_tokens": 130103,
+      "full_precision_compact_tokens": 123899,
+      "rounded_json_tokens": 43384,
+      "rounded_compact_tokens": 24419,
+      "same_set_json_tokens": 3809,
+      "same_set_compact_tokens": 2540,
+      "baseline_status": "parsed",
+      "same_set_compact_status": "parsed",
+      "expanded_compact_status": "invalid_q9",
+      "full_wire_unchanged": true,
+      "roundtrip_exact": true
+    },
+    "F": {
+      "full_records": 51,
+      "baseline_records": 5,
+      "compact_expanded_records": 19,
+      "full_precision_json_tokens": 86440,
+      "full_precision_compact_tokens": 80520,
+      "rounded_json_tokens": 29493,
+      "rounded_compact_tokens": 10812,
+      "same_set_json_tokens": 3516,
+      "same_set_compact_tokens": 1815,
+      "baseline_status": "parsed",
+      "same_set_compact_status": "parsed",
+      "expanded_compact_status": "parsed",
+      "full_wire_unchanged": true,
+      "roundtrip_exact": true
+    },
+    "PF": {
+      "full_records": 81,
+      "baseline_records": 4,
+      "compact_expanded_records": 8,
+      "full_precision_json_tokens": 179898,
+      "full_precision_compact_tokens": 169053,
+      "rounded_json_tokens": 60209,
+      "rounded_compact_tokens": 30292,
+      "same_set_json_tokens": 3477,
+      "same_set_compact_tokens": 2256,
+      "baseline_status": "parsed",
+      "same_set_compact_status": "parsed",
+      "expanded_compact_status": "parsed",
+      "full_wire_unchanged": true,
+      "roundtrip_exact": true
+    }
+  }
+}

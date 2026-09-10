@@ -1,0 +1,91 @@
+{
+  "status": "PASS",
+  "scope": "saved real-frame connection invariants, no quality assessment",
+  "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+  "global_frame": 5526,
+  "actions": {
+    "Ego": {
+      "status": "parsed",
+      "q8": {
+        "speed": "fast",
+        "steering": "straight"
+      },
+      "final_waypoint": [
+        24.5,
+        4.6
+      ],
+      "full_records": 21,
+      "prompt_records": 5,
+      "remote_prompt_records": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "q8_seconds": 0.9291569800116122,
+      "q9_seconds": 1.9711210611276329,
+      "q8_input_tokens": 3345,
+      "q9_input_tokens": 3382
+    },
+    "P": {
+      "status": "parsed",
+      "q8": {
+        "speed": "fast",
+        "steering": "straight"
+      },
+      "final_waypoint": [
+        72.2,
+        -0.1
+      ],
+      "full_records": 51,
+      "prompt_records": 4,
+      "remote_prompt_records": 2,
+      "request_bytes": 138,
+      "response_bytes": 58597,
+      "q8_seconds": 0.8769423780031502,
+      "q9_seconds": 2.122707088943571,
+      "q8_input_tokens": 3770,
+      "q9_input_tokens": 3807
+    },
+    "F": {
+      "status": "parsed",
+      "q8": {
+        "speed": "fast",
+        "steering": "straight"
+      },
+      "final_waypoint": [
+        23.9,
+        2.9
+      ],
+      "full_records": 51,
+      "prompt_records": 5,
+      "remote_prompt_records": 3,
+      "request_bytes": 138,
+      "response_bytes": 53071,
+      "q8_seconds": 0.8421066401060671,
+      "q9_seconds": 1.9996223791968077,
+      "q8_input_tokens": 3477,
+      "q9_input_tokens": 3514
+    },
+    "PF": {
+      "status": "parsed",
+      "q8": {
+        "speed": "fast",
+        "steering": "straight"
+      },
+      "final_waypoint": [
+        7.2,
+        3.5
+      ],
+      "full_records": 81,
+      "prompt_records": 4,
+      "remote_prompt_records": 3,
+      "request_bytes": 276,
+      "response_bytes": 111668,
+      "q8_seconds": 0.8365805649664253,
+      "q9_seconds": 1.886920923832804,
+      "q8_input_tokens": 3438,
+      "q9_input_tokens": 3475
+    }
+  },
+  "same_information_targets": 30,
+  "same_information_max_difference": 0.0,
+  "saved_python_matches_current": true
+}

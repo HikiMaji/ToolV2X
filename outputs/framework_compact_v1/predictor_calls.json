@@ -1,0 +1,42 @@
+[
+  {
+    "source": "no_fusion",
+    "g": 5526,
+    "targets": 21,
+    "original_model_targets": 21,
+    "seconds": 2.0450062709860504,
+    "path": "outputs/framework_compact_v1/forecasts/000_no_fusion.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.691757227992639,
+    "path": "outputs/framework_compact_v1/forecasts/001_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.689297210192308,
+    "path": "outputs/framework_compact_v1/forecasts/002_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.7096467779483646,
+    "path": "outputs/framework_compact_v1/forecasts/003_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.7174974880181253,
+    "path": "outputs/framework_compact_v1/forecasts/004_no_fusion_cav1.npz"
+  }
+]

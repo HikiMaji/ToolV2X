@@ -1,0 +1,20 @@
+{
+  "context_limit": 4096,
+  "reserved_generation_tokens": 256,
+  "input_token_bound": 3796,
+  "objects_total": 21,
+  "objects_retained": 19,
+  "dropped_objects": [
+    {
+      "source": "ego",
+      "track_id": 16
+    },
+    {
+      "source": "ego",
+      "track_id": 28
+    }
+  ],
+  "numeric_decimal_places": 2,
+  "evidence_format": "compact",
+  "selection": "ascending current anchor distance; same rule for all actions"
+}

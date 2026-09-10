@@ -1,0 +1,180 @@
+{
+  "context_limit": 4096,
+  "reserved_generation_tokens": 256,
+  "input_token_bound": 3797,
+  "objects_total": 51,
+  "objects_retained": 9,
+  "dropped_objects": [
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 4
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 3
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 30
+    },
+    {
+      "source": "ego",
+      "track_id": 11
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 0
+    },
+    {
+      "source": "ego",
+      "track_id": 23
+    },
+    {
+      "source": "ego",
+      "track_id": 6
+    },
+    {
+      "source": "ego",
+      "track_id": 2
+    },
+    {
+      "source": "ego",
+      "track_id": 1
+    },
+    {
+      "source": "ego",
+      "track_id": 3
+    },
+    {
+      "source": "ego",
+      "track_id": 24
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 12
+    },
+    {
+      "source": "ego",
+      "track_id": 0
+    },
+    {
+      "source": "ego",
+      "track_id": 7
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 29
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 16
+    },
+    {
+      "source": "ego",
+      "track_id": 4
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 36
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 19
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 23
+    },
+    {
+      "source": "ego",
+      "track_id": 18
+    },
+    {
+      "source": "ego",
+      "track_id": 9
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 8
+    },
+    {
+      "source": "ego",
+      "track_id": 16
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 33
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 2
+    },
+    {
+      "source": "ego",
+      "track_id": 17
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 13
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 9
+    },
+    {
+      "source": "ego",
+      "track_id": 28
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 14
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 5
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 7
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 15
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 24
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 11
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 21
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 28
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 32
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 1
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 35
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 34
+    }
+  ],
+  "numeric_decimal_places": 2,
+  "evidence_format": "compact",
+  "selection": "ascending current anchor distance; same rule for all actions"
+}

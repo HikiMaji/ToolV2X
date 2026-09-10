@@ -1,0 +1,62 @@
+{
+  "checked_at": "2026-09-10T20:19:43+08:00",
+  "scope": "GitHub review packaging verification; no new 7B generation, training or task quality evaluation",
+  "original_suite_before_edits": {
+    "tests": 58,
+    "passed": true
+  },
+  "full_local_integration_after_edits": {
+    "tests": 62,
+    "passed": true,
+    "python": "3.8",
+    "external_resources_available": true
+  },
+  "exported_staged_tree_review": {
+    "tests": 51,
+    "passed": true,
+    "python": "3.8",
+    "numpy": "1.24.2",
+    "scipy": "1.10.1",
+    "torch_installed": false,
+    "transformers_installed": false,
+    "external_resource_paths_unavailable": true
+  },
+  "source_copies": {
+    "original_llava_package_files_equal": 61,
+    "native_label_file_equal": true,
+    "mtr_yaml_equal": true,
+    "intention_points_equal": true
+  },
+  "mtr_regression": {
+    "scope": "MTR packaging regression on the archived validation decision; no quality evaluation",
+    "targets": 21,
+    "fields_equal": [
+      "track_ids",
+      "states",
+      "means",
+      "scores",
+      "local_gmm",
+      "model_used"
+    ],
+    "checkpoint_state_items": 880,
+    "bundled_config_used": true,
+    "forecast_equal": true,
+    "new_training_steps": 0
+  },
+  "packaging_checks": {
+    "credentials_pattern_matches": 0,
+    "symlinks": 0,
+    "files_over_2MB": 0,
+    "excluded_category_violations": 0,
+    "entry_document_links_valid": true,
+    "exported_file_bytes_match": true,
+    "strict_json_files_valid": true,
+    "new_and_modified_preparation_files_whitespace_clean": true
+  },
+  "limitations": [
+    "Historical upstream source whitespace retained to preserve copied content.",
+    "Historical artifact paths and complete replay dependencies remain external.",
+    "Original full-model outputs and forward reports were not regenerated in this packaging task.",
+    "Upstream license metadata conflicts are recorded in docs/upstream_sources.md."
+  ]
+}

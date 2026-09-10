@@ -1,0 +1,42 @@
+[
+  {
+    "source": "no_fusion",
+    "g": 719,
+    "targets": 8,
+    "original_model_targets": 8,
+    "seconds": 0.761099899886176,
+    "path": "outputs/framework_compact_train_v1/forecasts/000_no_fusion.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 719,
+    "targets": 6,
+    "original_model_targets": 6,
+    "seconds": 0.5349956969730556,
+    "path": "outputs/framework_compact_train_v1/forecasts/001_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 719,
+    "targets": 6,
+    "original_model_targets": 6,
+    "seconds": 0.541786601068452,
+    "path": "outputs/framework_compact_train_v1/forecasts/002_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 719,
+    "targets": 6,
+    "original_model_targets": 6,
+    "seconds": 0.5358091781381518,
+    "path": "outputs/framework_compact_train_v1/forecasts/003_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 719,
+    "targets": 6,
+    "original_model_targets": 6,
+    "seconds": 0.5298695100937039,
+    "path": "outputs/framework_compact_train_v1/forecasts/004_no_fusion_cav1.npz"
+  }
+]

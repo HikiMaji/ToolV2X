@@ -1,0 +1,125 @@
+{
+  "scope": "native supervised forward only; no backward or optimization",
+  "examples": "outputs/adaptation_data_v1/examples/train.jsonl",
+  "model": {
+    "checkpoint": "/root/autodl-tmp/V2V-GoT/LLaVA/checkpoints/llava-v1.5-7b-task-lora/llava-v1.5-7b-task-lora_v2v4real_3d_grounding_v2vgot_10ep_both_shallow_f2/checkpoint-4330",
+    "adapted_checkpoint": "/root/autodl-tmp/ToolV2X/models/llava-toolv2x-lora-ego",
+    "base": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+    "clip": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336",
+    "model_class": "LlavaLlamaForCausalLM",
+    "source": "/root/autodl-tmp/V2V-GoT/LLaVA/llava/model/language_model/llava_llama.py",
+    "my_model_config": {
+      "mm_scene_projector_input_size": 3072,
+      "scene_level_only": false,
+      "object_level_only": false,
+      "scene_feature_mode": "shallow",
+      "object_feature_mode": "shallow",
+      "num_input_frames": 2,
+      "ego_only": true,
+      "feature_source": "no_fusion_keep_all",
+      "dataset_source": "v2v4real",
+      "num_latency_frames": 0,
+      "positional_error_std": 0.0
+    },
+    "loading_seconds": 10.202841476071626,
+    "released_tokenizer_limit": 2048,
+    "context_limit": 4096,
+    "evidence_format": "compact",
+    "adapted_to_tool_evidence": false,
+    "training_provenance_verified": false,
+    "actual_rgb_input": false,
+    "point_cloud_feature_input": true
+  },
+  "rows": [
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "Ego",
+      "task": "Q8",
+      "loss": 0.004056083969771862,
+      "seconds": 0.26271634199656546,
+      "sequence_tokens": 2191,
+      "feature_tokens": 540,
+      "supervised_tokens": 18,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "Ego",
+      "task": "Q9",
+      "loss": 0.9208549857139587,
+      "seconds": 0.23246950702741742,
+      "sequence_tokens": 2273,
+      "feature_tokens": 540,
+      "supervised_tokens": 63,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "P",
+      "task": "Q8",
+      "loss": 0.00010078523337142542,
+      "seconds": 0.4115430770907551,
+      "sequence_tokens": 3782,
+      "feature_tokens": 540,
+      "supervised_tokens": 18,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "P",
+      "task": "Q9",
+      "loss": 0.79429692029953,
+      "seconds": 0.41624017991125584,
+      "sequence_tokens": 3864,
+      "feature_tokens": 540,
+      "supervised_tokens": 63,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "F",
+      "task": "Q8",
+      "loss": 0.0013825794449076056,
+      "seconds": 0.35559027409181,
+      "sequence_tokens": 3321,
+      "feature_tokens": 540,
+      "supervised_tokens": 18,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "F",
+      "task": "Q9",
+      "loss": 0.8031570315361023,
+      "seconds": 0.3806664140429348,
+      "sequence_tokens": 3403,
+      "feature_tokens": 540,
+      "supervised_tokens": 63,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "PF",
+      "task": "Q8",
+      "loss": 0.00020891758322250098,
+      "seconds": 0.41175992507487535,
+      "sequence_tokens": 3780,
+      "feature_tokens": 540,
+      "supervised_tokens": 18,
+      "feature_labels_masked": true
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "action": "PF",
+      "task": "Q9",
+      "loss": 0.859088122844696,
+      "seconds": 0.41612403094768524,
+      "sequence_tokens": 3862,
+      "feature_tokens": 540,
+      "supervised_tokens": 63,
+      "feature_labels_masked": true
+    }
+  ],
+  "optimizer_steps": 0,
+  "all_losses_finite": true
+}

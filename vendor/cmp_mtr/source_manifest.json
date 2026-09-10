@@ -1,0 +1,141 @@
+{
+  "source_root": "/root/autodl-tmp/CMP/MTR/mtr",
+  "copied_before_adaptation": [
+    {
+      "local": "mtr/config.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/config.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/context_encoder/__init__.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/context_encoder/__init__.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/context_encoder/mtr_encoder.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/context_encoder/mtr_encoder.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/model.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/model.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/motion_decoder/__init__.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/motion_decoder/__init__.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/motion_decoder/mtr_decoder.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/motion_decoder/mtr_decoder.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/multi_ego_mtr_model.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/multi_ego_mtr_model.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/common_layers.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/common_layers.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/polyline_encoder.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/polyline_encoder.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/transformer/multi_head_attention.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/transformer/multi_head_attention.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/transformer/multi_head_attention_local.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/transformer/multi_head_attention_local.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/transformer/position_encoding_utils.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/transformer/position_encoding_utils.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/transformer/transformer_decoder_layer.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/transformer/transformer_decoder_layer.py"
+    },
+    {
+      "local": "mtr/models_v2v4real/utils/transformer/transformer_encoder_layer.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/utils/transformer/transformer_encoder_layer.py"
+    },
+    {
+      "local": "mtr/ops/attention/__init__.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/__init__.py"
+    },
+    {
+      "local": "mtr/ops/attention/attention_utils.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/attention_utils.py"
+    },
+    {
+      "local": "mtr/ops/attention/attention_utils_v2.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/attention_utils_v2.py"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_api.cpp",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_api.cpp"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_func.cpp",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_func.cpp"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_func.h",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_func.h"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_func_v2.cpp",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_func_v2.cpp"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_func_v2.h",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_func_v2.h"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_value_computation_kernel.cu",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_value_computation_kernel.cu"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_value_computation_kernel_v2.cu",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_value_computation_kernel_v2.cu"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_weight_computation_kernel.cu",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_weight_computation_kernel.cu"
+    },
+    {
+      "local": "mtr/ops/attention/src/attention_weight_computation_kernel_v2.cu",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/attention/src/attention_weight_computation_kernel_v2.cu"
+    },
+    {
+      "local": "mtr/ops/knn/knn_utils.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/knn/knn_utils.py"
+    },
+    {
+      "local": "mtr/ops/knn/src/knn.cpp",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/knn/src/knn.cpp"
+    },
+    {
+      "local": "mtr/ops/knn/src/knn_api.cpp",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/knn/src/knn_api.cpp"
+    },
+    {
+      "local": "mtr/ops/knn/src/knn_gpu.cu",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/knn/src/knn_gpu.cu"
+    },
+    {
+      "local": "mtr/ops/knn/src/knn_gpu.h",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/ops/knn/src/knn_gpu.h"
+    },
+    {
+      "local": "mtr/utils/common_utils.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/utils/common_utils.py"
+    },
+    {
+      "local": "mtr/utils/loss_utils.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/utils/loss_utils.py"
+    },
+    {
+      "local": "mtr/utils/motion_utils.py",
+      "source": "/root/autodl-tmp/CMP/MTR/mtr/utils/motion_utils.py"
+    }
+  ]
+}

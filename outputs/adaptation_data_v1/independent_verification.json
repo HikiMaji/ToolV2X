@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "scope": "encoding, provenance, separated labels and native forward; no quality claim",
+  "actions": {
+    "Ego": {
+      "raw_distinct_mode_counts": {
+        "6": 21
+      },
+      "rounded_distinct_mode_counts": {
+        "1": 18,
+        "2": 3
+      }
+    },
+    "P": {
+      "raw_distinct_mode_counts": {
+        "6": 48,
+        "1": 3
+      },
+      "rounded_distinct_mode_counts": {
+        "1": 46,
+        "2": 5
+      }
+    },
+    "F": {
+      "raw_distinct_mode_counts": {
+        "6": 48,
+        "1": 3
+      },
+      "rounded_distinct_mode_counts": {
+        "1": 46,
+        "2": 5
+      }
+    },
+    "PF": {
+      "raw_distinct_mode_counts": {
+        "6": 75,
+        "1": 6
+      },
+      "rounded_distinct_mode_counts": {
+        "1": 74,
+        "2": 7
+      }
+    }
+  },
+  "data": {
+    "train": {
+      "frames": 3027,
+      "complete_labels": 3027,
+      "q8_distribution": {
+        "The suggested speed setting is: fast. The suggested steering setting is: straight.": 1299,
+        "The suggested speed setting is: fast. The suggested steering setting is: slightly left.": 126,
+        "The suggested speed setting is: very slow. The suggested steering setting is: straight.": 45,
+        "The suggested speed setting is: stop. The suggested steering setting is: straight.": 293,
+        "The suggested speed setting is: very slow. The suggested steering setting is: slightly left.": 5,
+        "The suggested speed setting is: very slow. The suggested steering setting is: left.": 9,
+        "The suggested speed setting is: slow. The suggested steering setting is: left.": 10,
+        "The suggested speed setting is: moderate. The suggested steering setting is: left.": 16,
+        "The suggested speed setting is: moderate. The suggested steering setting is: slightly left.": 4,
+        "The suggested speed setting is: slow. The suggested steering setting is: right.": 67,
+        "The suggested speed setting is: slow. The suggested steering setting is: slightly right.": 29,
+        "The suggested speed setting is: slow. The suggested steering setting is: straight.": 93,
+        "The suggested speed setting is: moderate. The suggested steering setting is: straight.": 1014,
+        "The suggested speed setting is: moderate. The suggested steering setting is: right.": 8,
+        "The suggested speed setting is: moderate. The suggested steering setting is: slightly right.": 9
+      }
+    },
+    "validation": {
+      "frames": 108,
+      "complete_labels": 108,
+      "q8_distribution": {
+        "The suggested speed setting is: moderate. The suggested steering setting is: straight.": 79,
+        "The suggested speed setting is: fast. The suggested steering setting is: straight.": 29
+      }
+    }
+  },
+  "materialized_examples": 8,
+  "native_supervised_forward_rows": 8,
+  "optimizer_steps": 0,
+  "final_snapshot_matches_current": true
+}

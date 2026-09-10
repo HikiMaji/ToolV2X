@@ -1,0 +1,56 @@
+{
+  "context_limit": 4096,
+  "reserved_generation_tokens": 256,
+  "input_token_bound": 3801,
+  "objects_total": 20,
+  "objects_retained": 9,
+  "dropped_objects": [
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 0
+    },
+    {
+      "source": "ego",
+      "track_id": 4
+    },
+    {
+      "source": "ego",
+      "track_id": 1
+    },
+    {
+      "source": "ego",
+      "track_id": 3
+    },
+    {
+      "source": "no_fusion_cav1:F",
+      "track_id": 3
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 3
+    },
+    {
+      "source": "ego",
+      "track_id": 10
+    },
+    {
+      "source": "ego",
+      "track_id": 6
+    },
+    {
+      "source": "ego",
+      "track_id": 12
+    },
+    {
+      "source": "no_fusion_cav1:F",
+      "track_id": 1
+    },
+    {
+      "source": "no_fusion_cav1:P_local",
+      "track_id": 1
+    }
+  ],
+  "numeric_decimal_places": 2,
+  "evidence_format": "compact",
+  "selection": "ascending current anchor distance; same rule for all actions"
+}

@@ -1,0 +1,28 @@
+diff --git a/MTR/mtr/datasets/v2v4real_multiego_dataset.py b/MTR/mtr/datasets/v2v4real_multiego_dataset.py
+--- a/MTR/mtr/datasets/v2v4real_multiego_dataset.py
++++ b/MTR/mtr/datasets/v2v4real_multiego_dataset.py
+@@ -174,8 +174,9 @@ class V2V4RealMultiEgoDataset(DatasetTemplate):
+                         # print("All cav has invalid segments")
+                         continue
+ 
+-                    # Make sure the fused feature exists.
+-                    if not os.path.exists(timestamp_content['fused_feature']):
++                    # Make sure the fused feature exists (ToolV2X: skipped when ALLOW_MISSING_FUSED_FEATURE).
++                    if not self.dataset_cfg.get('ALLOW_MISSING_FUSED_FEATURE', False) and \
++                            not os.path.exists(timestamp_content['fused_feature']):
+                         logger.warning(f'{self.idx2scenrio[scenario_idx].split("/")[-1]}-{ego_cav_id}-{timestamp_idx} has no fused feature')
+                         continue
+                     
+@@ -690,7 +691,11 @@ class V2V4RealMultiEgoDataset(DatasetTemplate):
+ 
+         # Load Fused CoBEVT features.
+         fused_feature_path = self.scenario_database[scenario_index][ego_cav_id][curr_timestamp_key]['fused_feature']
+-        fused_feature = np.load(fused_feature_path)  # [1, 256, 48, 176] or (1, 256, 48, 128)
++        if os.path.exists(fused_feature_path):
++            fused_feature = np.load(fused_feature_path)  # [1, 256, 48, 176] or (1, 256, 48, 128)
++        else:
++            # ToolV2X: no BEV features available; aggregator's BEV branch sees a constant zero map.
++            fused_feature = np.zeros((1, 256, 48, 128), dtype=np.float32)
+         ret_dict['fused_feature'] = fused_feature
+ 
+         return ret_dict
