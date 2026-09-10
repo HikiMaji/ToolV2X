@@ -45,5 +45,5 @@ Files: `README.md`, `AGENTS.md`, `.gitignore`, `requirements-review.txt`, `scrip
 - [x] Audit the staged file list, symlinks, large files, and accidental credentials. Validate selected artifact references and documentation links.
 - [x] Export exactly the staged tree to a temporary directory; run lightweight checks there with only review dependencies and unavailable external resource roots.
 - [x] Verify unchanged model source/configuration and run the full local integration suite after source edits.
-- [ ] Commit and push the selected tree to `main`; verify the remote branch matches the local commit without printing revision identifiers.
-- [ ] Report the published location, checks performed, limits of reproducibility, and token revocation advice.
+- [x] Commit and push the selected tree to `main`; verify the remote branch matches the local commit without printing revision identifiers.
+- [x] Report the published location, checks performed, limits of reproducibility, and token revocation advice.
