@@ -1,0 +1,422 @@
+{
+  "translation_threshold_m": 20.0,
+  "yaw_threshold_deg": 20.0,
+  "scanned_intervals": {
+    "train": 3912,
+    "validation": 226
+  },
+  "jumps": [
+    {
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "from_g": 2760,
+      "to_g": 2761,
+      "translation_m": 67.34350346596979,
+      "yaw_change_deg": 1.819285572063265
+    }
+  ],
+  "excluded": [
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:158",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2731,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:159",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2732,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:160",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2733,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:161",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2734,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:162",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2735,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:163",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2736,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:164",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2737,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:165",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2738,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:166",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2739,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:167",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2740,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:168",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2741,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:169",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2742,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:170",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2743,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:171",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2744,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:172",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2745,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:173",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2746,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:174",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2747,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:175",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2748,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:176",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2749,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:177",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2750,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:178",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2751,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:179",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2752,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:180",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2753,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:181",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2754,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:182",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2755,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:183",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2756,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:184",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2757,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:185",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2758,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:186",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2759,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:187",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2760,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:188",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2761,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:189",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2762,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:190",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2763,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:191",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2764,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:192",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2765,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:193",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2766,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:194",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2767,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:195",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2768,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:196",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2769,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:197",
+      "role": "train",
+      "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+      "g": 2770,
+      "crossed_jump_frames": [
+        2761
+      ],
+      "reason": "one-second history or three-second label crosses pose discontinuity"
+    }
+  ],
+  "rule": "g-10 < discontinuity_to_g <= g+30 within the same physical scene",
+  "scope": "offline sample eligibility; underlying source data and frozen MTR unchanged"
+}

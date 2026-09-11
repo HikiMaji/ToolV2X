@@ -1,0 +1,34 @@
+{
+  "epoch": 1,
+  "next_row": 0,
+  "steps": 10,
+  "examples_seen": 80,
+  "best_loss": 0.6866553664207459,
+  "best_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_training_epoch_v1/checkpoint-epoch01",
+  "bad_epochs": 0,
+  "data": "/root/autodl-tmp/ToolV2X/outputs/framework_debug_data_v2",
+  "batch_size": 8,
+  "seed": 20,
+  "history": [
+    {
+      "epoch": 1,
+      "validation": {
+        "macro_loss": 0.6866553664207459,
+        "groups": {
+          "testoutput_CAV_data_2022-03-17-16-06-11|Ego": 0.9504492878913879,
+          "testoutput_CAV_data_2022-03-17-16-06-11|P": 0.8001063466072083,
+          "testoutput_CAV_data_2022-03-17-16-06-11|F": 0.8004961609840393,
+          "testoutput_CAV_data_2022-03-17-16-06-11|PF": 0.7492741942405701,
+          "testoutput_CAV_data_2022-03-17-16-06-11|rule": 0.8138028085231781,
+          "testoutput_CAV_data_2022-03-21-09-50-20|Ego": 0.513327494263649,
+          "testoutput_CAV_data_2022-03-21-09-50-20|P": 0.5172636955976486,
+          "testoutput_CAV_data_2022-03-21-09-50-20|F": 0.5322490632534027,
+          "testoutput_CAV_data_2022-03-21-09-50-20|PF": 0.5358120203018188,
+          "testoutput_CAV_data_2022-03-21-09-50-20|rule": 0.6537725925445557
+        },
+        "examples": 20
+      },
+      "improved": true
+    }
+  ]
+}

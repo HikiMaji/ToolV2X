@@ -232,6 +232,10 @@ class V2VGoTPlanner:
             trainable_lora_loaded=trainable_lora,
             attention_implementation=attention,
             actual_rgb_input=False, point_cloud_feature_input=True)
+        if (checkpoint / 'training_state.json').is_file():
+            state = json.loads((checkpoint / 'training_state.json').read_text())
+            self.provenance.update(adapted_to_tool_evidence=state.get('examples_seen', 0) > 0,
+                                   local_training_state=state)
 
     @torch.inference_mode()
     def _generate(self, features, prompt, max_new_tokens):
@@ -251,7 +255,41 @@ class V2VGoTPlanner:
             seconds=perf_counter() - begin, input_tokens=count, output_tokens=int(output.shape[1]),
             feature_tokens=int(tensors['active_agent_mask'].sum()) * 270)
 
-    def plan(self, features, ego_state, evidence, evidence_format=None, decoding='q8_q9'):
+    def plan_prepared(self, features, prepared):
+        if (prepared.get('input_layout') != 'source_blocks_v1' or prepared.get('decoding') != 'direct' or
+                prepared.get('q8_executed') is not False or prepared.get('q8_raw')):
+            raise ValueError('expected a source-separated direct input')
+        expected = make_prompt('Trajectory', prepared['ego_motion'], prepared['evidence_used'],
+                               evidence_format='compact', remote_evidence=prepared.get('remote_evidence_used'))
+        selection = prepared['evidence_selection']
+        feature_count = int(np.asarray(features['active_agent_mask']).sum()) * 270
+        if (expected != prepared['q9_prompt'] or selection['context_limit'] != self.context_limit or
+                selection['feature_tokens'] != feature_count):
+            raise ValueError('prepared input differs from the model input contract')
+        result = dict(prepared, q9_executed=False, language_model_executed=False)
+        try:
+            raw, cost = self._generate(features, expected, Q9_MAX_NEW_TOKENS)
+        except ContextBudgetError as exc:
+            result.update(status='q9_context_overflow', error=str(exc), q9_budget=exc.budget)
+            return result
+        result.update(q9_raw=raw, q9_cost=cost, q9_executed=True, language_model_executed=True)
+        try:
+            result['waypoints'] = parse_q9(raw).tolist()
+            result['status'] = 'parsed'
+        except ValueError as exc:
+            result.update(status='invalid_q9', error=str(exc))
+        return result
+
+    def plan(self, features, ego_state, evidence, evidence_format=None, decoding='q8_q9', input_layout='legacy'):
+        if input_layout == 'source_blocks_v1':
+            if decoding != 'direct':
+                raise ValueError('source-separated execution currently uses the direct trajectory task')
+            from planning.context import build_plan_input
+            count = int(np.asarray(features['active_agent_mask']).sum()) * 270
+            return self.plan_prepared(features, build_plan_input(self.tokenizer, ego_state, evidence,
+                                                                count, self.context_limit))
+        if input_layout != 'legacy':
+            raise ValueError('unknown input layout')
         if decoding not in ('q8_q9', 'direct'):
             raise ValueError('unknown driving decoding mode')
         evidence_format = self.evidence_format if evidence_format is None else evidence_format

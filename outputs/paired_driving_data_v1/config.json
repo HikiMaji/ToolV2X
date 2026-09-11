@@ -1,0 +1,36 @@
+{
+  "created_utc": "2026-09-11T08:21:01.526072+00:00",
+  "source_index": "/root/autodl-tmp/ToolV2X/outputs/adaptation_data_v1",
+  "actions": [
+    "Ego",
+    "F"
+  ],
+  "decoding": "direct",
+  "evidence_format": "compact",
+  "context_limit": 4096,
+  "generation_reserve": 256,
+  "peer_reserve": 1536,
+  "mtr_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_stability_v1/full_seed20/best_model.pth",
+  "device": "cuda",
+  "target_batch_size": 32,
+  "counts": {
+    "train": {
+      "original": 3027,
+      "kept": 2987,
+      "excluded": 40,
+      "recordings": 8
+    },
+    "validation": {
+      "original": 108,
+      "kept": 108,
+      "excluded": 0,
+      "recordings": 2
+    }
+  },
+  "nominal_dt_seconds": 0.1,
+  "actual_sensor_timestamps_verified": false,
+  "test_access": false,
+  "training": false,
+  "driver_initialization": "existing GoT checkpoint-4330",
+  "validation_used_for_development": true
+}

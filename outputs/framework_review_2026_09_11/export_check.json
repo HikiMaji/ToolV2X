@@ -1,0 +1,16 @@
+{
+  "export": "/tmp/toolv2x-framework-publish-m7_zgm8t/tree",
+  "python": "/tmp/toolv2x-review-environment-v626f2pd/venv/bin/python",
+  "returncode": 0,
+  "environment": {
+    "python": "3.8.10",
+    "modules": {
+      "numpy": true,
+      "scipy": true,
+      "torch": false,
+      "transformers": false
+    }
+  },
+  "external_resources_unavailable": true,
+  "source": "actual Git index export"
+}

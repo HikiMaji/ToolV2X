@@ -1,0 +1,20 @@
+{
+  "source_data": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1",
+  "per_recording": 2,
+  "policies": [
+    "Ego",
+    "P",
+    "F",
+    "PF",
+    "rule"
+  ],
+  "p_processing": "local_mtr",
+  "input_layout": "source_blocks_v1",
+  "mtr_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_stability_v1/full_seed20/best_model.pth",
+  "context_limit": 4096,
+  "peer_reserve": 1536,
+  "real_rgb_input": false,
+  "gt_labels_read": false,
+  "driver_executed": false,
+  "scope": "complete tool episodes and shared inputs"
+}

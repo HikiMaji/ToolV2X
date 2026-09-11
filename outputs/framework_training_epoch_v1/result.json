@@ -1,0 +1,12 @@
+{
+  "status": "training_completed",
+  "optimizer_steps": 10,
+  "epochs": 1,
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_training_epoch_v1/checkpoint-epoch01",
+  "validation_loss": 0.6866553664207459,
+  "generation_evaluated": false,
+  "examples_seen": 80,
+  "new_training_examples": 56,
+  "formal_adaptation_complete": false,
+  "method_effectiveness_established": false
+}

@@ -22,11 +22,14 @@ def save_json(path, value):
     Path(path).write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False) + '\n')
 
 
-def load_window(scene, local_frame, source, paths):
+def load_window(scene, local_frame, source, paths, archive_loader=None):
     # Validation scenes come from the physical train archive; split_manifest defines holdout.
     path = ROOT / 'outputs/causal_windows_v1/train' / source / (scene + '.pkl')
-    with open(path, 'rb') as handle:
-        artifact = pickle.load(handle)
+    if archive_loader is None:
+        with open(path, 'rb') as handle:
+            artifact = pickle.load(handle)
+    else:
+        artifact = archive_loader(path)
     meta = artifact['meta']
     if (meta['gt_access'] is not False or meta['coordinate_frame'] != 'ego_at_t' or
             meta['scene'] != scene or meta['split'] != 'train' or meta['yaw_unit'] != 'radian' or meta['dt_seconds'] != .1):
@@ -154,7 +157,9 @@ def prepare(out, validation_index, local_frame, actions, evidence_format='json',
         window_archives=paths, online_gt_fields=False, archive_selection='causal selected window only'))
     save_json(out / 'predictor_calls.json', calls)
     metadata = dict(scene=scene, local_frame=local_frame, g=g, physical_split='train', research_split=research_split,
-        ego_motion=motion, actions=results, evidence_format=evidence_format, inputs_prepared=True, actual_original_cmp_executed=True,
+        ego_motion=motion, actions=results, evidence_format=evidence_format, inputs_prepared=True,
+        actual_original_cmp_executed=any(call['original_model_targets'] > 0 for call in calls),
+        original_cmp_target_evaluations=sum(call['original_model_targets'] for call in calls),
         actual_original_projector_executed=True, language_model_executed=False,
         training=False, quality_evaluation=False, closed_loop=False, full_framework_complete=False)
     save_json(out / 'connection.json', metadata)

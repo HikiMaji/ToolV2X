@@ -82,7 +82,8 @@ def supervised_examples(role, sample_id, action, motion, plan, label, feature_pa
     if decoding == 'direct':
         if plan.get('q8_executed') is not False or plan.get('q8_raw'):
             raise ValueError('direct supervision cannot contain a Q8 parent')
-        prompt = make_prompt('Trajectory', motion, evidence, evidence_format=mode)
+        prompt = make_prompt('Trajectory', motion, evidence, evidence_format=mode,
+                             remote_evidence=plan.get('remote_evidence_used'))
         if prompt != plan['q9_prompt']:
             raise ValueError('direct prompt does not match causal evidence')
         return ([dict(common, task='Trajectory', prompt=prompt, target=label['target_q9'],

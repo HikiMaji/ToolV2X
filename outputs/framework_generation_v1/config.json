@@ -1,0 +1,9 @@
+{
+  "prepared_root": "/root/autodl-tmp/ToolV2X/outputs/framework_debug_v2",
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_training_epoch_v1/checkpoint-epoch01",
+  "role": "validation",
+  "input_layout": "source_blocks_v1",
+  "tasks": 20,
+  "execution": "generate from causally completed rule/fixed episodes; no new queries",
+  "gt_labels_read": false
+}

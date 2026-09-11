@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-09-11T19:26:24.925864+08:00",
+  "status": "passed",
+  "tests": {
+    "full_local": 117,
+    "lightweight_local": 89,
+    "lightweight_exported": 89
+  },
+  "exported_environment": {
+    "export": "/tmp/toolv2x-framework-publish-m7_zgm8t/tree",
+    "python": "/tmp/toolv2x-review-environment-v626f2pd/venv/bin/python",
+    "returncode": 0,
+    "environment": {
+      "python": "3.8.10",
+      "modules": {
+        "numpy": true,
+        "scipy": true,
+        "torch": false,
+        "transformers": false
+      }
+    },
+    "external_resources_unavailable": true,
+    "source": "actual Git index export"
+  },
+  "runtime_source_unchanged_since_launch": true,
+  "selected_validation_tasks": 20,
+  "selected_train_rule_tasks": 2,
+  "selected_offline_labels": 4,
+  "archive_scope": "Selected actual text records; weights, features, other tasks and repeated snapshots are external.",
+  "excluded_local_drafts": [
+    "docs/9-10.md",
+    "docs/9-10-2.md",
+    "docs/9-11.md"
+  ],
+  "credential_and_resource_screen": "passed for selected new and modified files",
+  "git_whitespace_check": "passed"
+}

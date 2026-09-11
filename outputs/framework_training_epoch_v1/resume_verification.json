@@ -1,0 +1,10 @@
+{
+  "adapter_exact": true,
+  "projectors_exact": true,
+  "optimizer_exact": true,
+  "rng_exact": true,
+  "resume": "/root/autodl-tmp/ToolV2X/outputs/framework_training_resume_v1/checkpoint-step000003",
+  "next_row": 24,
+  "steps": 3,
+  "scope": "exact saved-state restoration; CUDA backward may be nondeterministic"
+}

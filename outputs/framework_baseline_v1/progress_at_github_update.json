@@ -1,0 +1,33 @@
+{
+  "captured_at": "2026-09-11T19:26:24.922593+08:00",
+  "pipeline": {
+    "status": "running",
+    "pid": 8392,
+    "started": "2026-09-11T19:03:05.556194+08:00",
+    "stages": [],
+    "stage": "prepare",
+    "command": [
+      "/root/autodl-tmp/conda-envs/llava/bin/python",
+      "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_v1/code/src/planning/run_framework.py",
+      "prepare",
+      "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_v1/episodes",
+      "--data",
+      "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1",
+      "--per-recording",
+      "0"
+    ],
+    "updated": "2026-09-11T19:03:05.557877+08:00",
+    "child_pid": 8393
+  },
+  "episodes": {
+    "status": "running",
+    "frames": 1521,
+    "expected_frames": 3095,
+    "tasks": 7605,
+    "task_failures": 0,
+    "elapsed_seconds": 1394.1709438129328
+  },
+  "live_progress": false,
+  "note": "Publication snapshot; the local detached process continues independently.",
+  "publication_scope": "3095 cleaned causal frames; preparation, then original GoT adaptation and development evaluation"
+}

@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "scope": "saved data pairing, common local block, labels and counts only",
+  "roles": {
+    "train": {
+      "frames": 2987,
+      "rows": 5974
+    },
+    "validation": {
+      "frames": 108,
+      "rows": 216
+    }
+  },
+  "excluded": 40,
+  "max_F_input_tokens": 3840
+}

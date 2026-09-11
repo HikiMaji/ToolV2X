@@ -1,0 +1,110 @@
+{
+  "status": "completed",
+  "counts": {
+    "training_examples": 5974,
+    "frames_verified": 3095,
+    "no_peer_objects_returned": 4,
+    "peer_returned_but_none_retained": 0,
+    "validation_inputs": 216
+  },
+  "coverage": {
+    "train": {
+      "frames": 2987,
+      "ego_full": {
+        "mean": 10.366253766320723,
+        "minimum": 2,
+        "maximum": 37
+      },
+      "ego_retained": {
+        "mean": 2.4941412788751256,
+        "minimum": 2,
+        "maximum": 4
+      },
+      "peer_full": {
+        "mean": 10.413793103448276,
+        "minimum": 0,
+        "maximum": 35
+      },
+      "peer_retained": {
+        "mean": 2.963508536993639,
+        "minimum": 0,
+        "maximum": 7
+      },
+      "ego_input_tokens": {
+        "mean": 2028.7053900234348,
+        "minimum": 1808,
+        "maximum": 2304
+      },
+      "F_input_tokens": {
+        "mean": 3588.859390693003,
+        "minimum": 1942,
+        "maximum": 3840
+      },
+      "response_bytes": {
+        "mean": 18879.58151991965,
+        "minimum": 283,
+        "maximum": 63152
+      }
+    },
+    "validation": {
+      "frames": 108,
+      "ego_full": {
+        "mean": 19.27777777777778,
+        "minimum": 8,
+        "maximum": 32
+      },
+      "ego_retained": {
+        "mean": 2.9722222222222223,
+        "minimum": 2,
+        "maximum": 4
+      },
+      "peer_full": {
+        "mean": 20.90740740740741,
+        "minimum": 10,
+        "maximum": 31
+      },
+      "peer_retained": {
+        "mean": 2.574074074074074,
+        "minimum": 2,
+        "maximum": 5
+      },
+      "ego_input_tokens": {
+        "mean": 2222.8703703703704,
+        "minimum": 1833,
+        "maximum": 2304
+      },
+      "F_input_tokens": {
+        "mean": 3562.462962962963,
+        "minimum": 3409,
+        "maximum": 3840
+      },
+      "response_bytes": {
+        "mean": 37533.25925925926,
+        "minimum": 18284,
+        "maximum": 54974
+      }
+    }
+  },
+  "source_counts": {
+    "train": {
+      "original": 3027,
+      "kept": 2987,
+      "excluded": 40,
+      "recordings": 8
+    },
+    "validation": {
+      "original": 108,
+      "kept": 108,
+      "excluded": 0,
+      "recordings": 2
+    }
+  },
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_stability_v1/full_seed20/best_model.pth",
+  "all_ego_feature_arrays_match_source": true,
+  "all_literal_ego_blocks_preserved": true,
+  "all_original_labels_recomputed": true,
+  "online_gt_labels_read": false,
+  "training_parameters_updated": false,
+  "driving_model_executed": false,
+  "scope": "paired direct trajectory training samples and validation inputs, not driving quality or method effectiveness"
+}

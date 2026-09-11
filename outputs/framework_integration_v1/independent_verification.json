@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "tasks_checked": 100,
+  "frames": 20,
+  "recording_groups": {
+    "train": 8,
+    "validation": 2
+  },
+  "generated_trajectories_checked": 20,
+  "exact_shared_ego_input": true,
+  "actual_wire_accounting": true,
+  "independent_ADE_FDE": true,
+  "timing_addition": true,
+  "repeated_point_trajectories": [
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "policy": "rule"
+    }
+  ],
+  "mean_retained_records": {
+    "Ego": [
+      2.65,
+      0.0
+    ],
+    "P": [
+      2.65,
+      1.35
+    ],
+    "F": [
+      2.65,
+      2.8
+    ],
+    "PF": [
+      2.65,
+      2.3
+    ],
+    "rule": [
+      2.65,
+      1.8
+    ]
+  },
+  "scope": "integration arithmetic and input audit; parsed trajectories are not necessarily physically useful"
+}

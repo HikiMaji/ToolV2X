@@ -1,0 +1,17 @@
+{
+  "scope": "one real first frame; portable torch execution only",
+  "max_absolute_difference": {
+    "track_ids": 0.0,
+    "states": 0.0,
+    "means": 0.000152587890625,
+    "scores": 2.5704503059387207e-07,
+    "local_gmm": 0.00016021728515625,
+    "model_used": 0.0
+  },
+  "native_CUDA_parity": false,
+  "rtol": 0.0001,
+  "trajectory_atol": 0.01,
+  "scores_atol": 1e-05,
+  "cpu_target_batch": 1,
+  "materialization_target_batch": 32
+}

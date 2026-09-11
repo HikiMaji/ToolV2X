@@ -1,4 +1,8 @@
-# 首次 GitHub 审查
+# GitHub 审查入口
+
+当前审查重点为 [完整框架实现与真实联调](framework_baseline_results.md)，发布范围见 [本轮更新](github_update_framework_2026_09_11.md)。新增 `planning/context.py`、`episode.py`、`run_framework.py`、`train_driver.py`、`evaluation/framework.py` 与两项 `scripts/prepare_framework_training.py` / `run_framework_baseline.py` 入口，连通真实查询、更新/停止、统一驾驶、训练恢复与评价。共享驾驶全量适配仍在本机后台执行，GitHub 的进度是带时间的发布快照。
+
+本轮精选归档包含全部 20 次验证生成及其原始任务、4 条独立离线标签、2 个训练帧的提前停止实例。`check_review.py` 能在没有模型和完整数据的环境里重建提示、重算 ADE/FDE 和实际通信字节，并核对退化答案没有被删除。它不替代 GPU 训练、全量评价或学习查询机制检验。原始任务索引包含 100 项，只有上述 22 项完整 JSON 被发布；未上传的特征、其他任务和重复源码快照仍需本机资源。
 
 日期：2026-09-10。目标仓库：HikiMaji/ToolV2X。首次仓库用于审查实现、协议和训练准备；当前没有正式方法收益结论。
 
@@ -18,6 +22,11 @@
 | 离线标签、训练样本、实际生成的 Q8 父上下文 | `src/planning/adaptation_data.py` |
 | 原监督前向、特征/提示损失屏蔽、一次真实参数更新检查 | `src/planning/check_adaptation.py`、`check_training.py` |
 | 同信息编码对照 | `src/planning/compare_evidence.py` |
+| 五策略实际查询、证据更新、继续/STOP、部分失败账本 | `src/planning/episode.py`、`run_framework.py` |
+| 本车块固定、已购邻车块、训练与生成共用提示 | `src/planning/context.py`、`paired_inputs.py` |
+| 完整监督导出、录制级验证、检查点恢复 | `scripts/prepare_framework_training.py`、`src/planning/train_driver.py` |
+| 预期任务覆盖、失败分母、轨迹与总调用成本 | `src/evaluation/framework.py` |
+| 从代码副本顺序执行完整单配置流程 | `scripts/run_framework_baseline.py` |
 
 `src/probe`、`src/oracle` 和旧 CMP 四配置脚本保留历史实现。不要把这些代码运行过等同于当前主线已验证，也不要仅凭文件夹名称删除当前仍引用的校验函数。`vendor/cmp_mtr/reference/` 中原 dataset 只供参考测试；正式在线适配器不调用该 GT 驱动 dataset。
 
@@ -37,12 +46,15 @@
 ## 可以交给审查者的任务
 
 ```text
-请对整个 ToolV2X 仓库做只读代码审查。先读 README.md、docs/evidence_adaptation.md 和 docs/upstream_sources.md，再追踪当前规划/工具/离线监督路径以及实际调用的 vendor 源码。
+请对整个 ToolV2X 仓库做只读代码审查。先读 README.md、docs/framework_baseline_results.md、docs/github_update_framework_2026_09_11.md 和 docs/upstream_sources.md，再追踪当前规划/工具/离线监督路径以及实际调用的 vendor 源码。
 
 优先检查：
 1. 时间 t 因果性、查询前远端信息隔离、GT 标签与在线输入分离、录制级数据划分。
 2. P/F 同信息对照、完整上下文与 ROI 顺序、坐标/时间、远端独有目标、多模态和实际通信成本。
 3. q8_q9 模式的真实生成父回答、direct 模式无 Q8 输入且不能由缺失父回答自动切换、格式失败分母、上下文截断/舍入、监督损失掩码与原模型真实接入。
+4. 规则是否只依赖本车与实际已购证据、第二次请求是否由真实第一步结果决定、调用/接收失败是否保留已付成本及任务身份、提前停止是否保持零额外读取。
+5. 五种策略是否共用本车输入和训练/生成提示、保存恢复是否包含可训练参数/优化器/随机状态、训练验证是否按物理录制组隔离、是否把小样本联调误称为完整适配。
+6. 评价是否核对完成标志和预期任务集合、缺失与格式错误是否被隐去、总成本是否包含两次调用及接收处理。区分可解析轨迹、物理合理性、驾驶模仿误差和最终方法收益。
 
 运行 python scripts/check_review.py；环境允许时再按 README 运行完整集成测试，并明确哪些未运行。
 不要只复述报告或把设计文档视为已完成实现。每条问题给出具体触发条件、文件位置、可观察后果和最小验证办法；区分实现缺陷、未验证假设与明确后置工作。不要将可解析轨迹或有限 loss 视为方法有效。此任务先报告发现，不修改代码、不启动训练。

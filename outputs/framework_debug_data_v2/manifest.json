@@ -1,0 +1,22 @@
+{
+  "status": "completed",
+  "prepared_root": "/root/autodl-tmp/ToolV2X/outputs/framework_debug_v2",
+  "label_data": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1",
+  "counts": {
+    "train_Ego": 16,
+    "train_P": 16,
+    "train_F": 16,
+    "train_PF": 16,
+    "train_rule": 16,
+    "validation_Ego": 4,
+    "validation_P": 4,
+    "validation_F": 4,
+    "validation_PF": 4,
+    "validation_rule": 4
+  },
+  "input_layout": "source_blocks_v1",
+  "scope": "driver supervision; no learned query targets",
+  "train_rows": 80,
+  "validation_rows": 20,
+  "validation_is_development": true
+}

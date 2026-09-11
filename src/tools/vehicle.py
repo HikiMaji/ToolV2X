@@ -159,7 +159,9 @@ def history_window(packet):
     return w
 
 
-def make_evidence(local_window, local_prediction, packets, predictor):
+def make_evidence(local_window, local_prediction, packets, predictor, predict_p=True):
+    if not isinstance(predict_p, bool):
+        raise ValueError('P processing must explicitly enable or disable local prediction')
     objects = []
     for obj in prediction_objects(local_window, local_prediction):
         objects.append(dict(obj, source='ego', forecast_times=TIMES))
@@ -168,7 +170,7 @@ def make_evidence(local_window, local_prediction, packets, predictor):
         p = decode_response(encode(p), local_window['scene'], local_window['g'])
         if p['provider'] == local_window['source']:
             raise ValueError('remote response must come from a different source')
-        if p['tool'] == 'P':
+        if p['tool'] == 'P' and predict_p:
             w = history_window(p)
             predicted = prediction_objects(w, predictor(w))
             observed = {o['track_id']: o for o in p['objects']}
@@ -176,6 +178,8 @@ def make_evidence(local_window, local_prediction, packets, predictor):
                 original = observed[obj['track_id']]
                 obj.update(history=original['history'], history_valid=original['history_valid'],
                            history_times=original['history_times'])
+        elif p['tool'] == 'P':
+            predicted = [{k: v for k, v in obj.items() if k != 'history_scores'} for obj in p['objects']]
         else:
             predicted = p['objects']
         for obj in predicted:
@@ -183,7 +187,8 @@ def make_evidence(local_window, local_prediction, packets, predictor):
             if key in peer_anchors and not np.allclose(peer_anchors[key], obj['box']):
                 raise ValueError('P/F anchor conflict at identical source/time')
             peer_anchors[key] = obj['box']
-            objects.append(dict(obj, source=p['provider'] + (':P_local' if p['tool'] == 'P' else ':F'), forecast_times=TIMES))
+            source = p['provider'] + ((':P_local' if predict_p else ':P') if p['tool'] == 'P' else ':F')
+            objects.append(dict(obj, source=source, **({'forecast_times': TIMES} if 'forecast' in obj else {})))
         queries.append(dict(tool=p['tool'], roi=p['roi'], response_bytes=len(encode(p)), status=p['status']))
     relations = []
     for ego in objects:

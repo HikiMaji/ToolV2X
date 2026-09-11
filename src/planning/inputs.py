@@ -161,7 +161,7 @@ def unpack_evidence(packed):
     return result
 
 
-def make_prompt(task, ego_state, evidence, q8_answer=None, evidence_format='json'):
+def make_prompt(task, ego_state, evidence, q8_answer=None, evidence_format='json', remote_evidence=None):
     if set(ego_state) != {'speed_mps', 'yaw_rate_rps'}:
         raise ValueError('unexpected ego state fields')
     for value in ego_state.values():
@@ -178,6 +178,20 @@ def make_prompt(task, ego_state, evidence, q8_answer=None, evidence_format='json
                + legend +
                'Acquired evidence (missing observations do not imply free space; source forecasts may disagree): '
                + json.dumps(rendered, sort_keys=True, separators=(',', ':'), allow_nan=False) + '\n')
+    if remote_evidence is not None:
+        validate_evidence(remote_evidence)
+        if (task != 'Trajectory' or evidence.get('queries') or evidence.get('relations') or
+                any(obj.get('source') != 'ego' for obj in evidence['objects']) or
+                any(obj.get('source') == 'ego' for obj in remote_evidence['objects']) or
+                evidence.get('coordinate_frame') != 'ego_at_t' or
+                any(remote_evidence.get(key) != evidence.get(key) for key in ('as_of_g', 'coordinate_frame')) or
+                not remote_evidence.get('queries')):
+            raise ValueError('paired direct prompt requires an isolated ego block and a queried same-time remote block')
+        remote = remote_evidence if evidence_format == 'json' else pack_evidence(remote_evidence)
+        # Encode separately: adding peer objects must not change the local block's
+        # compact columns/shared values or the literal local text.
+        context += ('Additional queried neighbor evidence: '
+                    + json.dumps(remote, sort_keys=True, separators=(',', ':'), allow_nan=False) + '\n')
     if task == 'Q8':
         if q8_answer is not None:
             raise ValueError('Q8 must not receive an answer')
