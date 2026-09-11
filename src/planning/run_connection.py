@@ -11,6 +11,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
+from common import v2v4real_meta as M
 from prediction import cmp_adapter as C
 from planning.inputs import load_ego_features, load_ego_motion, make_prompt
 from planning.v2vgot import CHECKPOINT, UPSTREAM, V2VGoTPlanner, load_projector, project_ego_features, fit_evidence
@@ -70,8 +71,8 @@ def prepare(out, validation_index, local_frame, actions, evidence_format='json',
     paths = []
     ego = load_window(scene, local_frame, 'no_fusion', paths)
     g = int(ego['g'])
-    features = load_ego_features('/root/autodl-tmp/V2V-GoT', 'train', g)
-    motion, motion_paths = load_ego_motion('/root/autodl-tmp/V2V-GoT', 'train', g)
+    features = load_ego_features(M.V2VGOT_ROOT, 'train', g)
+    motion, motion_paths = load_ego_motion(M.V2VGOT_ROOT, 'train', g)
     np.savez(str(out / 'ego_features.npz'), **{key: value for key, value in features.items() if isinstance(value, np.ndarray)})
     projector, provenance = load_projector()
     begin = perf_counter()
@@ -160,15 +161,17 @@ def prepare(out, validation_index, local_frame, actions, evidence_format='json',
     return features, metadata
 
 
-def infer(out, features, metadata):
-    planner = V2VGoTPlanner(evidence_format=metadata['evidence_format'])
+def infer(out, features, metadata, decoding='q8_q9'):
+    planner = V2VGoTPlanner(evidence_format=metadata['evidence_format'],
+                           adapter_directory=out / 'llava-toolv2x-lora-ego')
     save_json(out / 'v2vgot_model_loading.json', planner.provenance)
     metadata['language_model_executed'] = False
+    metadata['decoding'] = decoding
     for action in metadata['actions']:
         evidence = json.loads((out / action / 'evidence_full.json').read_text())
-        result = planner.plan(features, metadata['ego_motion'], evidence)
+        result = planner.plan(features, metadata['ego_motion'], evidence, decoding=decoding)
         save_json(out / action / 'plan.json', result)
-        metadata['language_model_executed'] = True
+        metadata['language_model_executed'] |= result['language_model_executed']
         metadata['actions'][action]['plan_status'] = result['status']
         metadata['actions'][action]['q9_executed'] = result['q9_executed']
         save_json(out / 'connection.json', metadata)
@@ -184,6 +187,7 @@ def main():
     parser.add_argument('out', type=Path)
     parser.add_argument('--mode', choices=('prepare', 'infer'), default='prepare')
     parser.add_argument('--evidence-format', choices=('json', 'compact'), default='json')
+    parser.add_argument('--decoding', choices=('q8_q9', 'direct'), default='q8_q9')
     parser.add_argument('--research-split', choices=('train', 'validation'), default='validation')
     parser.add_argument('--scene-index', '--validation-index', dest='validation_index', type=int, default=0)
     parser.add_argument('--local-frame', type=int, default=10)
@@ -198,7 +202,7 @@ def main():
         features, metadata = prepare(args.out, args.validation_index, args.local_frame, args.actions,
                                      args.evidence_format, args.research_split)
         if args.mode == 'infer':
-            infer(args.out, features, metadata)
+            infer(args.out, features, metadata, args.decoding)
         save_json(args.out / 'execution.json', dict(status='completed', mode=args.mode,
             language_model_executed=metadata['language_model_executed'],
             all_actions_parsed=metadata.get('all_actions_parsed'), full_framework_complete=False))

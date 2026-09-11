@@ -32,6 +32,15 @@ MODEL_CONFIG = dict(mm_scene_projector_input_size=3072, scene_level_only=False,
     object_level_only=False, scene_feature_mode='shallow', object_feature_mode='shallow',
     num_input_frames=2, ego_only=True, feature_source='no_fusion_keep_all',
     dataset_source='v2v4real', num_latency_frames=0, positional_error_std=0.)
+Q8_MAX_NEW_TOKENS = 128
+Q9_MAX_NEW_TOKENS = 256
+
+
+class ContextBudgetError(ValueError):
+    def __init__(self, input_tokens, max_new_tokens, context_limit):
+        self.budget = dict(input_tokens=input_tokens, max_new_tokens=max_new_tokens, context_limit=context_limit)
+        super().__init__('explicit token budget exceeded: %d + %d > %d; refuse upstream silent truncation' %
+                         (input_tokens, max_new_tokens, context_limit))
 
 
 class PointProjector(torch.nn.Module, LlavaMetaForCausalLM):
@@ -111,7 +120,7 @@ def rounded(value):
     return value
 
 
-def fit_evidence(tokenizer, ego_state, evidence, feature_tokens, context_limit=4096, reserve=256, evidence_format='json'):
+def fit_evidence(tokenizer, ego_state, evidence, feature_tokens, context_limit=4096, reserve=Q9_MAX_NEW_TOKENS, evidence_format='json'):
     """Explicit same-rule context selection, with the full ledger kept by caller.
 
     ponytail: current-distance priority is a fixed initial receiver rule; evaluate
@@ -128,7 +137,10 @@ def fit_evidence(tokenizer, ego_state, evidence, feature_tokens, context_limit=4
     def size(candidate):
         q8 = make_prompt('Q8', ego_state, candidate, evidence_format=evidence_format)
         q9 = make_prompt('Q9', ego_state, candidate, prototype, evidence_format=evidence_format)
-        return max(len(prompt_tokens(tokenizer, q8)), len(prompt_tokens(tokenizer, q9))) - 1 + feature_tokens
+        # Reserve a full Q8 generation in addition to the prototype. Decoding and
+        # re-tokenization can change length, so _generate still checks the actual prompt.
+        return max(len(prompt_tokens(tokenizer, q8)),
+                   len(prompt_tokens(tokenizer, q9)) + Q8_MAX_NEW_TOKENS) - 1 + feature_tokens
 
     if size(view) + reserve > context_limit:
         raise ValueError('task/header alone exceeds context capacity')
@@ -147,18 +159,20 @@ def fit_evidence(tokenizer, ego_state, evidence, feature_tokens, context_limit=4
             if size(trial) + reserve <= context_limit:
                 view = trial
     return view, dict(context_limit=context_limit, reserved_generation_tokens=reserve,
+        reserved_q8_parent_tokens=Q8_MAX_NEW_TOKENS, actual_prompt_budget_check_required=True,
         input_token_bound=size(view), objects_total=len(objects), objects_retained=len(view['objects']),
         dropped_objects=dropped, numeric_decimal_places=2,
         evidence_format=evidence_format,
         selection='ascending current anchor distance; same rule for all actions')
 
 
-def local_adapter(checkpoint, clip):
+def local_adapter(checkpoint, clip, directory=None):
     """Use local CLIP files without changing the original release directory."""
+    checkpoint, clip = Path(checkpoint).expanduser().resolve(), Path(clip).expanduser().resolve()
     missing = [name for name in ('config.json', 'preprocessor_config.json', 'pytorch_model.bin') if not (clip / name).is_file()]
     if missing:
         raise FileNotFoundError('missing user-supplied CLIP files in ' + str(clip) + ': ' + ', '.join(missing))
-    adapter = ROOT / 'models/llava-toolv2x-lora-ego'
+    adapter = Path(directory).expanduser().resolve() if directory is not None else ROOT / 'models/llava-toolv2x-lora-ego'
     adapter.mkdir(exist_ok=True, parents=True)
     for name in ('adapter_model.safetensors', 'adapter_config.json', 'non_lora_trainables.bin',
                  'tokenizer.model', 'tokenizer_config.json', 'special_tokens_map.json'):
@@ -170,6 +184,8 @@ def local_adapter(checkpoint, clip):
                 raise FileExistsError('existing adapter points to different weights: ' + str(destination))
         else:
             destination.symlink_to(source)
+        if not destination.is_file():
+            raise FileNotFoundError('adapter link does not resolve to a file: ' + str(destination))
     config = json.loads((checkpoint / 'config.json').read_text())
     config.update(mm_vision_tower=str(clip), ego_only=True)
     (adapter / 'config.json').write_text(json.dumps(config, indent=2) + '\n')
@@ -177,9 +193,9 @@ def local_adapter(checkpoint, clip):
 
 
 class V2VGoTPlanner:
-    def __init__(self, checkpoint=CHECKPOINT, base=BASE, clip=CLIP, context_limit=4096, evidence_format='json'):
+    def __init__(self, checkpoint=CHECKPOINT, base=BASE, clip=CLIP, context_limit=4096,
+                 evidence_format='json', adapter_directory=None, trainable_lora=False):
         from llava.model.builder import load_pretrained_model
-        from llava.mm_utils import get_model_name_from_path
         checkpoint, base = Path(checkpoint), Path(base)
         index_path = base / 'pytorch_model.bin.index.json'
         if not index_path.is_file():
@@ -191,11 +207,12 @@ class V2VGoTPlanner:
             raise FileNotFoundError('missing base model files: ' + ', '.join(missing))
         if not torch.cuda.is_available():
             raise RuntimeError('original full-model GPU inference unavailable in this execution environment')
-        adapted_checkpoint = local_adapter(checkpoint, Path(clip))
+        adapted_checkpoint = local_adapter(checkpoint, Path(clip), adapter_directory)
         begin = perf_counter()
+        attention = 'flash_attention_2' if trainable_lora else 'sdpa'
         self.tokenizer, self.model, _, _ = load_pretrained_model(str(adapted_checkpoint), str(base),
-            get_model_name_from_path(str(adapted_checkpoint)), device_map='cuda:0', device='cuda',
-            my_model_config=dict(MODEL_CONFIG), attn_implementation='sdpa')
+            'llava-toolv2x-lora', device_map='cuda:0', device='cuda',
+            my_model_config=dict(MODEL_CONFIG), attn_implementation=attention, trainable_lora=trainable_lora)
         self.model.eval()
         native_limit = self.model.config.max_position_embeddings
         if not 512 <= context_limit <= native_limit:
@@ -212,6 +229,8 @@ class V2VGoTPlanner:
             released_tokenizer_limit=self.released_tokenizer_limit, context_limit=context_limit,
             evidence_format=evidence_format,
             adapted_to_tool_evidence=False, training_provenance_verified=False,
+            trainable_lora_loaded=trainable_lora,
+            attention_implementation=attention,
             actual_rgb_input=False, point_cloud_feature_input=True)
 
     @torch.inference_mode()
@@ -221,7 +240,7 @@ class V2VGoTPlanner:
         ids = prompt_tokens(self.tokenizer, prompt).unsqueeze(0).to(device)
         count = ids.shape[1] - 1 + int(tensors['active_agent_mask'].sum()) * 270
         if count + max_new_tokens > self.context_limit:
-            raise ValueError('explicit token budget exceeded; refuse upstream silent truncation')
+            raise ContextBudgetError(count, max_new_tokens, self.context_limit)
         torch.cuda.synchronize()
         begin = perf_counter()
         output = self.model.generate(ids, images=torch.zeros((1, 3, 336, 336), device=device, dtype=self.model.dtype),
@@ -232,23 +251,36 @@ class V2VGoTPlanner:
             seconds=perf_counter() - begin, input_tokens=count, output_tokens=int(output.shape[1]),
             feature_tokens=int(tensors['active_agent_mask'].sum()) * 270)
 
-    def plan(self, features, ego_state, evidence, evidence_format=None):
+    def plan(self, features, ego_state, evidence, evidence_format=None, decoding='q8_q9'):
+        if decoding not in ('q8_q9', 'direct'):
+            raise ValueError('unknown driving decoding mode')
         evidence_format = self.evidence_format if evidence_format is None else evidence_format
         feature_count = int(np.asarray(features['active_agent_mask']).sum()) * 270
         view, selection = fit_evidence(self.tokenizer, ego_state, evidence, feature_count, self.context_limit,
                                       evidence_format=evidence_format)
-        q8 = make_prompt('Q8', ego_state, view, evidence_format=evidence_format)
-        raw8, cost8 = self._generate(features, q8, 128)
-        result = dict(q8_prompt=q8, q8_raw=raw8, q8_cost=cost8, evidence_selection=selection,
-                      evidence_used=view, q9_executed=False, language_model_executed=True)
+        result = dict(decoding=decoding, q8_executed=False, q8_prompt=None, q8_raw=None, q8_cost=None,
+                      evidence_selection=selection, evidence_used=view, q9_executed=False,
+                      language_model_executed=False)
+        if decoding == 'q8_q9':
+            q8 = make_prompt('Q8', ego_state, view, evidence_format=evidence_format)
+            raw8, cost8 = self._generate(features, q8, Q8_MAX_NEW_TOKENS)
+            result.update(q8_prompt=q8, q8_raw=raw8, q8_cost=cost8, q8_executed=True,
+                          language_model_executed=True)
+            try:
+                result['action'] = parse_q8(raw8)
+            except ValueError as exc:
+                result.update(status='invalid_q8', error=str(exc))
+                return result
+            q9 = make_prompt('Q9', ego_state, view, raw8, evidence_format=evidence_format)
+        else:
+            q9 = make_prompt('Trajectory', ego_state, view, evidence_format=evidence_format)
+        result['q9_prompt'] = q9
         try:
-            result['action'] = parse_q8(raw8)
-        except ValueError as exc:
-            result.update(status='invalid_q8', error=str(exc))
+            raw9, cost9 = self._generate(features, q9, Q9_MAX_NEW_TOKENS)
+        except ContextBudgetError as exc:
+            result.update(status='q9_context_overflow', error=str(exc), q9_budget=exc.budget)
             return result
-        q9 = make_prompt('Q9', ego_state, view, raw8, evidence_format=evidence_format)
-        raw9, cost9 = self._generate(features, q9, 256)
-        result.update(q9_prompt=q9, q9_raw=raw9, q9_cost=cost9, q9_executed=True)
+        result.update(q9_raw=raw9, q9_cost=cost9, q9_executed=True, language_model_executed=True)
         try:
             result['waypoints'] = parse_q9(raw9).tolist()
             result['status'] = 'parsed'

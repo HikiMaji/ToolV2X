@@ -1,0 +1,42 @@
+[
+  {
+    "source": "no_fusion",
+    "g": 5526,
+    "targets": 21,
+    "original_model_targets": 21,
+    "seconds": 2.049646837171167,
+    "path": "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_q8_q9/forecasts/000_no_fusion.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.6384400699753314,
+    "path": "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_q8_q9/forecasts/001_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.6472476827912033,
+    "path": "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_q8_q9/forecasts/002_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.645031648920849,
+    "path": "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_q8_q9/forecasts/003_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.628513763193041,
+    "path": "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_q8_q9/forecasts/004_no_fusion_cav1.npz"
+  }
+]

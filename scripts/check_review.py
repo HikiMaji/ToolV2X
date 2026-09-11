@@ -10,7 +10,11 @@ sys.path.insert(0, str(ROOT / 'src'))
 names = [
     'test_compact_evidence', 'test_planning_inputs', 'test_protocol',
     'test_vehicle_tools', 'test_vehicle_probe', 'test_learned_probe',
-    'test_review_portability', 'test_saved_review_evidence',
+    'test_review_portability', 'test_saved_review_evidence', 'test_wire_comparison',
+    'test_prediction_evaluation', 'test_planning_evaluation',
+    'test_direct_planning.DirectPlanningInputTests',
+    'test_mtr_supervision.MTRSupervisionTests.test_current_geometry_gates_and_ego_exclusion_leave_targets_in_ledger',
+    'test_mtr_supervision.MTRSupervisionTests.test_labels_match_current_only_keep_missing_and_preserve_inputs',
     'test_adaptation_data.AdaptationDataTests.test_native_labels_use_six_future_poses_in_fixed_current_frame',
     'test_adaptation_data.AdaptationDataTests.test_missing_or_cross_record_future_keeps_mask_without_fabricating_label',
     'test_adaptation_data.AdaptationDataTests.test_supervised_q9_uses_generated_parent_even_when_q9_prediction_failed',

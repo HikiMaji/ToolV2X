@@ -1,0 +1,13 @@
+[
+  {
+    "tool": "F",
+    "request_bytes": 138,
+    "response_bytes": 52855,
+    "service_seconds": 2.6561777289025486,
+    "model_seconds": 2.6472646188922226,
+    "model_targets_computed": 27,
+    "fallback_targets_computed": 3,
+    "returned_targets": 30,
+    "within_decision_forecast_cache_hit": false
+  }
+]

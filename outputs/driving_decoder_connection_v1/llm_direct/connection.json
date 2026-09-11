@@ -1,0 +1,869 @@
+{
+  "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+  "local_frame": 10,
+  "g": 5526,
+  "physical_split": "train",
+  "research_split": "validation",
+  "ego_motion": {
+    "speed_mps": 14.83771562576294,
+    "yaw_rate_rps": 0.0034606456756591797
+  },
+  "actions": {
+    "Ego": {
+      "evidence_objects": 21,
+      "remote_archive_reads": 0,
+      "predictor_calls": 0,
+      "selected_remote_records": 0,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "reserved_q8_parent_tokens": 128,
+        "actual_prompt_budget_check_required": true,
+        "input_token_bound": 3549,
+        "objects_total": 21,
+        "objects_retained": 5,
+        "dropped_objects": [
+          {
+            "source": "ego",
+            "track_id": 12
+          },
+          {
+            "source": "ego",
+            "track_id": 11
+          },
+          {
+            "source": "ego",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 1
+          },
+          {
+            "source": "ego",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 24
+          },
+          {
+            "source": "ego",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 7
+          },
+          {
+            "source": "ego",
+            "track_id": 4
+          },
+          {
+            "source": "ego",
+            "track_id": 18
+          },
+          {
+            "source": "ego",
+            "track_id": 9
+          },
+          {
+            "source": "ego",
+            "track_id": 16
+          },
+          {
+            "source": "ego",
+            "track_id": 17
+          },
+          {
+            "source": "ego",
+            "track_id": 28
+          }
+        ],
+        "numeric_decimal_places": 2,
+        "evidence_format": "json",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "q9_executed": true,
+      "plan_status": "invalid_q9"
+    },
+    "P": {
+      "evidence_objects": 51,
+      "remote_archive_reads": 1,
+      "predictor_calls": 1,
+      "selected_remote_records": 2,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "reserved_q8_parent_tokens": 128,
+        "actual_prompt_budget_check_required": true,
+        "input_token_bound": 3515,
+        "objects_total": 51,
+        "objects_retained": 3,
+        "dropped_objects": [
+          {
+            "source": "ego",
+            "track_id": 10
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 10
+          },
+          {
+            "source": "ego",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 4
+          },
+          {
+            "source": "ego",
+            "track_id": 8
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 5
+          },
+          {
+            "source": "ego",
+            "track_id": 12
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 30
+          },
+          {
+            "source": "ego",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 1
+          },
+          {
+            "source": "ego",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 12
+          },
+          {
+            "source": "ego",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 29
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 16
+          },
+          {
+            "source": "ego",
+            "track_id": 4
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 36
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 19
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 18
+          },
+          {
+            "source": "ego",
+            "track_id": 9
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 8
+          },
+          {
+            "source": "ego",
+            "track_id": 16
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 33
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 17
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 9
+          },
+          {
+            "source": "ego",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 14
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 5
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 15
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 21
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 32
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 1
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 35
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 34
+          }
+        ],
+        "numeric_decimal_places": 2,
+        "evidence_format": "json",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 138,
+      "response_bytes": 58597,
+      "q9_executed": true,
+      "plan_status": "invalid_q9"
+    },
+    "F": {
+      "evidence_objects": 51,
+      "remote_archive_reads": 1,
+      "predictor_calls": 1,
+      "selected_remote_records": 3,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "reserved_q8_parent_tokens": 128,
+        "actual_prompt_budget_check_required": true,
+        "input_token_bound": 3640,
+        "objects_total": 51,
+        "objects_retained": 5,
+        "dropped_objects": [
+          {
+            "source": "ego",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 4
+          },
+          {
+            "source": "ego",
+            "track_id": 8
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 5
+          },
+          {
+            "source": "ego",
+            "track_id": 12
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 30
+          },
+          {
+            "source": "ego",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 1
+          },
+          {
+            "source": "ego",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 12
+          },
+          {
+            "source": "ego",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 29
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 16
+          },
+          {
+            "source": "ego",
+            "track_id": 4
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 36
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 19
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 18
+          },
+          {
+            "source": "ego",
+            "track_id": 9
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 8
+          },
+          {
+            "source": "ego",
+            "track_id": 16
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 33
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 17
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 9
+          },
+          {
+            "source": "ego",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 14
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 5
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 15
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 21
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 32
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 1
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 35
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 34
+          }
+        ],
+        "numeric_decimal_places": 2,
+        "evidence_format": "json",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 138,
+      "response_bytes": 52855,
+      "q9_executed": true,
+      "plan_status": "invalid_q9"
+    },
+    "PF": {
+      "evidence_objects": 81,
+      "remote_archive_reads": 1,
+      "predictor_calls": 2,
+      "selected_remote_records": 3,
+      "context_selection": {
+        "context_limit": 4096,
+        "reserved_generation_tokens": 256,
+        "reserved_q8_parent_tokens": 128,
+        "actual_prompt_budget_check_required": true,
+        "input_token_bound": 3604,
+        "objects_total": 81,
+        "objects_retained": 4,
+        "dropped_objects": [
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 10
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 10
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 10
+          },
+          {
+            "source": "ego",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 4
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 4
+          },
+          {
+            "source": "ego",
+            "track_id": 8
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 3
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 5
+          },
+          {
+            "source": "ego",
+            "track_id": 12
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 30
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 30
+          },
+          {
+            "source": "ego",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 0
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 6
+          },
+          {
+            "source": "ego",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 1
+          },
+          {
+            "source": "ego",
+            "track_id": 3
+          },
+          {
+            "source": "ego",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 12
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 12
+          },
+          {
+            "source": "ego",
+            "track_id": 0
+          },
+          {
+            "source": "ego",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 29
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 29
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 16
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 16
+          },
+          {
+            "source": "ego",
+            "track_id": 4
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 36
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 36
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 19
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 19
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 23
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 23
+          },
+          {
+            "source": "ego",
+            "track_id": 18
+          },
+          {
+            "source": "ego",
+            "track_id": 9
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 8
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 8
+          },
+          {
+            "source": "ego",
+            "track_id": 16
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 33
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 33
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 2
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 2
+          },
+          {
+            "source": "ego",
+            "track_id": 17
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 13
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 9
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 9
+          },
+          {
+            "source": "ego",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 14
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 14
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 5
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 5
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 7
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 15
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 15
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 24
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 11
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 21
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 21
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 28
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 32
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 32
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 1
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 1
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 35
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 35
+          },
+          {
+            "source": "no_fusion_cav1:F",
+            "track_id": 34
+          },
+          {
+            "source": "no_fusion_cav1:P_local",
+            "track_id": 34
+          }
+        ],
+        "numeric_decimal_places": 2,
+        "evidence_format": "json",
+        "selection": "ascending current anchor distance; same rule for all actions"
+      },
+      "request_bytes": 276,
+      "response_bytes": 111452,
+      "q9_executed": true,
+      "plan_status": "invalid_q9"
+    }
+  },
+  "evidence_format": "json",
+  "inputs_prepared": true,
+  "actual_original_cmp_executed": true,
+  "actual_original_projector_executed": true,
+  "language_model_executed": true,
+  "training": false,
+  "quality_evaluation": false,
+  "closed_loop": false,
+  "full_framework_complete": false,
+  "decoding": "direct",
+  "all_actions_parsed": false,
+  "scope": "fixed-action original-model connection; unadapted driving checkpoint, no task-quality claim"
+}

@@ -1,0 +1,134 @@
+{
+  "data_audit": {
+    "roles": {
+      "train": {
+        "source_frames": 6054,
+        "recording_groups": 8,
+        "scenes": 15,
+        "counts": {
+          "labelled": 44550,
+          "unmatched": 15474,
+          "online_targets": 63573,
+          "future_points": 1524117,
+          "supervised_model_targets": 43789,
+          "matched_no_future": 731,
+          "ego_self": 2818
+        }
+      },
+      "validation": {
+        "source_frames": 216,
+        "recording_groups": 2,
+        "scenes": 2,
+        "counts": {
+          "labelled": 3857,
+          "online_targets": 4340,
+          "future_points": 141772,
+          "supervised_model_targets": 3792,
+          "unmatched": 341,
+          "matched_no_future": 34,
+          "ego_self": 108
+        }
+      }
+    },
+    "sampled_frames": 102,
+    "sampled_future_frames": 306,
+    "checked_valid_points": 2101,
+    "maximum_coordinate_error_m": 7.557889870015255e-06,
+    "test_access": false,
+    "status": "PASS"
+  },
+  "training_audit": {
+    "status": "PASS",
+    "stages": {
+      "before": {
+        "source_frames": 216,
+        "target_rows": 7256,
+        "max_metric_difference_m": 1.0311361549497633e-05,
+        "grouping_recomputed": true
+      },
+      "after": {
+        "source_frames": 216,
+        "target_rows": 7256,
+        "max_metric_difference_m": 9.23226569682356e-06,
+        "grouping_recomputed": true
+      }
+    },
+    "test_access": false,
+    "metric_formula": "independent float64 Euclidean distances",
+    "training": {
+      "optimizer_steps": 9960,
+      "epochs": 10,
+      "supervised_center_presentations": 59305,
+      "best_epoch": 5,
+      "saved_parameter_tensors": 772,
+      "changed_parameter_tensors": 456,
+      "saved_checkpoint_metadata": {
+        "epoch": 5,
+        "it": 5196,
+        "version": "ToolV2X causal MTR adaptation v1"
+      }
+    },
+    "running_code_matches_current": {
+      "src/prediction/train_mtr.py": true,
+      "src/prediction/supervision.py": true,
+      "src/prediction/cmp_adapter.py": true,
+      "src/evaluation/prediction.py": true,
+      "vendor/cmp_mtr/mtr/models_v2v4real/motion_decoder/mtr_decoder.py": true
+    }
+  },
+  "completion": {
+    "status": "completed",
+    "optimizer_steps": 9960,
+    "completed_epochs": 10,
+    "best_epoch": 5,
+    "stopped_by_patience": true,
+    "best_metric": 5.873749537046499,
+    "original_metric": 21.519482501195817,
+    "training_changed_parameters": true,
+    "final_training_head_max_parameter_change": 0.33588477969169617,
+    "checkpoint_reload_max_metric_difference": 0.0,
+    "checkpoint": {
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_adaptation_v1/best_model.pth",
+      "config": "/root/autodl-tmp/ToolV2X/vendor/cmp_mtr/configs/v2v4real_multiego_no_coop.yaml",
+      "model_class": "CMP MotionTransformer",
+      "state_items_loaded": 880,
+      "missing_keys": [],
+      "unexpected_keys": [],
+      "parameter_count": 68514524,
+      "checkpoint_metadata": {
+        "epoch": 5,
+        "it": 5196,
+        "version": "ToolV2X causal MTR adaptation v1"
+      },
+      "source": "/root/autodl-tmp/ToolV2X/vendor/cmp_mtr/mtr/models_v2v4real/model.py",
+      "upstream_source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/model.py",
+      "device": "cuda",
+      "operators": "CMP layers with portable torch KNN/indexed attention reference",
+      "native_CUDA_parity_measured": false,
+      "training_provenance_verified": false,
+      "input_distribution": "causal fixed-frame history; differs from original GT-aligned moving-frame dataset"
+    },
+    "elapsed_s": 1067.199893710902,
+    "test_access": false,
+    "conclusion_scope": "conditional native MTR adaptation; validation-selected checkpoint; no policy or closed-loop claim"
+  },
+  "tool_replay": {
+    "checked": true,
+    "target_count": 30,
+    "max_waypoint_difference": 0.0,
+    "max_score_difference": 0.0,
+    "equal_within_1e_5": true
+  },
+  "tests": {
+    "full": {
+      "count": 82,
+      "passed": true,
+      "log": "outputs/mtr_analysis_v1/full_tests.log"
+    },
+    "review": {
+      "count": 63,
+      "passed": true,
+      "log": "outputs/mtr_analysis_v1/review_tests.log"
+    }
+  }
+}

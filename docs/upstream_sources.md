@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | `vendor/cmp_mtr/mtr/` | `/root/autodl-tmp/CMP/MTR/mtr/` | [原 MTR LICENSE](../vendor/cmp_mtr/LICENSE)、[源文件对应表](../vendor/cmp_mtr/source_manifest.json) |
 | `vendor/cmp_mtr/easydict/` | `/root/autodl-tmp/conda-envs/dmstrack/lib/python3.7/site-packages/easydict/`，1.9 | [原 LICENSE](../vendor/cmp_mtr/easydict/LICENSE)、[原包 METADATA](../vendor/cmp_mtr/easydict/METADATA)；源码逐字一致 |
-| `vendor/v2vgot_llava/llava/` | `/root/autodl-tmp/V2V-GoT/LLaVA/llava/` | [原 LICENSE](../vendor/v2vgot_llava/LICENSE)、原 README 和 pyproject.toml；包内非缓存文件逐字一致 |
+| `vendor/v2vgot_llava/llava/` | `/root/autodl-tmp/V2V-GoT/LLaVA/llava/` | [原 LICENSE](../vendor/v2vgot_llava/LICENSE)、原 README 和 pyproject.toml；首次复制时非缓存文件逐字一致，后续 builder 修改见下文 |
 | `vendor/v2vgot_opencood/inference.py` | `/root/autodl-tmp/V2V-GoT/DMSTrack/V2V4Real/opencood/tools/inference.py` | [原目录 LICENSE](../vendor/v2vgot_opencood/LICENSE)、原 setup.py 与 PKG-INFO；文件逐字一致 |
 
 MTR 和 LLaVA 目录的 LICENSE 文件是 Apache 2.0 文本。EasyDict 1.9 附带 GNU LGPL v3 文本，其 METADATA 中的 `LPGL` 拼写原样保留。未为这些第三方文件重新授予统一的项目许可证。
@@ -24,12 +24,14 @@ V2V4Real 目录存在许可元数据冲突：LICENSE 是 Apache 2.0 文本，set
 [source_manifest.json](../vendor/cmp_mtr/source_manifest.json) 是最初复制时的路径对应记录，不是一份完整改动清单。当前与本地 CMP 源文件不同的文件为：
 
 - `context_encoder/mtr_encoder.py`：移除未使用的导入，把输入张量移到模型实际设备。
-- `motion_decoder/mtr_decoder.py`：intention points 支持指定设备，当前连接使用 CPU。
+- `motion_decoder/mtr_decoder.py`：intention points 支持指定设备；原解码器/邻居预测损失的标签与索引跟随预测张量设备，损失公式保留。默认连接仍使用 CPU，本轮适配训练使用 CUDA 上的 PyTorch 运算。
 - `ops/attention/__init__.py`：使用新增的 `attention_torch.py` 作为 portable attention 实现。
 - `ops/knn/knn_utils.py`：保留原入口并提供 torch KNN，按 batch 隔离，缺邻居填 -1；排序与原 CUDA 的堆顺序、边界同距选择可能不同。
 - `utils/common_utils.py`：batch offsets 使用输入张量的设备。
 
 原 C++/CUDA 源码保留供审查，不代表当前执行了这些算子，也没有测定数值或性能一致性。`src/prediction/cmp_adapter.py` 构造保留当前源上下文的因果 22 通道历史，将时间间隔显式设为 0.1 秒；在线推理不调用原 GT 驱动 dataset。
+
+`src/prediction/supervision.py` 和 `prepare_mtr.py` 是本项目新增的独立离线匹配/标签适配；`train_mtr.py` 用这些标签驱动原网络的损失和参数更新。完整/ROI 上下文交替、当前目标匹配条件、录制组划分、验证选模是 ToolV2X 本轮实验设置，不是原 CMP 全流程复现。训练批次包含一个来源帧的全部有监督中心，保留原 AdamW、lambdaLR 和梯度裁剪设置；原分类损失对中心维度求和的行为也未更改。详细配置见 `mtr_adaptation_plan.md` 和运行目录的 `run_config.json`。
 
 原配置和辅助资源逐字复制自：
 
@@ -40,7 +42,9 @@ V2V4Real 目录存在许可元数据冲突：LICENSE 是 Apache 2.0 文本，set
 
 ## V2V-GoT 执行边界
 
-`src/planning/v2vgot.py` 默认从随仓库提供的原 LLaVA 包加载 projector、点云 token 构造、对话模板、tokenizer 接口和原模型加载器。包内源码保持复制时的内容。ToolV2X 的变化位于 `src/`：Ego 输入隔离、提示/证据构造、显式预算、原始回答解析，以及原 Q8 到 Q9 的实际生成链。
+`src/planning/v2vgot.py` 默认从随仓库提供的原 LLaVA 包加载 projector、点云 token 构造、对话模板、tokenizer 接口和原模型加载器。ToolV2X 在 `src/` 实现 Ego 输入隔离、提示/证据构造、显式预算、原始回答解析、实际生成 Q8 到 Q9 的链条，以及显式 direct Trajectory 入口。两种解码的任务边界见 [协议](driving_decoder_plan.md)。
+
+2026-09-11 为真实参数更新检查修改了 `vendor/v2vgot_llava/llava/model/builder.py`：新增显式 `trainable_lora`，训练时按原 BF16 路径加载、保留原 PEFT LoRA 并开放后续训练设置；默认推理仍为 FP16 加载并合并 LoRA。其余 LLaVA vendor 文件未在本次修改。`src/planning/check_training.py` 只检查一帧四动作的一次真实共享参数更新和保存，不是正式驾驶适配实验；完整运行边界和失败记录见 [检查协议](driving_training_readiness_plan.md)。
 
 `src/planning/adaptation_data.py` 只从原 `inference.py` AST 中提取 `get_suggested_speed_steering` 与 `get_future_trajectory_str` 两个纯函数；不导入整个 OpenCOOD CLI/GT QA 图。该模块只用于离线准备，在线工具和规划器不导入它。原文件中其他 GT 逻辑随源码保留供检查，不等于它们进入了当前推理。
 

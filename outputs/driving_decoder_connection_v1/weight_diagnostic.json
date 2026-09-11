@@ -1,0 +1,98 @@
+{
+  "got_direct": {
+    "projectors": {
+      "base_model.model.model.mm_projector.0.weight": {
+        "max": 0.1552734375,
+        "norm": 45.16242980957031,
+        "finite": true
+      },
+      "base_model.model.model.mm_scene_projector.0.weight": {
+        "max": 0.1162109375,
+        "norm": 70.92668914794922,
+        "finite": true
+      }
+    },
+    "lora_sample": {
+      "base_model.model.model.layers.0.mlp.gate_proj.lora_A.weight": {
+        "shape": [
+          128,
+          4096
+        ],
+        "norm": 7.041562080383301,
+        "max": 0.029541015625
+      },
+      "base_model.model.model.layers.0.mlp.gate_proj.lora_B.weight": {
+        "shape": [
+          11008,
+          128
+        ],
+        "norm": 4.010538578033447,
+        "max": 0.02685546875
+      },
+      "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight": {
+        "shape": [
+          128,
+          4096
+        ],
+        "norm": 7.01200008392334,
+        "max": 0.03466796875
+      },
+      "base_model.model.model.layers.0.self_attn.q_proj.lora_B.weight": {
+        "shape": [
+          4096,
+          128
+        ],
+        "norm": 3.0170819759368896,
+        "max": 0.02587890625
+      }
+    }
+  },
+  "llm_direct": {
+    "projectors": {
+      "base_model.model.model.mm_projector.0.weight": {
+        "max": 0.1552734375,
+        "norm": 45.09963607788086,
+        "finite": true
+      },
+      "base_model.model.model.mm_scene_projector.0.weight": {
+        "max": 0.115234375,
+        "norm": 70.90446472167969,
+        "finite": true
+      }
+    },
+    "lora_sample": {
+      "base_model.model.model.layers.0.mlp.gate_proj.lora_A.weight": {
+        "shape": [
+          128,
+          4096
+        ],
+        "norm": 6.540354251861572,
+        "max": 0.018798828125
+      },
+      "base_model.model.model.layers.0.mlp.gate_proj.lora_B.weight": {
+        "shape": [
+          11008,
+          128
+        ],
+        "norm": 1.221225380897522,
+        "max": 0.00860595703125
+      },
+      "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight": {
+        "shape": [
+          128,
+          4096
+        ],
+        "norm": 6.641689300537109,
+        "max": 0.022216796875
+      },
+      "base_model.model.model.layers.0.self_attn.q_proj.lora_B.weight": {
+        "shape": [
+          4096,
+          128
+        ],
+        "norm": 0.6617159843444824,
+        "max": 0.00921630859375
+      }
+    }
+  }
+}

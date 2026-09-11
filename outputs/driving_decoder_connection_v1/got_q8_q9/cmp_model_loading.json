@@ -1,0 +1,21 @@
+{
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_adaptation_v1/best_model.pth",
+  "config": "/root/autodl-tmp/ToolV2X/vendor/cmp_mtr/configs/v2v4real_multiego_no_coop.yaml",
+  "model_class": "CMP MotionTransformer",
+  "state_items_loaded": 880,
+  "missing_keys": [],
+  "unexpected_keys": [],
+  "parameter_count": 68514524,
+  "checkpoint_metadata": {
+    "epoch": 5,
+    "it": 5196,
+    "version": "ToolV2X causal MTR adaptation v1"
+  },
+  "source": "/root/autodl-tmp/ToolV2X/vendor/cmp_mtr/mtr/models_v2v4real/model.py",
+  "upstream_source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/model.py",
+  "device": "cpu",
+  "operators": "CMP layers with portable torch KNN/indexed attention reference",
+  "native_CUDA_parity_measured": false,
+  "training_provenance_verified": false,
+  "input_distribution": "causal fixed-frame history; differs from original GT-aligned moving-frame dataset"
+}

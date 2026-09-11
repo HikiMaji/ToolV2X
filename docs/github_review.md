@@ -2,6 +2,10 @@
 
 日期：2026-09-10。目标仓库：HikiMaji/ToolV2X。首次仓库用于审查实现、协议和训练准备；当前没有正式方法收益结论。
 
+2026-09-11 本地补充：原 MTR 因果适配已完成，见 [实验结果](mtr_adaptation_results.md) 和 [Q8/Q9 质量诊断](planning_quality.md)。新增审查入口为 `src/prediction/{supervision,prepare_mtr,train_mtr}.py`、`src/evaluation/` 及 `tests/verify_mtr_*.py`。重点区分离线 GT 监督与在线因果输入、相同目标的原始/适配对照、验证选模与独立测试、完整/ROI 训练设置与真正的 P/F 方法收益；最新大体积产物和权重仍在本机。
+
+继续推进的入口：MTR 六组等预算协议见 [mtr_stability_plan.md](mtr_stability_plan.md)，驾驶初始化/解码真实接入见 [driving_decoder_results.md](driving_decoder_results.md)。新增 `check_training.py` 与原 builder 的可训练 LoRA 加载支持；监督前向、真实更新、重载和正式适配必须分别核实。权重和完整缓存仍留在工作站，精选文件范围见 [本次更新说明](github_update_2026_09_11.md)。
+
 ## 审查入口
 
 | 关注点 | 当前代码 |
@@ -9,10 +13,10 @@
 | 当前/过去 Ego 特征、输入字段白名单、回答解析 | `src/planning/inputs.py` |
 | 原 MTR 22 通道输入、缺失历史、完整上下文与预测输出 | `src/prediction/cmp_adapter.py`、`vendor/cmp_mtr/` |
 | P/F 请求与响应、解码、P 本地重算、来源与模式保留 | `src/tools/vehicle.py` |
-| 原 projector、上下文预算、原 7B 的 Q8→Q9 | `src/planning/v2vgot.py`、`vendor/v2vgot_llava/llava/` |
+| 原 projector、上下文预算、原 7B 的 Q8→Q9 / direct | `src/planning/v2vgot.py`、`vendor/v2vgot_llava/llava/` |
 | 固定四动作执行和访问/通信账本 | `src/planning/run_connection.py` |
 | 离线标签、训练样本、实际生成的 Q8 父上下文 | `src/planning/adaptation_data.py` |
-| 原监督前向、特征/提示损失屏蔽 | `src/planning/check_adaptation.py` |
+| 原监督前向、特征/提示损失屏蔽、一次真实参数更新检查 | `src/planning/check_adaptation.py`、`check_training.py` |
 | 同信息编码对照 | `src/planning/compare_evidence.py` |
 
 `src/probe`、`src/oracle` 和旧 CMP 四配置脚本保留历史实现。不要把这些代码运行过等同于当前主线已验证，也不要仅凭文件夹名称删除当前仍引用的校验函数。`vendor/cmp_mtr/reference/` 中原 dataset 只供参考测试；正式在线适配器不调用该 GT 驱动 dataset。
@@ -38,7 +42,7 @@
 优先检查：
 1. 时间 t 因果性、查询前远端信息隔离、GT 标签与在线输入分离、录制级数据划分。
 2. P/F 同信息对照、完整上下文与 ROI 顺序、坐标/时间、远端独有目标、多模态和实际通信成本。
-3. Q9 的实际生成 Q8 父上下文、格式失败处理、上下文截断/舍入、监督损失掩码与原模型真实接入。
+3. q8_q9 模式的真实生成父回答、direct 模式无 Q8 输入且不能由缺失父回答自动切换、格式失败分母、上下文截断/舍入、监督损失掩码与原模型真实接入。
 
 运行 python scripts/check_review.py；环境允许时再按 README 运行完整集成测试，并明确哪些未运行。
 不要只复述报告或把设计文档视为已完成实现。每条问题给出具体触发条件、文件位置、可观察后果和最小验证办法；区分实现缺陷、未验证假设与明确后置工作。不要将可解析轨迹或有限 loss 视为方法有效。此任务先报告发现，不修改代码、不启动训练。

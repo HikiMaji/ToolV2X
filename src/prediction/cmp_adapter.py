@@ -54,7 +54,7 @@ def make_batch(window, center_indices):
         'center_objects_world': centers, 'center_objects_id': np.asarray(window['track_ids'])[indices.numpy()]}}
 
 
-def load_model(checkpoint=CHECKPOINT):
+def load_model(checkpoint=CHECKPOINT, device='cpu'):
     add_vendor_path()
     from mtr.config import cfg, cfg_from_yaml_file
     from mtr.models_v2v4real.model import MotionTransformer
@@ -72,13 +72,16 @@ def load_model(checkpoint=CHECKPOINT):
     with torch.device('meta'):
         model = MotionTransformer(config.MODEL)
     loaded = model.load_state_dict(state, strict=True, assign=True)
+    model.to(device)
+    model.motion_decoder.intention_points = {key: value.to(device)
+        for key, value in model.motion_decoder.intention_points.items()}
     model.eval()
     evidence = {'checkpoint': str(checkpoint), 'config': str(CONFIG), 'model_class': 'CMP MotionTransformer',
         'state_items_loaded': len(state), 'missing_keys': list(loaded.missing_keys),
         'unexpected_keys': list(loaded.unexpected_keys), 'parameter_count': sum(p.numel() for p in model.parameters()),
         'checkpoint_metadata': {k: saved.get(k) for k in ('epoch', 'it', 'version')},
         'source': str(VENDOR / 'mtr/models_v2v4real/model.py'),
-        'upstream_source': str(CMP / 'MTR/mtr/models_v2v4real/model.py'), 'device': 'cpu',
+        'upstream_source': str(CMP / 'MTR/mtr/models_v2v4real/model.py'), 'device': str(device),
         'operators': 'CMP layers with portable torch KNN/indexed attention reference',
         'native_CUDA_parity_measured': False, 'training_provenance_verified': False,
         'input_distribution': 'causal fixed-frame history; differs from original GT-aligned moving-frame dataset'}
@@ -86,7 +89,9 @@ def load_model(checkpoint=CHECKPOINT):
 
 
 @torch.inference_mode()
-def predict(model, window):
+def predict(model, window, batch_size=1):
+    if not isinstance(batch_size, int) or batch_size < 1:
+        raise ValueError('positive target batch size required')
     states = np.asarray(window['states'])
     valid = np.asarray(window['valid'])
     n = len(states)
@@ -96,19 +101,21 @@ def predict(model, window):
     scores[:, 0] = 1.
     local_gmm = np.zeros((n, 6, 50, 5), np.float32)
     model_used = valid.sum(axis=1) >= 2
-    for i in np.flatnonzero(model_used):
-        batch = make_batch(window, [int(i)])
+    selected = np.flatnonzero(model_used)
+    for start in range(0, len(selected), batch_size):
+        indices = selected[start:start + batch_size]
+        batch = make_batch(window, indices)
         output = model(batch)
-        raw = output['pred_trajs'][0].cpu()
-        probabilities = output['pred_scores'][0].cpu().numpy()
-        if tuple(raw.shape) != (6, 50, 5) or not torch.isfinite(raw).all() or not np.isfinite(probabilities).all():
+        raw = output['pred_trajs'].cpu()
+        probabilities = output['pred_scores'].cpu().numpy()
+        if tuple(raw.shape) != (len(indices), 6, 50, 5) or not torch.isfinite(raw).all() or not np.isfinite(probabilities).all():
             raise ValueError('invalid original MTR output')
         from mtr.utils.common_utils import rotate_points_along_z
-        xy = rotate_points_along_z(raw[None, :, :, :2].reshape(1, -1, 2),
-            torch.tensor([states[i, -1, 6]])).reshape(6, 50, 2).numpy()
-        means[i] = xy + states[i, -1, :2]
-        scores[i] = probabilities
-        local_gmm[i] = raw.numpy()
+        xy = rotate_points_along_z(raw[..., :2].reshape(len(indices), -1, 2),
+            torch.as_tensor(states[indices, -1, 6])).reshape(len(indices), 6, 50, 2).numpy()
+        means[indices] = xy + states[indices, None, -1:, :2]
+        scores[indices] = probabilities
+        local_gmm[indices] = raw.numpy()
     if not np.isfinite(means).all() or (scores < 0).any() or (scores.sum(axis=1) > 1.0001).any():
         raise ValueError('invalid predictions/scores')
     return dict(track_ids=np.asarray(window['track_ids']), states=states[:, -1], means=means,

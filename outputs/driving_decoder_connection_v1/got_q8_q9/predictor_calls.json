@@ -1,0 +1,42 @@
+[
+  {
+    "source": "no_fusion",
+    "g": 5526,
+    "targets": 21,
+    "original_model_targets": 21,
+    "seconds": 2.067476361989975,
+    "path": "outputs/driving_decoder_connection_v1/got_q8_q9/forecasts/000_no_fusion.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.7394122309051454,
+    "path": "outputs/driving_decoder_connection_v1/got_q8_q9/forecasts/001_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.6948605270590633,
+    "path": "outputs/driving_decoder_connection_v1/got_q8_q9/forecasts/002_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.697385294828564,
+    "path": "outputs/driving_decoder_connection_v1/got_q8_q9/forecasts/003_no_fusion_cav1.npz"
+  },
+  {
+    "source": "no_fusion_cav1",
+    "g": 5526,
+    "targets": 30,
+    "original_model_targets": 27,
+    "seconds": 2.7456058820243925,
+    "path": "outputs/driving_decoder_connection_v1/got_q8_q9/forecasts/004_no_fusion_cav1.npz"
+  }
+]

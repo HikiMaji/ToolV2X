@@ -184,13 +184,16 @@ def make_prompt(task, ego_state, evidence, q8_answer=None, evidence_format='json
         context += ('Use speed: fast, moderate, slow, very slow, or stop; '
                     'steering: left, slightly left, straight, slightly right, or right.\n')
         question = 'What are the suggested speed and steering settings to avoid collision with nearby objects?'
-    elif task == 'Q9':
-        if not q8_answer:
-            raise ValueError('Q9 requires the actual generated Q8 answer')
-        parse_q8(q8_answer)
+    elif task in ('Q9', 'Trajectory'):
         context += ('Output six numeric (x,y) waypoints in the current ego LiDAR frame, '
-                    'at 0.5, 1, 1.5, 2, 2.5 and 3 seconds.\n'
-                    'Context from the generated action answer: ' + q8_answer + '\n')
+                    'at 0.5, 1, 1.5, 2, 2.5 and 3 seconds.\n')
+        if task == 'Q9':
+            if not q8_answer:
+                raise ValueError('Q9 requires the actual generated Q8 answer')
+            parse_q8(q8_answer)
+            context += 'Context from the generated action answer: ' + q8_answer + '\n'
+        elif q8_answer is not None:
+            raise ValueError('direct trajectory task cannot receive an action parent')
         question = 'What is the suggested future trajectory to avoid collision with nearby objects?'
     else:
         raise ValueError('unknown driving task')

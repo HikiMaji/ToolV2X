@@ -23,7 +23,10 @@ from llava.model import *
 from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 
 
-def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", use_flash_attn=False, **kwargs):
+def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", use_flash_attn=False, trainable_lora=False, **kwargs):
+    if trainable_lora and (load_8bit or load_4bit or model_base is None or
+                           'llava' not in model_name.lower() or 'lora' not in model_name.lower()):
+        raise ValueError('ToolV2X training requires the original unquantized LLaVA LoRA branch')
     kwargs = {"device_map": device_map, **kwargs}
 
     print('kwargs: ', kwargs)
@@ -42,7 +45,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             bnb_4bit_quant_type='nf4'
         )
     else:
-        kwargs['torch_dtype'] = torch.float16
+        kwargs['torch_dtype'] = torch.bfloat16 if trainable_lora else torch.float16
 
     if use_flash_attn:
         kwargs['attn_implementation'] = 'flash_attention_2'
@@ -122,9 +125,10 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
 
             from peft import PeftModel
             print('Loading LoRA weights...')
-            model = PeftModel.from_pretrained(model, model_path)
-            print('Merging LoRA weights...')
-            model = model.merge_and_unload()
+            model = PeftModel.from_pretrained(model, model_path, is_trainable=trainable_lora)
+            if not trainable_lora:
+                print('Merging LoRA weights...')
+                model = model.merge_and_unload()
             print('Model is loaded...')
         elif model_base is not None:
             # this may be mm projector only

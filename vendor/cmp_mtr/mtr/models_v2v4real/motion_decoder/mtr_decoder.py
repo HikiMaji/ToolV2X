@@ -361,9 +361,10 @@ class MTRDecoder(nn.Module):
         return pred_list
 
     def get_decoder_loss(self, tb_pre_tag=''):
-        center_gt_trajs = self.forward_ret_dict['center_gt_trajs'].cuda()
-        center_gt_trajs_mask = self.forward_ret_dict['center_gt_trajs_mask'].cuda()
-        center_gt_final_valid_idx = self.forward_ret_dict['center_gt_final_valid_idx'].long()
+        device = self.forward_ret_dict['pred_list'][0][0].device
+        center_gt_trajs = self.forward_ret_dict['center_gt_trajs'].to(device)
+        center_gt_trajs_mask = self.forward_ret_dict['center_gt_trajs_mask'].to(device)
+        center_gt_final_valid_idx = self.forward_ret_dict['center_gt_final_valid_idx'].to(device).long()
         assert center_gt_trajs.shape[-1] == 2
 
         pred_list = self.forward_ret_dict['pred_list']
@@ -432,8 +433,9 @@ class MTRDecoder(nn.Module):
         return total_loss, tb_dict, disp_dict
 
     def get_dense_future_prediction_loss(self, tb_pre_tag='', tb_dict=None, disp_dict=None):
-        obj_trajs_future_state = self.forward_ret_dict['obj_trajs_future_state'].cuda()
-        obj_trajs_future_mask = self.forward_ret_dict['obj_trajs_future_mask'].cuda()
+        device = self.forward_ret_dict['pred_dense_trajs'].device
+        obj_trajs_future_state = self.forward_ret_dict['obj_trajs_future_state'].to(device)
+        obj_trajs_future_mask = self.forward_ret_dict['obj_trajs_future_mask'].to(device)
         pred_dense_trajs = self.forward_ret_dict['pred_dense_trajs']  # (num_center_objects, num_objects, num_future_frames, 7)
         assert pred_dense_trajs.shape[-1] == 5
         assert obj_trajs_future_state.shape[-1] == 2
@@ -447,7 +449,7 @@ class MTRDecoder(nn.Module):
         fake_scores = pred_dense_trajs.new_zeros((num_center_objects, num_objects)).view(-1, 1)  # (num_center_objects * num_objects, 1)
 
         temp_pred_trajs = pred_dense_trajs_gmm.contiguous().view(num_center_objects * num_objects, 1, num_timestamps, 5)
-        temp_gt_idx = torch.zeros(num_center_objects * num_objects).cuda().long()  # (num_center_objects * num_objects)
+        temp_gt_idx = torch.zeros(num_center_objects * num_objects, device=device).long()  # (num_center_objects * num_objects)
         temp_gt_trajs = obj_trajs_future_state[:, :, :, 0:2].contiguous().view(num_center_objects * num_objects, num_timestamps, 2)
         temp_gt_trajs_mask = obj_trajs_future_mask.view(num_center_objects * num_objects, num_timestamps)
         loss_reg_gmm, _ = loss_utils.nll_loss_gmm_direct(

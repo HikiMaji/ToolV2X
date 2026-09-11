@@ -3,6 +3,7 @@ import copy
 import json
 import sys
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 import numpy as np
 
@@ -98,6 +99,30 @@ class VehicleToolTests(unittest.TestCase):
             for _ in range(2):
                 with self.assertRaises(ValueError):
                     tools.query('F')
+
+    def test_cost_separates_new_model_fallback_and_roi_returned_targets(self):
+        def predict(w):
+            result = fixture_prediction(w)
+            result['model_used'] = np.array([True, False])
+            return result
+
+        tools = VehicleTools(lambda: window(), predict, 'scene', 10, provider='peer')
+        # Target counts must not depend on the timer resolving a short operation.
+        with patch('tools.vehicle.perf_counter', return_value=5.):
+            first = tools.query('F', [0., -5., 5., 5.])
+            cached = tools.query('F')
+            perception = tools.query('P')
+        self.assertEqual(first['cost']['model_targets_computed'], 1)
+        self.assertEqual(first['cost']['fallback_targets_computed'], 1)
+        self.assertEqual(first['cost']['returned_targets'], 1)
+        self.assertFalse(first['cost']['within_decision_forecast_cache_hit'])
+        self.assertEqual(cached['cost']['model_targets_computed'], 0)
+        self.assertEqual(cached['cost']['fallback_targets_computed'], 0)
+        self.assertEqual(cached['cost']['returned_targets'], 2)
+        self.assertTrue(cached['cost']['within_decision_forecast_cache_hit'])
+        self.assertEqual(perception['cost']['model_targets_computed'], 0)
+        self.assertEqual(perception['cost']['fallback_targets_computed'], 0)
+        self.assertFalse(perception['cost']['within_decision_forecast_cache_hit'])
 
 
 if __name__ == '__main__':

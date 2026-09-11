@@ -1,0 +1,170 @@
+{
+  "scope": "saved-output diagnostic; no new generation and no assumption about model adaptation status",
+  "runs": {
+    "got_direct": {
+      "attempts": 4,
+      "saved_status_counts": {
+        "parsed": 4
+      },
+      "decoding_counts": {
+        "direct": 4
+      },
+      "q8_parse_successes": 0,
+      "q9_executed": 4,
+      "q9_parse_successes": 4,
+      "q9_failure_fraction": 0.0,
+      "q8_labelled_attempts": 0,
+      "q8_speed_correct": 0,
+      "q8_speed_accuracy": null,
+      "q8_steering_correct": 0,
+      "q8_steering_accuracy": null,
+      "q8_joint_correct": 0,
+      "q8_joint_accuracy": null,
+      "ADE3": 27.464088269217687,
+      "ADE3_targets": 4,
+      "FDE3": 42.14652779534292,
+      "FDE3_targets": 4,
+      "L2_1": 17.92203933205552,
+      "L2_1_targets": 4,
+      "L2_2": 31.57027322694727,
+      "L2_2_targets": 4,
+      "first_segment_speed_mps": 19.149054458402823,
+      "first_segment_speed_mps_targets": 4,
+      "peak_segment_speed_mps": 19.153192584917733,
+      "peak_segment_speed_mps_targets": 4,
+      "initial_acceleration_estimate_mps2": 84.29363380182839,
+      "initial_acceleration_estimate_mps2_targets": 4,
+      "peak_acceleration_estimate_mps2": 84.29363380182839,
+      "peak_acceleration_estimate_mps2_targets": 4
+    },
+    "got_q8_q9": {
+      "attempts": 4,
+      "saved_status_counts": {
+        "parsed": 4
+      },
+      "decoding_counts": {
+        "q8_q9": 4
+      },
+      "q8_parse_successes": 4,
+      "q9_executed": 4,
+      "q9_parse_successes": 4,
+      "q9_failure_fraction": 0.0,
+      "q8_labelled_attempts": 4,
+      "q8_speed_correct": 0,
+      "q8_speed_accuracy": 0.0,
+      "q8_steering_correct": 4,
+      "q8_steering_accuracy": 1.0,
+      "q8_joint_correct": 0,
+      "q8_joint_accuracy": 0.0,
+      "ADE3": 17.183822741859213,
+      "ADE3_targets": 4,
+      "FDE3": 29.55504963408352,
+      "FDE3_targets": 4,
+      "L2_1": 9.829454039908594,
+      "L2_1_targets": 4,
+      "L2_2": 19.90519710001877,
+      "L2_2_targets": 4,
+      "first_segment_speed_mps": 21.609865875521134,
+      "first_segment_speed_mps_targets": 4,
+      "peak_segment_speed_mps": 22.41301076540879,
+      "peak_segment_speed_mps_targets": 4,
+      "initial_acceleration_estimate_mps2": 38.81600440076323,
+      "initial_acceleration_estimate_mps2_targets": 4,
+      "peak_acceleration_estimate_mps2": 38.81600440076323,
+      "peak_acceleration_estimate_mps2_targets": 4
+    },
+    "llm_direct": {
+      "attempts": 4,
+      "saved_status_counts": {
+        "invalid_q9": 4
+      },
+      "decoding_counts": {
+        "direct": 4
+      },
+      "q8_parse_successes": 0,
+      "q9_executed": 4,
+      "q9_parse_successes": 0,
+      "q9_failure_fraction": 1.0,
+      "q8_labelled_attempts": 0,
+      "q8_speed_correct": 0,
+      "q8_speed_accuracy": null,
+      "q8_steering_correct": 0,
+      "q8_steering_accuracy": null,
+      "q8_joint_correct": 0,
+      "q8_joint_accuracy": null,
+      "ADE3": null,
+      "ADE3_targets": 0,
+      "FDE3": null,
+      "FDE3_targets": 0,
+      "L2_1": null,
+      "L2_1_targets": 0,
+      "L2_2": null,
+      "L2_2_targets": 0,
+      "first_segment_speed_mps": null,
+      "first_segment_speed_mps_targets": 0,
+      "peak_segment_speed_mps": null,
+      "peak_segment_speed_mps_targets": 0,
+      "initial_acceleration_estimate_mps2": null,
+      "initial_acceleration_estimate_mps2_targets": 0,
+      "peak_acceleration_estimate_mps2": null,
+      "peak_acceleration_estimate_mps2_targets": 0
+    },
+    "llm_q8_q9": {
+      "attempts": 4,
+      "saved_status_counts": {
+        "invalid_q8": 4
+      },
+      "decoding_counts": {
+        "q8_q9": 4
+      },
+      "q8_parse_successes": 0,
+      "q9_executed": 0,
+      "q9_parse_successes": 0,
+      "q9_failure_fraction": 1.0,
+      "q8_labelled_attempts": 4,
+      "q8_speed_correct": 0,
+      "q8_speed_accuracy": 0.0,
+      "q8_steering_correct": 0,
+      "q8_steering_accuracy": 0.0,
+      "q8_joint_correct": 0,
+      "q8_joint_accuracy": 0.0,
+      "ADE3": null,
+      "ADE3_targets": 0,
+      "FDE3": null,
+      "FDE3_targets": 0,
+      "L2_1": null,
+      "L2_1_targets": 0,
+      "L2_2": null,
+      "L2_2_targets": 0,
+      "first_segment_speed_mps": null,
+      "first_segment_speed_mps_targets": 0,
+      "peak_segment_speed_mps": null,
+      "peak_segment_speed_mps_targets": 0,
+      "initial_acceleration_estimate_mps2": null,
+      "initial_acceleration_estimate_mps2_targets": 0,
+      "peak_acceleration_estimate_mps2": null,
+      "peak_acceleration_estimate_mps2_targets": 0
+    }
+  },
+  "unique_decision_frames": 1,
+  "saved_runs": [
+    "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/got_direct",
+    "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/got_q8_q9",
+    "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_direct",
+    "/root/autodl-tmp/ToolV2X/outputs/driving_decoder_connection_v1/llm_q8_q9"
+  ],
+  "labels": "/root/autodl-tmp/ToolV2X/outputs/adaptation_data_v1/offline_labels",
+  "comparison": "keep runs separate; repeated actions/frames are not independent samples",
+  "dynamics_definition": "origin is (0,0); mean segment velocities at midpoint times; initial velocity assumes ego +x heading",
+  "repeated_points_rule": "reported as a pattern only, not automatically invalid or a failure",
+  "error_definition": "metres against observed ego trajectory, only on valid labels; failures reported separately",
+  "evaluated": [
+    "Q8 parse and native-label correctness",
+    "Q9 parse/coverage and 1/2/3s error",
+    "initial and segment dynamics"
+  ],
+  "collision_evaluated": false,
+  "closed_loop_evaluated": false,
+  "new_model_generation": false,
+  "test_access": false
+}

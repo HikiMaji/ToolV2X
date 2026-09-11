@@ -2,7 +2,9 @@
 
 Each window contains only [t-10,t], expressed in ego(t), in metres/radians.
 Raw IDs remain source-local. Missing states are masked, never interpolated.
-All current tracks are retained; eligible marks >=2 observed history states.
+All current tracks are retained; eligible marks >=2 available tracker states.
+An available state can be a causal tracker prediction on a missed detection;
+valid is not a detection-match mask.
 """
 import argparse
 import json

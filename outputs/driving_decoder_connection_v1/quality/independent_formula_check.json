@@ -1,0 +1,7 @@
+{
+  "attempts": 16,
+  "parsed": 8,
+  "maximum_difference": 0.0,
+  "formula": "float64 sqrt(sum((saved_xy - offline_label_xy)^2)); mean over six future points and final point",
+  "scope": "single-frame diagnostic"
+}

@@ -76,11 +76,22 @@ def supervised_examples(role, sample_id, action, motion, plan, label, feature_pa
         raise ValueError('only train recordings may become SFT examples')
     mode = plan['evidence_selection']['evidence_format']
     evidence = plan['evidence_used']
+    common = dict(sample_id=sample_id, action=action, feature_path=feature_path,
+                  evidence_format=mode, supervision='assistant target only')
+    decoding = plan.get('decoding', 'q8_q9')
+    if decoding == 'direct':
+        if plan.get('q8_executed') is not False or plan.get('q8_raw'):
+            raise ValueError('direct supervision cannot contain a Q8 parent')
+        prompt = make_prompt('Trajectory', motion, evidence, evidence_format=mode)
+        if prompt != plan['q9_prompt']:
+            raise ValueError('direct prompt does not match causal evidence')
+        return ([dict(common, task='Trajectory', prompt=prompt, target=label['target_q9'],
+                      q8_parent_source='not applicable')] if label['target_q9'] is not None else [])
+    if decoding != 'q8_q9':
+        raise ValueError('unknown supervision decoding mode')
     prompt8 = make_prompt('Q8', motion, evidence, evidence_format=mode)
     if prompt8 != plan['q8_prompt']:
         raise ValueError('saved prompt does not match causal evidence')
-    common = dict(sample_id=sample_id, action=action, feature_path=feature_path,
-                  evidence_format=mode, supervision='assistant target only')
     rows = []
     if label['target_q8'] is not None:
         rows.append(dict(common, task='Q8', prompt=prompt8, target=label['target_q8']))

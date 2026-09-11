@@ -1,4 +1,8 @@
-"""P/F services use source-local observations and an injected original predictor."""
+"""P/F services use source-local causal track states and an injected predictor.
+
+history_valid marks available tracker output, including prediction-maintained
+states on missed detections; it is not a per-frame detection-match mask.
+"""
 import json
 from time import perf_counter
 import numpy as np
@@ -66,6 +70,7 @@ class VehicleTools:
             self._window = window
         w = self._window
         model_seconds = 0.
+        model_targets, fallback_targets = 0, 0
         cache_hit = self._forecast is not None
         if tool == 'P':
             objects = [dict(track_id=int(track_id), box=w['states'][i, -1].tolist(),
@@ -81,6 +86,9 @@ class VehicleTools:
                 self._forecast = self._predict(w)
                 model_seconds = perf_counter() - start
             objects = prediction_objects(w, self._forecast)
+            if not cache_hit:
+                model_targets = sum(obj['model_used'] for obj in objects)
+                fallback_targets = len(objects) - model_targets
         objects = [obj for obj in objects if in_roi(obj['box'], roi)]
         packet = dict(request, coordinate_frame='ego_at_t', objects=objects,
             status='ok' if objects else 'no_observed_targets', coverage='not_established',
@@ -89,7 +97,8 @@ class VehicleTools:
         decode_response(wire, self.scene, self.g)
         return dict(request=request, wire=wire, cost=dict(request_bytes=len(encode(request)),
             response_bytes=len(wire), service_seconds=perf_counter() - begin,
-            model_seconds=model_seconds, model_targets_computed=len(w['track_ids']) if model_seconds else 0,
+            model_seconds=model_seconds, model_targets_computed=model_targets,
+            fallback_targets_computed=fallback_targets, returned_targets=len(objects),
             within_decision_forecast_cache_hit=cache_hit if tool == 'F' else False))
 
 
@@ -124,7 +133,7 @@ def decode_response(wire, scene, g):
                     not valid[-1] or scores.shape != (11,) or (scores < 0).any() or (scores > 1).any() or
                     times.shape != (11,) or not np.allclose(times, np.arange(-10, 1) / 10.) or
                     not np.allclose(history[-1], box) or not np.isclose(scores[-1], obj['score'])):
-                raise ValueError('invalid causal observation history')
+                raise ValueError('invalid causal track-state history')
         else:
             scores = np.asarray(obj['forecast_scores'])
             if (np.shape(obj['forecast']) != (6, 6, 2) or scores.shape != (6,) or
@@ -139,7 +148,7 @@ def decode_response(wire, scene, g):
 def history_window(packet):
     p = decode_response(encode(packet), packet['scene'], packet['g'])
     if p['tool'] != 'P':
-        raise ValueError('observed history requires P')
+        raise ValueError('track-state history requires P')
     objects, n = p['objects'], len(p['objects'])
     w = dict(source=p['provider'], scene=p['scene'], g=p['g'], track_ids=np.array([o['track_id'] for o in objects], dtype=np.int64),
         states=np.array([o['history'] for o in objects], dtype=np.float32).reshape(n, 11, 7),

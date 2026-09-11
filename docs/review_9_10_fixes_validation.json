@@ -1,0 +1,170 @@
+{
+  "recorded_at": "2026-09-10T15:08:57.843645+00:00",
+  "branch": "fix/review-2026-09-10",
+  "fixes": [
+    "configured runner data root",
+    "Q8 parent reserve and persisted Q9 overflow",
+    "saved packet byte comparison",
+    "resolved adapter source paths",
+    "MTR versus fallback target cost"
+  ],
+  "tests": {
+    "full": {
+      "status": "passed",
+      "tests": 72,
+      "seconds": 4.602,
+      "log": "/root/autodl-tmp/ToolV2X/outputs/review_9_10_fixes_v1/full_tests.log"
+    },
+    "light": {
+      "status": "passed",
+      "tests": 55,
+      "seconds": 0.379,
+      "log": "/root/autodl-tmp/ToolV2X/outputs/review_9_10_fixes_v1/light_tests.log"
+    }
+  },
+  "new_tests": 10,
+  "artifact_directory": "/root/autodl-tmp/ToolV2X/outputs/review_9_10_fixes_v1",
+  "regression_evidence": "nine tests ran against unfixed code; the additional report test failed with the old constant in memory and passed after restoration",
+  "tokenizer_boundary": {
+    "original_local_tokenizer": true,
+    "generated_q8_fixture_tokens": 124,
+    "seven_b_generation_executed": false,
+    "residual_overflow_test": "synthetic overlong decoded parent; actual generation guard and action persistence executed"
+  },
+  "short_history": {
+    "original_cmp_predict_executed": true,
+    "model_calls": 0,
+    "fallback_targets": 2
+  },
+  "training": false,
+  "optimizer_steps": 0,
+  "quality_evaluation": false,
+  "pushed": false,
+  "selection_recalculation": {
+    "Ego": {
+      "json": {
+        "archived_retained": 5,
+        "current_retained": 5,
+        "budgeted_input": 3512,
+        "q9_actual_input_with_long_parent": 3489,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 3745,
+        "context_limit": 4096
+      },
+      "compact": {
+        "archived_retained": 19,
+        "current_retained": 18,
+        "budgeted_input": 3784,
+        "q9_actual_input_with_long_parent": 3761,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 4017,
+        "context_limit": 4096
+      }
+    },
+    "P": {
+      "json": {
+        "archived_retained": 4,
+        "current_retained": 3,
+        "budgeted_input": 3493,
+        "q9_actual_input_with_long_parent": 3470,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 3726,
+        "context_limit": 4096
+      },
+      "compact": {
+        "archived_retained": 9,
+        "current_retained": 8,
+        "budgeted_input": 3797,
+        "q9_actual_input_with_long_parent": 3774,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 4030,
+        "context_limit": 4096
+      }
+    },
+    "F": {
+      "json": {
+        "archived_retained": 5,
+        "current_retained": 5,
+        "budgeted_input": 3644,
+        "q9_actual_input_with_long_parent": 3621,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 3877,
+        "context_limit": 4096
+      },
+      "compact": {
+        "archived_retained": 19,
+        "current_retained": 18,
+        "budgeted_input": 3824,
+        "q9_actual_input_with_long_parent": 3801,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 4057,
+        "context_limit": 4096
+      }
+    },
+    "PF": {
+      "json": {
+        "archived_retained": 4,
+        "current_retained": 4,
+        "budgeted_input": 3605,
+        "q9_actual_input_with_long_parent": 3582,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 3838,
+        "context_limit": 4096
+      },
+      "compact": {
+        "archived_retained": 8,
+        "current_retained": 8,
+        "budgeted_input": 3832,
+        "q9_actual_input_with_long_parent": 3809,
+        "q9_reserved_generation": 256,
+        "q9_actual_total": 4065,
+        "context_limit": 4096
+      }
+    }
+  },
+  "archived_wire": {
+    "Ego": {
+      "checked": true,
+      "equal": true,
+      "compared_files": [],
+      "missing_files": [],
+      "different_files": [],
+      "method": "direct saved-file byte comparison"
+    },
+    "P": {
+      "checked": true,
+      "equal": true,
+      "compared_files": [
+        "P_request.json",
+        "P_response.json"
+      ],
+      "missing_files": [],
+      "different_files": [],
+      "method": "direct saved-file byte comparison"
+    },
+    "F": {
+      "checked": true,
+      "equal": true,
+      "compared_files": [
+        "F_request.json",
+        "F_response.json"
+      ],
+      "missing_files": [],
+      "different_files": [],
+      "method": "direct saved-file byte comparison"
+    },
+    "PF": {
+      "checked": true,
+      "equal": true,
+      "compared_files": [
+        "P_request.json",
+        "P_response.json",
+        "F_request.json",
+        "F_response.json"
+      ],
+      "missing_files": [],
+      "different_files": [],
+      "method": "direct saved-file byte comparison"
+    }
+  }
+}

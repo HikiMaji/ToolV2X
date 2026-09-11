@@ -1,0 +1,217 @@
+{
+  "scope": "independent saved input and response-byte comparison; request bytes independently reserialized from readable saved JSON with the recorded compact sorted encoding; no model generation",
+  "runs": {
+    "got_direct": {
+      "ego_arrays_equal": true,
+      "frame": [
+        "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        10,
+        5526
+      ],
+      "actions": {
+        "Ego": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {},
+          "wire_bytes": 0,
+          "llm_calls": 1,
+          "status": "parsed"
+        },
+        "P": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true
+          },
+          "wire_bytes": 58735,
+          "llm_calls": 1,
+          "status": "parsed"
+        },
+        "F": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 52993,
+          "llm_calls": 1,
+          "status": "parsed"
+        },
+        "PF": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true,
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 111728,
+          "llm_calls": 1,
+          "status": "parsed"
+        }
+      }
+    },
+    "got_q8_q9": {
+      "ego_arrays_equal": true,
+      "frame": [
+        "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        10,
+        5526
+      ],
+      "actions": {
+        "Ego": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {},
+          "wire_bytes": 0,
+          "llm_calls": 2,
+          "status": "parsed"
+        },
+        "P": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true
+          },
+          "wire_bytes": 58735,
+          "llm_calls": 2,
+          "status": "parsed"
+        },
+        "F": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 52993,
+          "llm_calls": 2,
+          "status": "parsed"
+        },
+        "PF": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true,
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 111728,
+          "llm_calls": 2,
+          "status": "parsed"
+        }
+      }
+    },
+    "llm_direct": {
+      "ego_arrays_equal": true,
+      "frame": [
+        "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        10,
+        5526
+      ],
+      "actions": {
+        "Ego": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {},
+          "wire_bytes": 0,
+          "llm_calls": 1,
+          "status": "invalid_q9"
+        },
+        "P": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true
+          },
+          "wire_bytes": 58735,
+          "llm_calls": 1,
+          "status": "invalid_q9"
+        },
+        "F": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 52993,
+          "llm_calls": 1,
+          "status": "invalid_q9"
+        },
+        "PF": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true,
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 111728,
+          "llm_calls": 1,
+          "status": "invalid_q9"
+        }
+      }
+    },
+    "llm_q8_q9": {
+      "ego_arrays_equal": true,
+      "frame": [
+        "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        10,
+        5526
+      ],
+      "actions": {
+        "Ego": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {},
+          "wire_bytes": 0,
+          "llm_calls": 1,
+          "status": "invalid_q8"
+        },
+        "P": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true
+          },
+          "wire_bytes": 58735,
+          "llm_calls": 1,
+          "status": "invalid_q8"
+        },
+        "F": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 52993,
+          "llm_calls": 1,
+          "status": "invalid_q8"
+        },
+        "PF": {
+          "evidence_equal": true,
+          "selection_equal": true,
+          "same_wire_bytes": {
+            "P_request.json": true,
+            "P_response.json": true,
+            "F_request.json": true,
+            "F_response.json": true
+          },
+          "wire_bytes": 111728,
+          "llm_calls": 1,
+          "status": "invalid_q8"
+        }
+      }
+    }
+  }
+}

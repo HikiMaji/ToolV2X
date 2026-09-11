@@ -1,0 +1,85 @@
+{
+  "scope": "offline original two-CAV short-Q5 diagnostic; not ToolV2X online, training or comparative quality evaluation",
+  "original_checkpoint": "/root/autodl-tmp/V2V-GoT/LLaVA/checkpoints/llava-v1.5-7b-task-lora/llava-v1.5-7b-task-lora_v2v4real_3d_grounding_v2vllmq5_10ep_both_shallow_f2/checkpoint-490",
+  "source": "/root/autodl-tmp/ToolV2X/vendor/v2vgot_llava/llava/eval/model_vqa_loader.py",
+  "frames": [
+    5526,
+    5525
+  ],
+  "cavs": [
+    "ego",
+    "1"
+  ],
+  "paths": [
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_regression_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/1/5526_regression_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_regression_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/1/5525_regression_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_classification_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/1/5526_classification_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_classification_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/1/5525_classification_map.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_detection_box_score.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/1/5526_detection_box_score.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_detection_box_score.npy",
+    "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/1/5525_detection_box_score.npy"
+  ],
+  "future_or_gt_reads": false,
+  "optimizer_steps": 0,
+  "actual_rgb_input": false,
+  "lora_merge_checks": [
+    {
+      "parameter": "model.layers.0.self_attn.q_proj.weight",
+      "sampled_rows": 128,
+      "compared_values": 524288,
+      "maximum_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "maximum_adapter_change": 0.00421142578125,
+      "matches_explicit_base_plus_lora": true
+    },
+    {
+      "parameter": "model.layers.0.mlp.gate_proj.weight",
+      "sampled_rows": 128,
+      "compared_values": 524288,
+      "maximum_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "maximum_adapter_change": 0.00162506103515625,
+      "matches_explicit_base_plus_lora": true
+    },
+    {
+      "parameter": "model.layers.31.self_attn.v_proj.weight",
+      "sampled_rows": 128,
+      "compared_values": 524288,
+      "maximum_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "maximum_adapter_change": 0.003208160400390625,
+      "matches_explicit_base_plus_lora": true
+    }
+  ],
+  "non_lora_exact_checks": {
+    "model.mm_projector.0.weight": true,
+    "model.mm_projector.0.bias": true,
+    "model.mm_projector.2.weight": true,
+    "model.mm_projector.2.bias": true,
+    "model.mm_scene_projector.0.weight": true,
+    "model.mm_scene_projector.0.bias": true,
+    "model.mm_scene_projector.2.weight": true,
+    "model.mm_scene_projector.2.bias": true
+  },
+  "ego_arrays_equal_to_online": {
+    "regression_map": true,
+    "classification_map": true,
+    "detection_box_score": true,
+    "active_agent_mask": true
+  },
+  "prompt": "I am CAV_1. What is the suggested future trajectory to avoid collision with nearby objects?",
+  "raw": "",
+  "cost": {
+    "seconds": 0.19137727189809084,
+    "input_tokens": 1143,
+    "output_tokens": 2,
+    "feature_tokens": 1080
+  },
+  "trajectory_status": "invalid",
+  "error": "missing Q9 trajectory"
+}

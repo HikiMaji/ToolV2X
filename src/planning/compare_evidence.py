@@ -8,11 +8,36 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
 from planning.inputs import make_prompt, pack_evidence, unpack_evidence
-from planning.v2vgot import V2VGoTPlanner, prompt_tokens, rounded
-from planning.run_connection import save_json, snapshot_code
+
+
+def compare_saved_wire(baseline, expanded, action):
+    """Compare saved request/response bytes; evidence equality is insufficient.
+
+    Requests are stored as formatted JSON by the runner; responses are the wire
+    bytes. This checks file equality, not the network size of formatted requests.
+    """
+    if action not in ('Ego', 'P', 'F', 'PF'):
+        raise ValueError('unknown action')
+    compared, missing, different = [], [], []
+    for tool in (() if action == 'Ego' else tuple(action)):
+        for kind in ('request', 'response'):
+            name = tool + '_' + kind + '.json'
+            left, right = Path(baseline) / name, Path(expanded) / name
+            absent = [str(path) for path in (left, right) if not path.is_file()]
+            if absent:
+                missing.extend(absent)
+                continue
+            compared.append(name)
+            if left.read_bytes() != right.read_bytes():
+                different.append(name)
+    return dict(checked=not missing, equal=None if missing else not different,
+                compared_files=compared, missing_files=missing, different_files=different,
+                method='direct saved-file byte comparison')
 
 
 def compare(out, baseline, expanded):
+    from planning.v2vgot import V2VGoTPlanner, prompt_tokens, rounded
+    from planning.run_connection import save_json, snapshot_code
     out.mkdir(parents=True, exist_ok=False)
     snapshot_code(out)
     read = lambda path: json.loads(path.read_text())
@@ -34,6 +59,7 @@ def compare(out, baseline, expanded):
     report = dict(scope='encoding and same-frame input coverage; no task quality claim',
                   baseline=str(baseline), compact_expanded=str(expanded), scene=meta['scene'], g=meta['g'], actions={})
     for action in meta['actions']:
+        wire = compare_saved_wire(baseline / action, expanded / action, action)
         full = read(baseline / action / 'evidence_full.json')
         assert full == read(expanded / action / 'evidence_full.json')
         selected = read(baseline / action / 'evidence_used.json')
@@ -51,7 +77,8 @@ def compare(out, baseline, expanded):
             rounded_json_tokens=tokens(rounded(full), 'json'), rounded_compact_tokens=tokens(rounded(full), 'compact'),
             same_set_json_tokens=tokens(selected, 'json'), same_set_compact_tokens=tokens(selected, 'compact'),
             baseline_status=old_plan['status'], same_set_compact_status=result['status'],
-            expanded_compact_status=new_plan['status'], full_wire_unchanged=True, roundtrip_exact=True)
+            expanded_compact_status=new_plan['status'], full_wire_unchanged=wire['equal'],
+            wire_comparison=wire, roundtrip_exact=True)
         report['actions'][action] = row
         save_json(out / 'comparison.json', report)
         print(json.dumps(dict(action=action, **row)), flush=True)
