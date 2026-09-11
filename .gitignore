@@ -84,6 +84,8 @@ __pycache__/
 !/outputs/mtr_stability_v1/*_audit.json
 !/outputs/mtr_stability_v1/run_study.py
 !/outputs/mtr_stability_v1/analyze.py
+!/outputs/mtr_stability_v1/continue_study.py
+!/outputs/mtr_stability_v1/interruption.json
 !/outputs/driving_decoder_connection_v1/
 !/outputs/driving_decoder_connection_v1/same_inputs_audit.json
 !/outputs/driving_decoder_connection_v1/llm_short_prompt.json

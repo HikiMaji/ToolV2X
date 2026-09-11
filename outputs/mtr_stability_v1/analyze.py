@@ -150,6 +150,7 @@ lines += ['', '## 相同 ROI 目标与实际训练量', '',
 for r in records:
     lines.append('| %s / %d | %.3f | %.3f | %d |' % (r['context'], r['seed'], r['best_full_on_roi_ADE5'], r['best_roi_ADE5'], r['supervised_center_presentations']))
 lines += ['', '## 复核与限制', '',
+    '- 另有第 5 组中断尝试：已落盘第 1 轮 996 步，落盘后是否还有额外更新未知；完整归档后以相同初始化和 seed22 从头重跑。中断尝试不进入六次完整运行的 59,760 步合计或选模，记录见 `outputs/mtr_stability_v1/interruption.json`。',
     '- 六次原网络训练均保存真实参数更新、best/last 检查点、逐轮报表和选中权重重载结果；各自独立审计在 `outputs/mtr_stability_v1/*_audit.json`。',
     '- 每个种子的两方案第 1 轮均为相同完整上下文；另核对该轮监督计数、平均训练 loss 及验证值一致，差异从第 2 轮开始引入。',
     '- 独立 float64 公式复算原始与所选检查点的预测，核对身份、标签覆盖、录制组、更新预算和检查点元数据。末三轮均值另从逐轮报表的录制组指标复算；未将其表述为每轮原始预测都已独立重算。',

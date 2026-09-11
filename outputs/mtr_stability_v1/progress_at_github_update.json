@@ -102,7 +102,7 @@
       "ADE5_curve": [
         18.124732835305682
       ],
-      "status": "running",
+      "status": "incomplete_attempt_later_found_interrupted",
       "optimizer_steps_recorded": 996
     },
     {
@@ -119,5 +119,7 @@
   "required_runs": 6,
   "frozen_checkpoint_selected": false,
   "selection_pending": true,
-  "test_access": false
+  "test_access": false,
+  "post_publication_correction": "A later live process check found the incomplete full_seed22 attempt had stopped; existence of epoch files alone did not establish it was running. The attempt was archived and remaining runs restarted from original initialization.",
+  "correction_record": "outputs/mtr_stability_v1/interruption.json"
 }
