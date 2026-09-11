@@ -2,11 +2,11 @@
 
 ToolV2X 研究车辆如何按驾驶任务需要调用邻车的感知 P 与预测 F。当前代码把 **CMP 原 MotionTransformer**、独立 P/F 报文和 **V2V-GoT 原 LLaVA 驾驶模型**接在一起，先验证因果输入和固定动作对照，再开展能力适配与查询机制研究。
 
-截至 2026-09-11，**原 CMP MTR 的首轮因果适配已完成**：10 轮、9,960 步，选中第 5 轮；两个验证录制组平均 top-1 ADE5 为 21.519 → 5.874 米，详见 [首轮结果与限制](docs/mtr_adaptation_results.md)。后续六组等预算稳定性对照正在运行，[协议](docs/mtr_stability_plan.md)与[本次发布进度快照](outputs/mtr_stability_v1/progress_at_github_update.json)区分已完成运行和待选模结论。
+截至 2026-09-11，**原 CMP MTR 六组等预算对照已完成**：full/alternating × 三个种子，每次 9,960 步。按训练前固定规则选择 full，冻结预先指定的 seed20 第 9 轮检查点；两个验证录制组平均 top-1 ADE5 为 21.519 → 4.841 米。完整曲线与门槛见 [六组结果](docs/mtr_stability_results.md)，明显训练波动与验证选模的限制仍保留。[首轮适配](docs/mtr_adaptation_results.md)和[发布时进度快照](outputs/mtr_stability_v1/progress_at_github_update.json)保存历史含义。
 
-发布后进程核对发现第 5 组在第一轮后中断，已保留该尝试并从相同原始初始化重跑剩余两组；前 4 组完成记录及审计保留。详见 [中断与重跑记录](outputs/mtr_stability_v1/interruption.json)。
+发布后进程核对发现第 5 组在第一轮后中断，已保留该尝试并从相同原始初始化重跑剩余两组；六组现均完成训练和独立审计，中断尝试不进入选模或六组总更新数。详见 [中断与重跑记录](outputs/mtr_stability_v1/interruption.json)。
 
-驾驶端已支持实际生成 Q8→Q9 和显式 direct 六点轨迹，两种初始化的真实单帧四动作检查见 [接入诊断](docs/driving_decoder_results.md)。共享驾驶参数更新入口已实现，长序列反向传播所需训练内核正在准备；正式共享驾驶适配及 P/F 驾驶收益尚未验证。查询策略与闭环未评价，RSU、I 和最终查询机制仍后置。当前发布范围见 [更新说明](docs/github_update_2026_09_11.md)。
+驾驶端已支持实际生成 Q8→Q9 和显式 direct 六点轨迹，两种初始化的真实单帧四动作检查见 [接入诊断](docs/driving_decoder_results.md)。四个组合已分别完成一帧、一次真实参数更新与独立重载生成，见 [训练入口结果](docs/driving_training_readiness_results.md)；正式共享驾驶适配及 P/F 驾驶收益尚未验证。查询策略与闭环未评价，RSU、I 和最终查询机制仍后置。当前发布范围见 [更新说明](docs/github_update_2026_09_11.md)。
 
 ## 从哪里读
 

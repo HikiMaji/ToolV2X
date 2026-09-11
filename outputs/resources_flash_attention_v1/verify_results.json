@@ -1,0 +1,119 @@
+{
+  "torch": "2.1.2+cu118",
+  "cuda": "11.8",
+  "device": "NVIDIA GeForce RTX 4090",
+  "capability": [
+    8,
+    9
+  ],
+  "results": [
+    {
+      "label": "torch.float16.causal=False",
+      "shape": [
+        1,
+        256,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.08132478594779968,
+      "q_grad_abs_mean": 7.100888979039155e-07,
+      "peak_memory_bytes": 1838592
+    },
+    {
+      "label": "varlen.torch.float16.causal=False",
+      "shape": [
+        112,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.1587417721748352,
+      "q_grad_abs_mean": 7.417369488393888e-06,
+      "peak_memory_bytes": 840704
+    },
+    {
+      "label": "torch.float16.causal=True",
+      "shape": [
+        1,
+        256,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.14261016249656677,
+      "q_grad_abs_mean": 2.8682297852355987e-06,
+      "peak_memory_bytes": 1838592
+    },
+    {
+      "label": "varlen.torch.float16.causal=True",
+      "shape": [
+        112,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.2661861777305603,
+      "q_grad_abs_mean": 2.0198580386932008e-05,
+      "peak_memory_bytes": 840704
+    },
+    {
+      "label": "torch.bfloat16.causal=False",
+      "shape": [
+        1,
+        256,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.08007601648569107,
+      "q_grad_abs_mean": 5.920772991885315e-07,
+      "peak_memory_bytes": 1838592
+    },
+    {
+      "label": "varlen.torch.bfloat16.causal=False",
+      "shape": [
+        112,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.16945978999137878,
+      "q_grad_abs_mean": 8.082794010988437e-06,
+      "peak_memory_bytes": 840704
+    },
+    {
+      "label": "torch.bfloat16.causal=True",
+      "shape": [
+        1,
+        256,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.1442878395318985,
+      "q_grad_abs_mean": 3.100707772318856e-06,
+      "peak_memory_bytes": 1838592
+    },
+    {
+      "label": "varlen.torch.bfloat16.causal=True",
+      "shape": [
+        112,
+        2,
+        128
+      ],
+      "out_abs_mean": 0.26559019088745117,
+      "q_grad_abs_mean": 1.884626180981286e-05,
+      "peak_memory_bytes": 840704
+    },
+    {
+      "label": "unsupported_head_dim_64",
+      "message": "This local FlashAttention wheel only supports head dimension 128."
+    },
+    {
+      "label": "long_fp16_2248x32x128",
+      "shape": [
+        1,
+        2248,
+        32,
+        128
+      ],
+      "out_abs_mean": 0.053121451288461685,
+      "q_grad_abs_mean": 1.88144344548391e-09,
+      "peak_memory_bytes": 264530432
+    }
+  ]
+}

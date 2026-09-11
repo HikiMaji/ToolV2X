@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "scope": "serialization, merge, projector and actual generation after reload; not driving quality",
+  "training_report": "/root/autodl-tmp/ToolV2X/outputs/driving_training_readiness_v1/got_q8_q9_flash/training_check.json",
+  "model": {
+    "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/driving_training_readiness_v1/got_q8_q9_flash/checkpoint",
+    "adapted_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/driving_training_readiness_v1/got_q8_q9_flash/reload_adapter",
+    "base": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+    "clip": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336",
+    "model_class": "LlavaLlamaForCausalLM",
+    "source": "/root/autodl-tmp/ToolV2X/vendor/v2vgot_llava/llava/model/language_model/llava_llama.py",
+    "my_model_config": {
+      "mm_scene_projector_input_size": 3072,
+      "scene_level_only": false,
+      "object_level_only": false,
+      "scene_feature_mode": "shallow",
+      "object_feature_mode": "shallow",
+      "num_input_frames": 2,
+      "ego_only": true,
+      "feature_source": "no_fusion_keep_all",
+      "dataset_source": "v2v4real",
+      "num_latency_frames": 0,
+      "positional_error_std": 0.0
+    },
+    "loading_seconds": 9.948478064965457,
+    "released_tokenizer_limit": 4096,
+    "context_limit": 4096,
+    "evidence_format": "json",
+    "adapted_to_tool_evidence": false,
+    "training_provenance_verified": false,
+    "trainable_lora_loaded": false,
+    "attention_implementation": "sdpa",
+    "actual_rgb_input": false,
+    "point_cloud_feature_input": true
+  },
+  "sampled_lora_merge_checks": [
+    {
+      "parameter": "model.layers.0.self_attn.q_proj.weight",
+      "compared_values": 524288,
+      "maximum_absolute_error": 0.0
+    },
+    {
+      "parameter": "model.layers.0.mlp.gate_proj.weight",
+      "compared_values": 524288,
+      "maximum_absolute_error": 0.0
+    },
+    {
+      "parameter": "model.layers.31.self_attn.v_proj.weight",
+      "compared_values": 524288,
+      "maximum_absolute_error": 0.0
+    }
+  ],
+  "projector_exact_checks": {
+    "base_model.model.model.mm_projector.0.weight": true,
+    "base_model.model.model.mm_projector.0.bias": true,
+    "base_model.model.model.mm_projector.2.weight": true,
+    "base_model.model.model.mm_projector.2.bias": true,
+    "base_model.model.model.mm_scene_projector.0.weight": true,
+    "base_model.model.model.mm_scene_projector.0.bias": true,
+    "base_model.model.model.mm_scene_projector.2.weight": true,
+    "base_model.model.model.mm_scene_projector.2.bias": true
+  },
+  "actual_generation": true,
+  "generated_sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+  "generated_action": "PF",
+  "task": "Q9",
+  "prompt_source": "saved training prompt; no target answer supplied",
+  "raw_generation": "The suggested future trajectory is [(13.5,0.4),(28.6,0.4),(42.6,0.3),(56.5,0.1),(70.4,-0.1),(84.3,-0.7)].",
+  "generation_cost": {
+    "seconds": 2.1974905747920275,
+    "input_tokens": 3799,
+    "output_tokens": 64,
+    "feature_tokens": 540
+  },
+  "optimizer_steps_in_this_verifier": 0,
+  "formal_adaptation_complete": false
+}

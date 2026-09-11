@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "flash_attn_version": "2.5.9.post1",
+  "imported_package": "/root/autodl-tmp/conda-envs/llava/lib/python3.8/site-packages/flash_attn/__init__.py",
+  "torch": "2.1.2+cu118",
+  "scope": "small explicit FP32 attention reference; not full upstream package certification",
+  "results": [
+    {
+      "dtype": "torch.float16",
+      "varlen": false,
+      "causal": true,
+      "rtol": 0.01,
+      "atol": 0.002,
+      "maximum_absolute_errors": {
+        "output": 0.0008456707000732422,
+        "dq": 4.8704445362091064e-05,
+        "dk": 6.462633609771729e-05,
+        "dv": 8.210539817810059e-05
+      }
+    },
+    {
+      "dtype": "torch.float16",
+      "varlen": true,
+      "causal": true,
+      "rtol": 0.01,
+      "atol": 0.002,
+      "maximum_absolute_errors": {
+        "output": 0.0008809566497802734,
+        "dq": 4.6022236347198486e-05,
+        "dk": 5.001574754714966e-05,
+        "dv": 9.424984455108643e-05
+      }
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "varlen": false,
+      "causal": true,
+      "rtol": 0.04,
+      "atol": 0.02,
+      "maximum_absolute_errors": {
+        "output": 0.006155729293823242,
+        "dq": 0.0005018860101699829,
+        "dk": 0.00038810819387435913,
+        "dv": 0.0005281716585159302
+      }
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "varlen": true,
+      "causal": true,
+      "rtol": 0.04,
+      "atol": 0.02,
+      "maximum_absolute_errors": {
+        "output": 0.007779359817504883,
+        "dq": 0.000621408224105835,
+        "dk": 0.00043068360537290573,
+        "dv": 0.0006504058837890625
+      }
+    }
+  ]
+}

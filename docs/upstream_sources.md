@@ -51,3 +51,5 @@ V2V4Real 目录存在许可元数据冲突：LICENSE 是 Apache 2.0 文本，set
 ## 外部资源
 
 原 AB3DMOT/OpenCOOD 完整预处理栈、模型 checkpoint、tokenizer、基础 LLaVA、CLIP、检测缓存和完整数据仍由本机提供。源代码可审查与完整实验可重放是不同范围；环境和路径说明见 [README](../README.md)。
+
+2026-09-11 训练内核另从 PyPI 的 FlashAttention 2.5.9.post1 源码构建。只编译 head_dim128、FP16/BF16、sm80 CUDA 内核，并在 API 中拒绝其他维度；这是本机 sm89 原 7B 更新检查使用的限定构建。wheel 和完整源码在工作站，精选 [补丁](../outputs/resources_flash_attention_v1/source/replay_build_patch.diff)、[原 BSD 3-Clause LICENSE](../outputs/resources_flash_attention_v1/source/LICENSE) 和数值检查随本次结果提供。补丁相对 PyPI 压缩包、使用零行上下文，可在解压根目录用 `git apply --unidiff-zero replay_build_patch.diff` 应用；已在独立副本应用并与真实构建文件逐字比较。没有下载或修改其他上游仓库；torch/Transformers 等原版本保持不变，实际结果见 [训练入口报告](driving_training_readiness_results.md)。

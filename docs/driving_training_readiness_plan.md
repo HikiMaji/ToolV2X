@@ -12,3 +12,5 @@
 - 每行执行原多模态准备和原 causal language modeling loss，确认提示/点云 token 的标签均为 -100，只有回答和结束符参与损失。保存 loss、真实梯度、更新前后参数差、冻结参数无梯度检查及峰值显存。
 - 新目录保存可训练 adapter、完整原 projector 文件、tokenizer/config、输入行和过程报告。用标准推理入口重新加载，核对 adapter/projector 文件与保存前参数并执行真实生成。重载生成只检查读取路径，不作质量比较。
 - 如发生加载、梯度、格式或显存失败，保留真实日志，先修复具体入口问题。上述检查完成后才具备执行正式共享驾驶适配的基础。
+
+2026-09-11 内核资源补充：从 PyPI 的 FlashAttention 2.5.9.post1 原始源码构建本地 wheel，源码压缩包保留。构建副本仅编译本模型需要的 head_dim128 FP16/BF16 前向、反向和 split 内核，API 显式拒绝其他 head dimension；省略 sm90，保留 sm80 代码供本机 sm89 执行。这是有限范围的本地构建，不宣称完整原版包或其他模型可用。补丁、构建及实际 GPU 检查记录保存在 `outputs/resources_flash_attention_v1/`。主环境只安装该 wheel，不升级 torch/Transformers；四组合使用新的运行目录，旧失败证据保留。

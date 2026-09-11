@@ -1,0 +1,28 @@
+{
+  "selected_files": 146,
+  "selected_bytes": 2818934,
+  "credential_pattern_matches": 0,
+  "raw_user_notes_excluded": true,
+  "largest_files": [
+    [
+      153749,
+      "docs/figures/mtr_stability_v1.png"
+    ],
+    [
+      89556,
+      "outputs/driving_training_readiness_v1/llm_q8_q9_flash/parameter_updates.json"
+    ],
+    [
+      89552,
+      "outputs/driving_training_readiness_v1/got_q8_q9_flash/parameter_updates.json"
+    ],
+    [
+      89523,
+      "outputs/driving_training_readiness_v1/llm_direct_flash/parameter_updates.json"
+    ],
+    [
+      89420,
+      "outputs/driving_training_readiness_v1/got_direct_flash/parameter_updates.json"
+    ]
+  ]
+}

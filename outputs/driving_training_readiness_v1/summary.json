@@ -1,0 +1,121 @@
+{
+  "status": "PASS",
+  "scope": "one training frame, one update per combination; infrastructure only",
+  "runs": [
+    {
+      "name": "got_direct_flash",
+      "initialization": "got",
+      "decoding": "direct",
+      "supervised_rows": 4,
+      "optimizer_steps": 1,
+      "mean_row_loss": 1.1799923330545425,
+      "sequence_tokens": [
+        2248,
+        3839
+      ],
+      "changed_tensors": 452,
+      "peak_allocated_GiB": 18.877826690673828,
+      "sampled_merge_values": 1572864,
+      "sampled_merge_max_error": 0.0,
+      "projector_exact_tensors": 8,
+      "actual_reload_generation": true,
+      "source_files_match": {
+        "src/planning/check_training.py": true,
+        "src/planning/adaptation_data.py": true,
+        "src/planning/inputs.py": true,
+        "src/planning/v2vgot.py": true,
+        "tests/verify_driving_update.py": true,
+        "vendor_builder": true
+      }
+    },
+    {
+      "name": "got_q8_q9_flash",
+      "initialization": "got",
+      "decoding": "q8_q9",
+      "supervised_rows": 8,
+      "optimizer_steps": 1,
+      "mean_row_loss": 0.4233352240808017,
+      "sequence_tokens": [
+        2191,
+        3864
+      ],
+      "changed_tensors": 452,
+      "peak_allocated_GiB": 18.89146137237549,
+      "sampled_merge_values": 1572864,
+      "sampled_merge_max_error": 0.0,
+      "projector_exact_tensors": 8,
+      "actual_reload_generation": true,
+      "source_files_match": {
+        "src/planning/check_training.py": true,
+        "src/planning/adaptation_data.py": true,
+        "src/planning/inputs.py": true,
+        "src/planning/v2vgot.py": true,
+        "tests/verify_driving_update.py": true,
+        "vendor_builder": true
+      }
+    },
+    {
+      "name": "llm_direct_flash",
+      "initialization": "llm",
+      "decoding": "direct",
+      "supervised_rows": 4,
+      "optimizer_steps": 1,
+      "mean_row_loss": 0.4917570576071739,
+      "sequence_tokens": [
+        2248,
+        3839
+      ],
+      "changed_tensors": 452,
+      "peak_allocated_GiB": 18.877826690673828,
+      "sampled_merge_values": 1572864,
+      "sampled_merge_max_error": 0.0,
+      "projector_exact_tensors": 8,
+      "actual_reload_generation": true,
+      "source_files_match": {
+        "src/planning/check_training.py": true,
+        "src/planning/adaptation_data.py": true,
+        "src/planning/inputs.py": true,
+        "src/planning/v2vgot.py": true,
+        "tests/verify_driving_update.py": true,
+        "vendor_builder": true
+      }
+    },
+    {
+      "name": "llm_q8_q9_flash",
+      "initialization": "llm",
+      "decoding": "q8_q9",
+      "supervised_rows": 8,
+      "optimizer_steps": 1,
+      "mean_row_loss": 0.7731229364871979,
+      "sequence_tokens": [
+        2191,
+        3864
+      ],
+      "changed_tensors": 452,
+      "peak_allocated_GiB": 18.89146137237549,
+      "sampled_merge_values": 1572864,
+      "sampled_merge_max_error": 0.0,
+      "projector_exact_tensors": 8,
+      "actual_reload_generation": true,
+      "source_files_match": {
+        "src/planning/check_training.py": true,
+        "src/planning/adaptation_data.py": true,
+        "src/planning/inputs.py": true,
+        "src/planning/v2vgot.py": true,
+        "tests/verify_driving_update.py": true,
+        "vendor_builder": true
+      }
+    }
+  ],
+  "total_optimizer_updates": 4,
+  "unique_training_frames": 1,
+  "same_rows_across_initializations": true,
+  "same_trajectory_targets_across_decodings": true,
+  "q8_parent_source": "saved original GoT generation; not each candidate own generated parent",
+  "mtr_evidence": "historical readiness frame; not newly frozen MTR",
+  "test_access": false,
+  "actual_rgb_input": false,
+  "formal_adaptation_complete": false,
+  "initialization_or_decoder_selected": false,
+  "driving_utility_evaluated": false
+}

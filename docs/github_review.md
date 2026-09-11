@@ -4,7 +4,7 @@
 
 2026-09-11 本地补充：原 MTR 因果适配已完成，见 [实验结果](mtr_adaptation_results.md) 和 [Q8/Q9 质量诊断](planning_quality.md)。新增审查入口为 `src/prediction/{supervision,prepare_mtr,train_mtr}.py`、`src/evaluation/` 及 `tests/verify_mtr_*.py`。重点区分离线 GT 监督与在线因果输入、相同目标的原始/适配对照、验证选模与独立测试、完整/ROI 训练设置与真正的 P/F 方法收益；最新大体积产物和权重仍在本机。
 
-继续推进的入口：MTR 六组等预算协议见 [mtr_stability_plan.md](mtr_stability_plan.md)，驾驶初始化/解码真实接入见 [driving_decoder_results.md](driving_decoder_results.md)。新增 `check_training.py` 与原 builder 的可训练 LoRA 加载支持；监督前向、真实更新、重载和正式适配必须分别核实。权重和完整缓存仍留在工作站，精选文件范围见 [本次更新说明](github_update_2026_09_11.md)。
+最新补充：MTR 六组等预算训练及冻结选择见 [mtr_stability_results.md](mtr_stability_results.md)，驾驶初始化/解码真实接入见 [driving_decoder_results.md](driving_decoder_results.md)。`check_training.py` 与原 builder 的可训练 LoRA 路径已完成四组合一次真实更新、独立重载与生成，见 [训练入口结果](driving_training_readiness_results.md)；这些检查与正式适配必须分别核实。权重和完整缓存仍留在工作站，精选文件范围见 [本次更新说明](github_update_2026_09_11.md)。
 
 ## 审查入口
 

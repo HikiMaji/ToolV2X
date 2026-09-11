@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "reason": "CUDA out of memory during P backward",
+  "log": "outputs/driving_training_readiness_v1/got_direct_failure.log",
+  "optimizer_steps": 0,
+  "prior_artifacts_preserved": true
+}

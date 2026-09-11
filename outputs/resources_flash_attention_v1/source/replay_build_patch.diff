@@ -1,0 +1,84 @@
+--- a/setup.py
++++ b/setup.py
+@@ -124 +124,4 @@
+-        if bare_metal_version >= Version("11.8"):
++        # Target build is for Ada (RTX 4090, sm89); omit the optional Hopper
++        # sm90 image to keep the local wheel bounded and preserve the PyPI
++        # source tarball unchanged.
++        if bare_metal_version >= Version("11.8") and os.getenv("FLASH_ATTENTION_INCLUDE_SM90", "FALSE") == "TRUE":
+@@ -135,0 +139,3 @@
++            # Targeted build: LLaVA 7B uses head_dim=128. The original PyPI
++            # source list is retained in the tarball; this wheel compiles the
++            # fp16/bf16 hdim128 forward, backward, and split kernels only.
+@@ -138,6 +143,0 @@
+-                "csrc/flash_attn/src/flash_fwd_hdim32_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim32_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim64_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim64_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim96_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim96_bf16_sm80.cu",
+@@ -146,14 +145,0 @@
+-                "csrc/flash_attn/src/flash_fwd_hdim160_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim160_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim192_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim192_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim224_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim224_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim256_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_hdim256_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim32_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim32_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim64_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim64_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim96_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim96_bf16_sm80.cu",
+@@ -162,14 +147,0 @@
+-                "csrc/flash_attn/src/flash_bwd_hdim160_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim160_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim192_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim192_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim224_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim224_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim256_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_bwd_hdim256_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim32_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim32_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim64_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim64_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim96_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim96_bf16_sm80.cu",
+@@ -178,8 +149,0 @@
+-                "csrc/flash_attn/src/flash_fwd_split_hdim160_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim160_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim192_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim192_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim224_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim224_bf16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim256_fp16_sm80.cu",
+-                "csrc/flash_attn/src/flash_fwd_split_hdim256_bf16_sm80.cu",
+--- a/csrc/flash_attn/flash_api.cpp
++++ b/csrc/flash_attn/flash_api.cpp
+@@ -217,0 +218 @@
++    TORCH_CHECK(params.d == 128, "This local FlashAttention wheel only supports head dimension 128.");
+@@ -219,7 +220,6 @@
+-        HEADDIM_SWITCH(params.d, [&] {
+-            if (params.num_splits <= 1 && !force_split_kernel) {  // If we don't set it num_splits == 0
+-                run_mha_fwd_<elem_type, kHeadDim>(params, stream);
+-            } else {
+-                run_mha_fwd_splitkv_dispatch<elem_type, kHeadDim>(params, stream);
+-            }
+-        });
++        constexpr static int kHeadDim = 128;
++        if (params.num_splits <= 1 && !force_split_kernel) {  // If we don't set it num_splits == 0
++            run_mha_fwd_<elem_type, kHeadDim>(params, stream);
++        } else {
++            run_mha_fwd_splitkv_dispatch<elem_type, kHeadDim>(params, stream);
++        }
+@@ -748,0 +749 @@
++    TORCH_CHECK(params.d == 128, "This local FlashAttention wheel only supports head dimension 128.");
+@@ -750,3 +751,2 @@
+-        HEADDIM_SWITCH(params.d, [&] {
+-            run_mha_bwd_<elem_type, kHeadDim>(params, stream);
+-        });
++        constexpr static int kHeadDim = 128;
++        run_mha_bwd_<elem_type, kHeadDim>(params, stream);

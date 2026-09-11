@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "returncode": 0,
+  "source": "exported staged file tree",
+  "external_resource_roots_disabled": true,
+  "python_environment": "existing llava Python 3.8; no new dependency environment created",
+  "lightweight_tests": 66,
+  "full_tests_before_export": 91
+}

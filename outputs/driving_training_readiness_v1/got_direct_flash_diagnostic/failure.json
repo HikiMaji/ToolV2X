@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "reason": "torch built-in Flash SDPA does not support head_dim 128 training on sm89",
+  "log": "outputs/driving_training_readiness_v1/flash_diagnostic.log",
+  "optimizer_steps": 0,
+  "prior_artifacts_preserved": true
+}
