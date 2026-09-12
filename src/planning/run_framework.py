@@ -21,6 +21,68 @@ def read_jsonl(path):
         return [json.loads(line) for line in handle if line.strip()]
 
 
+def completed_prefix(root, rows, config):
+    """Reuse confirmed complete frames; leave the unfinished tail in its original run."""
+    from planning.inputs import make_prompt
+    old = json.loads((root/'config.json').read_text())
+    keys = ('source_data','per_recording','policies','p_processing','input_layout',
+            'mtr_checkpoint','context_limit','peer_reserve')
+    if any(old.get(k) != config[k] for k in keys):
+        raise ValueError('resume preparation configuration changed')
+    if read_jsonl(root/'selected_index.jsonl') != rows:
+        raise ValueError('resume causal index changed')
+    progress = json.loads((root/'progress.json').read_text())
+    frames = progress['frames']
+    if isinstance(frames, bool) or not isinstance(frames, int) or not 0 <= frames <= len(rows):
+        raise ValueError('invalid completed frame prefix')
+    count = frames*len(config['policies'])
+    lines = (root/'tasks.jsonl').read_text().splitlines()
+    if progress['tasks'] != count or len(lines) < count:
+        raise ValueError('incomplete task prefix')
+    records = [json.loads(line) for line in lines[:count]]
+    for number, record in enumerate(records):
+        row = rows[number//len(config['policies'])]
+        expected = dict(row, policy=config['policies'][number%len(config['policies'])])
+        task = json.loads(Path(record['path']).read_text())
+        if any(record[k] != expected[k] or task[k] != expected[k] for k in ('sample_id','scene','role','g','policy')):
+            raise ValueError('resume task identity changed')
+        if any(task[k] != row[k] for k in ('ego_motion','feature_read_paths','motion_read_paths')):
+            raise ValueError('resume task causal input changed')
+        if number % len(config['policies']) == 0:
+            feature_path = task['feature_path']
+        elif task['feature_path'] != feature_path:
+            raise ValueError('resume policies no longer share ego features')
+        if (task['status'] != 'prepared' or task['episode']['status'] != 'tools_completed' or
+                task['episode']['p_processing'] != config['p_processing'] or not Path(task['feature_path']).is_file()):
+            raise ValueError('resume prefix contains an unsuccessful or unavailable task')
+        prepared = task['prepared']
+        prompt = make_prompt('Trajectory',task['ego_motion'],prepared['evidence_used'],evidence_format='compact',
+                             remote_evidence=prepared['remote_evidence_used'])
+        if prepared['input_layout'] != config['input_layout'] or prompt != prepared['q9_prompt']:
+            raise ValueError('resume task prompt changed')
+    return records, dict(resume_from=str(root), reused_frames=frames, reused_tasks=count,
+                         unreused_task_lines=len(lines)-count, original_progress=progress)
+
+
+def check_resume_source(root):
+    # Only this orchestration module may change when adding preparation resumption.
+    snapshot = root/'code_snapshot'
+    for name in ('src','vendor/cmp_mtr','v2vgot_original'):
+        source = snapshot/name
+        if not source.is_dir():
+            raise ValueError('missing preparation source snapshot')
+        for path in source.rglob('*'):
+            if not path.is_file():
+                continue
+            relative = path.relative_to(snapshot)
+            if relative == Path('src/planning/run_framework.py'):
+                continue
+            target = (ROOT/'vendor/v2vgot_llava'/path.relative_to(source)
+                      if name == 'v2vgot_original' else ROOT/relative)
+            if not target.is_file() or path.read_bytes() != target.read_bytes():
+                raise ValueError('preparation dependency changed: '+str(relative))
+
+
 def completed_tasks(root):
     """Require every selected frame/policy, including failed attempts, exactly once."""
     progress = json.loads((root/'progress.json').read_text())
@@ -59,7 +121,7 @@ def select_rows(data, per_recording=0):
     return result
 
 
-def prepare(data, out, per_recording=0, predict_p=True, policies=POLICIES):
+def prepare(data, out, per_recording=0, predict_p=True, policies=POLICIES, resume_from=None):
     import torch
     from transformers import AutoTokenizer
     from common import v2v4real_meta as M
@@ -74,14 +136,28 @@ def prepare(data, out, per_recording=0, predict_p=True, policies=POLICIES):
     if not rows or not policies or set(policies) - set(POLICIES) or len(policies) != len(set(policies)):
         raise ValueError('empty or invalid task selection')
     config = json.loads((data / 'config.json').read_text())
+    run_config = dict(source_data=str(data), per_recording=per_recording, policies=list(policies),
+        p_processing='local_mtr' if predict_p else 'observations', input_layout='source_blocks_v1',
+        mtr_checkpoint=config['mtr_checkpoint'], context_limit=4096, peer_reserve=1536,
+        real_rgb_input=False, gt_labels_read=False, driver_executed=False, scope='complete tool episodes and shared inputs')
+    previous, resume = [], dict(reused_frames=0, reused_tasks=0)
+    if resume_from:
+        check_resume_source(resume_from)
+        previous, resume = completed_prefix(resume_from, rows, run_config)
     out.mkdir(parents=True, exist_ok=False)
     snapshot_code(out)
     (out / 'frames').mkdir()
     (out / 'selected_index.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
-    save_json(out / 'config.json', dict(source_data=str(data), per_recording=per_recording, policies=list(policies),
-        p_processing='local_mtr' if predict_p else 'observations', input_layout='source_blocks_v1',
-        mtr_checkpoint=config['mtr_checkpoint'], context_limit=4096, peer_reserve=1536,
-        real_rgb_input=False, gt_labels_read=False, driver_executed=False, scope='complete tool episodes and shared inputs'))
+    save_json(out/'config.json', dict(run_config, resume_from=str(resume_from) if resume_from else None))
+    save_json(out/'resumption.json', resume)
+    (out/'tasks.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in previous))
+    progress = dict(status='initializing', frames=resume['reused_frames'], expected_frames=len(rows),
+        tasks=len(previous), task_failures=0, reused_frames=resume['reused_frames'], new_frames=0, elapsed_seconds=0.)
+    save_json(out/'progress.json', progress)
+    if resume['reused_frames'] == len(rows):
+        save_json(out/'mtr_loading.json', json.loads((resume_from/'mtr_loading.json').read_text()))
+        save_json(out/'progress.json', dict(progress, status='completed'))
+        return
     torch.set_num_threads(1)
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
@@ -95,9 +171,9 @@ def prepare(data, out, per_recording=0, predict_p=True, policies=POLICIES):
             return pickle.load(handle)
 
     begin = perf_counter()
-    completed, failed = 0, 0
-    with (out / 'tasks.jsonl').open('w') as tasks:
-        for index, row in enumerate(rows):
+    completed, failed = len(previous), 0
+    with (out / 'tasks.jsonl').open('a') as tasks:
+        for index, row in enumerate(rows[resume['reused_frames']:], start=resume['reused_frames']):
             directory = out / 'frames' / ('%s_g%04d' % (row['role'], row['g']))
             directory.mkdir()
             reads = []
@@ -167,7 +243,8 @@ def prepare(data, out, per_recording=0, predict_p=True, policies=POLICIES):
                 failed += task['status'] != 'prepared'
                 completed += 1
             progress = dict(status='running', frames=index+1, expected_frames=len(rows), tasks=completed,
-                            task_failures=failed, elapsed_seconds=perf_counter()-begin)
+                            task_failures=failed, reused_frames=resume['reused_frames'],
+                            new_frames=index+1-resume['reused_frames'], elapsed_seconds=perf_counter()-begin)
             save_json(out / 'progress.json', progress)
             if index % 25 == 0 or index+1 == len(rows):
                 print(json.dumps(progress), flush=True)
@@ -229,6 +306,7 @@ if __name__ == '__main__':
     prepare_parser.add_argument('--data', type=Path, default=ROOT / 'outputs/paired_driving_data_v1')
     prepare_parser.add_argument('--per-recording', type=int, default=0)
     prepare_parser.add_argument('--p-processing', choices=('local_mtr', 'observations'), default='local_mtr')
+    prepare_parser.add_argument('--resume-from', type=Path, help='reuse the completed frame prefix from a previous preparation')
     gen_parser = commands.add_parser('generate')
     gen_parser.add_argument('prepared_root', type=Path)
     gen_parser.add_argument('out', type=Path)
@@ -238,7 +316,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     try:
         if args.command == 'prepare':
-            prepare(args.data.resolve(), args.out.resolve(), args.per_recording, args.p_processing == 'local_mtr')
+            prepare(args.data.resolve(), args.out.resolve(), args.per_recording, args.p_processing == 'local_mtr',
+                    resume_from=args.resume_from.resolve() if args.resume_from else None)
         else:
             generate(args.prepared_root.resolve(), args.out.resolve(), args.checkpoint.resolve(), args.role, args.per_recording)
     except Exception as exc:

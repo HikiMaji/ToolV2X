@@ -1,0 +1,24 @@
+{
+  "status": "stopped_by_user",
+  "at": "2026-09-12T18:23:59.331075+08:00",
+  "pids": [
+    3906,
+    3986
+  ],
+  "latest_complete_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/recovery-step001925",
+  "evaluation_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/checkpoint-epoch01",
+  "progress_at_stop": {
+    "epoch": 1,
+    "next_row": 592,
+    "steps": 1941,
+    "examples_seen": 15527,
+    "loss": 0.13514200784265995,
+    "gradient_norm": 1.3456761837005615,
+    "elapsed_seconds": 24802.977363741957,
+    "status": "training"
+  },
+  "reason": "User requested stopping training and evaluating saved results first; no automatic training restart.",
+  "verified_at": "2026-09-12T18:25:09.259641+08:00",
+  "training_processes_absent": true,
+  "training_will_not_auto_resume": true
+}

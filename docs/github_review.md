@@ -1,6 +1,8 @@
 # GitHub 审查入口
 
-当前审查重点为 [完整框架实现与真实联调](framework_baseline_results.md)，发布范围见 [本轮更新](github_update_framework_2026_09_11.md)。新增 `planning/context.py`、`episode.py`、`run_framework.py`、`train_driver.py`、`evaluation/framework.py` 与两项 `scripts/prepare_framework_training.py` / `run_framework_baseline.py` 入口，连通真实查询、更新/停止、统一驾驶、训练恢复与评价。共享驾驶全量适配仍在本机后台执行，GitHub 的进度是带时间的发布快照。
+**最新发布范围：** 先读 [09-12 更新说明](github_update_2026_09_12.md)、[第一轮评价](epoch01_quick_evaluation_2026_09_12.md) 和 [主线候选](mainline_innovation_search_2026_09_12.md)。当前训练已按用户要求停止；160 条实际轨迹与离线标签已随精选证据上传，可运行更新说明中的标准库复算。候选机制尚未实现，不把研究报告当现有算法。下文保留历史审查入口和核验记录。
+
+当前审查重点为 [完整框架实现与真实联调](framework_baseline_results.md)，发布范围见 [本轮更新](github_update_framework_2026_09_11.md)。新增 `planning/context.py`、`episode.py`、`run_framework.py`、`train_driver.py`、`evaluation/framework.py` 与两项 `scripts/prepare_framework_training.py` / `run_framework_baseline.py` 入口，连通真实查询、更新/停止、统一驾驶、训练恢复与评价。GitHub 的进度是带时间的发布快照；之后本机核对发现原全量准备中断，当前在新目录续接，见 [9-11-2 核实与恢复记录](review_9_11_2_response.md)。本轮本地修改尚未再次发布。
 
 本轮精选归档包含全部 20 次验证生成及其原始任务、4 条独立离线标签、2 个训练帧的提前停止实例。`check_review.py` 能在没有模型和完整数据的环境里重建提示、重算 ADE/FDE 和实际通信字节，并核对退化答案没有被删除。它不替代 GPU 训练、全量评价或学习查询机制检验。原始任务索引包含 100 项，只有上述 22 项完整 JSON 被发布；未上传的特征、其他任务和重复源码快照仍需本机资源。
 

@@ -1,0 +1,148 @@
+{
+  "status": "passed",
+  "attempts": 160,
+  "frames": 32,
+  "paired_counts": {
+    "P": {
+      "improved": 9,
+      "harmed": 13,
+      "equal": 10
+    },
+    "F": {
+      "improved": 7,
+      "harmed": 15,
+      "equal": 10
+    },
+    "PF": {
+      "improved": 8,
+      "harmed": 18,
+      "equal": 6
+    },
+    "rule": {
+      "improved": 8,
+      "harmed": 17,
+      "equal": 7
+    }
+  },
+  "motion_reference": {
+    "ADE3": 1.532692872483377,
+    "FDE3": 2.9731490633643514
+  },
+  "examples": [
+    {
+      "selection": "minimum F-minus-Ego within recording",
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:49",
+      "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+      "g": 5565,
+      "Ego_valid": true,
+      "Ego_ADE3": 1.6054303245342096,
+      "Ego_FDE3": 3.42016065224225,
+      "P_valid": true,
+      "P_ADE3": 2.2441361039184056,
+      "P_FDE3": 4.602115642442083,
+      "P_ADE3_minus_Ego": 0.6387057793841959,
+      "F_valid": true,
+      "F_ADE3": 0.47733106249475726,
+      "F_FDE3": 0.7868212220515299,
+      "F_ADE3_minus_Ego": -1.1280992620394523,
+      "PF_valid": true,
+      "PF_ADE3": 0.585781503622851,
+      "PF_FDE3": 0.8948175555192701,
+      "PF_ADE3_minus_Ego": -1.0196488209113586,
+      "rule_valid": true,
+      "rule_ADE3": 0.4770681132728674,
+      "rule_FDE3": 0.7868212220515299,
+      "rule_ADE3_minus_Ego": -1.1283622112613423
+    },
+    {
+      "selection": "maximum F-minus-Ego within recording",
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+      "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+      "g": 5526,
+      "Ego_valid": true,
+      "Ego_ADE3": 0.96551995769819,
+      "Ego_FDE3": 1.9193147943445146,
+      "P_valid": true,
+      "P_ADE3": 0.9125603533527697,
+      "P_FDE3": 1.9193147943445146,
+      "P_ADE3_minus_Ego": -0.05295960434542024,
+      "F_valid": true,
+      "F_ADE3": 1.091232519096911,
+      "F_FDE3": 1.6709947776919185,
+      "F_ADE3_minus_Ego": 0.125712561398721,
+      "PF_valid": true,
+      "PF_ADE3": 0.9833931485073498,
+      "PF_FDE3": 1.9193147943445146,
+      "PF_ADE3_minus_Ego": 0.017873190809159833,
+      "rule_valid": true,
+      "rule_ADE3": 0.9003516499874347,
+      "rule_FDE3": 1.8460625741525043,
+      "rule_ADE3_minus_Ego": -0.06516830771075532
+    },
+    {
+      "selection": "minimum F-minus-Ego within recording",
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+      "g": 7007,
+      "Ego_valid": true,
+      "Ego_ADE3": 0.4105095002958932,
+      "Ego_FDE3": 1.1894324961783027,
+      "P_valid": true,
+      "P_ADE3": 1.5720701354213948,
+      "P_FDE3": 4.001885443789345,
+      "P_ADE3_minus_Ego": 1.1615606351255017,
+      "F_valid": true,
+      "F_ADE3": 0.4105095002958932,
+      "F_FDE3": 1.1894324961783027,
+      "F_ADE3_minus_Ego": 0.0,
+      "PF_valid": true,
+      "PF_ADE3": 1.2985121749441861,
+      "PF_FDE3": 1.6210523168706974,
+      "PF_ADE3_minus_Ego": 0.888002674648293,
+      "rule_valid": true,
+      "rule_ADE3": 1.2985121749441861,
+      "rule_FDE3": 1.6210523168706974,
+      "rule_ADE3_minus_Ego": 0.888002674648293
+    },
+    {
+      "selection": "maximum F-minus-Ego within recording",
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:28",
+      "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+      "g": 7025,
+      "Ego_valid": true,
+      "Ego_ADE3": 0.8885143771141747,
+      "Ego_FDE3": 2.3855290624110506,
+      "P_valid": true,
+      "P_ADE3": 4.2450249049487185,
+      "P_FDE3": 8.416989946612267,
+      "P_ADE3_minus_Ego": 3.3565105278345437,
+      "F_valid": true,
+      "F_ADE3": 2.833896904213597,
+      "F_FDE3": 5.828786201071397,
+      "F_ADE3_minus_Ego": 1.9453825270994223,
+      "PF_valid": true,
+      "PF_ADE3": 2.833896904213597,
+      "PF_FDE3": 5.828786201071397,
+      "PF_ADE3_minus_Ego": 1.9453825270994223,
+      "rule_valid": true,
+      "rule_ADE3": 2.833896904213597,
+      "rule_FDE3": 5.828786201071397,
+      "rule_ADE3_minus_Ego": 1.9453825270994223
+    }
+  ],
+  "example_selection": "posthoc per-recording F difference extrema; not representative prevalence",
+  "leave_largest_benefit_out": {
+    "PF": {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:44",
+      "ego_ADE3": 4.685018081120828,
+      "policy_ADE3": 1.5283571987947049,
+      "remaining_mean_ADE3_minus_Ego": 0.08227084420490036
+    },
+    "rule": {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:44",
+      "ego_ADE3": 4.685018081120828,
+      "policy_ADE3": 0.08089603577373107,
+      "remaining_mean_ADE3_minus_Ego": 0.04542482821071852
+    }
+  }
+}

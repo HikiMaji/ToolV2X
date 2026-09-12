@@ -12,6 +12,57 @@ sys.path.insert(0, str(ROOT / 'src'))
 
 
 class PipelineTests(unittest.TestCase):
+    def test_preparation_resume_reuses_only_complete_frames_and_rejects_drift(self):
+        from planning.run_framework import completed_prefix
+        from planning.inputs import make_prompt
+        policies = ['Ego', 'P']
+        motion = dict(speed_mps=1.,yaw_rate_rps=0.)
+        rows = [dict(sample_id='s:%d'%g, scene='s', role='train', g=g, ego_motion=motion,
+                     feature_read_paths=['/features/%d'%g], motion_read_paths=['/motion/%d'%g]) for g in (10,11)]
+        config = dict(source_data='/data', per_recording=0, policies=policies, p_processing='local_mtr',
+                      input_layout='source_blocks_v1', mtr_checkpoint='/model', context_limit=4096, peer_reserve=1536)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'config.json').write_text(json.dumps(config))
+            (root/'selected_index.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
+            (root/'progress.json').write_text(json.dumps(dict(frames=1,tasks=2,status='running')))
+            feature = root/'features.npz'
+            feature.write_bytes(b'existing feature placeholder')
+            evidence = dict(as_of_g=10, coordinate_frame='ego_at_t', objects=[], queries=[])
+            prompt = make_prompt('Trajectory',motion,evidence,evidence_format='compact')
+            records=[]
+            for policy in policies:
+                path=root/(policy+'.json')
+                record=dict(rows[0], policy=policy, path=str(path))
+                task=dict(rows[0],policy=policy,status='prepared',feature_path=str(feature),
+                    episode=dict(status='tools_completed',p_processing='local_mtr'),
+                    prepared=dict(input_layout='source_blocks_v1',evidence_used=evidence,remote_evidence_used=None,q9_prompt=prompt))
+                path.write_text(json.dumps(task))
+                records.append(record)
+            # A write interrupted midway through the next frame must not invalidate the complete prefix.
+            (root/'tasks.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records)+'{"unfinished":')
+            actual, metadata = completed_prefix(root, rows, config)
+            self.assertEqual(actual, records)
+            self.assertEqual(metadata['reused_frames'],1)
+            self.assertEqual(metadata['unreused_task_lines'],1)
+            with self.assertRaisesRegex(ValueError,'configuration'):
+                completed_prefix(root,rows,dict(config,peer_reserve=0))
+            with self.assertRaisesRegex(ValueError,'index'):
+                completed_prefix(root,list(reversed(rows)),config)
+            original=json.loads((root/'P.json').read_text())
+            altered=json.loads((root/'P.json').read_text())
+            altered['ego_motion']['speed_mps'] = 3.
+            altered['prepared']['q9_prompt'] = make_prompt('Trajectory',altered['ego_motion'],evidence,evidence_format='compact')
+            (root/'P.json').write_text(json.dumps(altered))
+            with self.assertRaisesRegex(ValueError,'causal input'):
+                completed_prefix(root,rows,config)
+            (root/'P.json').write_text(json.dumps(original))
+            altered=json.loads((root/'P.json').read_text())
+            altered['prepared']['q9_prompt'] += ' modified'
+            (root/'P.json').write_text(json.dumps(altered))
+            with self.assertRaisesRegex(ValueError,'prompt'):
+                completed_prefix(root,rows,config)
+
     def test_incomplete_generation_cannot_be_published_as_completed(self):
         from evaluation.framework import validate_generation_run
         with tempfile.TemporaryDirectory() as directory:

@@ -1,0 +1,78 @@
+{
+  "checked_at": "2026-09-12T14:51:44.264439+08:00",
+  "scope": "read-only source and metadata audit; no model execution or test labels read",
+  "split": {
+    "train": {
+      "segments": 15,
+      "recordings": 8,
+      "candidate_frames": 3027
+    },
+    "validation": {
+      "segments": 2,
+      "recordings": 2,
+      "candidate_frames": 108
+    },
+    "test": {
+      "segments": 9,
+      "recordings": 6,
+      "candidate_frames": 1453
+    }
+  },
+  "training_config": {
+    "data": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/training_data",
+    "original_checkpoint": "/root/autodl-tmp/V2V-GoT/LLaVA/checkpoints/llava-v1.5-7b-task-lora/llava-v1.5-7b-task-lora_v2v4real_3d_grounding_v2vgot_10ep_both_shallow_f2/checkpoint-4330",
+    "epochs": 3,
+    "batch_size": 8,
+    "seed": 20,
+    "learning_rate": 2e-05,
+    "projector_learning_rate": 2e-05,
+    "weight_decay": 0.0,
+    "gradient_clip": 1.0,
+    "patience": 2,
+    "maximum_optimizer_steps": null,
+    "resume": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/first_step/recovery-step000001",
+    "train_rows": 14935,
+    "validation_rows": 540,
+    "input_layout": "source_blocks_v1",
+    "decoding": "direct",
+    "mtr_updated": false,
+    "actual_rgb_input": false,
+    "optimizer": "AdamW",
+    "answer_only_head": false,
+    "benchmark_only": false,
+    "checkpoint_steps": 25,
+    "pause_after_steps": null,
+    "checkpoint_retention": "two periodic recovery points plus epoch checkpoints",
+    "selection": "macro validation answer loss over recording and policy; never F improvement",
+    "integration_only": false,
+    "scope": "single-configuration shared driver adaptation"
+  },
+  "progress_snapshot": {
+    "epoch": 0,
+    "next_row": 7648,
+    "steps": 956,
+    "examples_seen": 7648,
+    "loss": 0.14494849927723408,
+    "gradient_norm": 2.3469409942626953,
+    "elapsed_seconds": 12064.41756319115,
+    "status": "training"
+  },
+  "checkpoint_pointer": {
+    "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/recovery-step000950",
+    "steps": 950,
+    "epoch": 0,
+    "next_row": 7600
+  },
+  "pid_alive": {
+    "3906": true,
+    "3986": true
+  },
+  "checked_sources": [
+    "src/planning/episode.py",
+    "src/planning/context.py",
+    "src/planning/adaptation_data.py",
+    "src/planning/train_driver.py",
+    "src/evaluation/framework.py",
+    "outputs/protocol_audit/split_manifest.json"
+  ]
+}

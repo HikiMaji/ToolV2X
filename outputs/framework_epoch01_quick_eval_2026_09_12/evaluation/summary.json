@@ -1,0 +1,445 @@
+{
+  "status": "completed",
+  "attempts": 160,
+  "policies": {
+    "Ego": {
+      "attempts": 32,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "cost_incomplete_attempts": 0,
+      "mean_ADE3": 1.7412095132312215,
+      "mean_FDE3": 3.4349342258794353,
+      "mean_calls": 0.0,
+      "mean_request_bytes": 0.0,
+      "mean_response_bytes": 0.0,
+      "stop_reasons": {
+        "fixed_sequence_completed": 32
+      },
+      "mean_local_model_seconds": 0.023697662552876864,
+      "mean_service_seconds": 0.0,
+      "mean_receiver_seconds": 0.0,
+      "mean_driver_seconds": 1.698658155328303,
+      "mean_total_compute_seconds": 1.72235581788118
+    },
+    "F": {
+      "attempts": 32,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "cost_incomplete_attempts": 0,
+      "mean_ADE3": 1.8212602648395642,
+      "mean_FDE3": 3.4793004714939517,
+      "mean_calls": 1.0,
+      "mean_request_bytes": 138.5,
+      "mean_response_bytes": 36381.8125,
+      "stop_reasons": {
+        "fixed_sequence_completed": 32
+      },
+      "mean_local_model_seconds": 0.023697662552876864,
+      "mean_service_seconds": 0.03000289497867925,
+      "mean_receiver_seconds": 0.010173003778618295,
+      "mean_driver_seconds": 2.0560331138185575,
+      "mean_total_compute_seconds": 2.119906675128732
+    },
+    "P": {
+      "attempts": 32,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "cost_incomplete_attempts": 0,
+      "mean_ADE3": 1.937440449904408,
+      "mean_FDE3": 3.9010140854618722,
+      "mean_calls": 1.0,
+      "mean_request_bytes": 138.5,
+      "mean_response_bytes": 42356.59375,
+      "stop_reasons": {
+        "fixed_sequence_completed": 32
+      },
+      "mean_local_model_seconds": 0.023697662552876864,
+      "mean_service_seconds": 0.006166315302834846,
+      "mean_receiver_seconds": 0.04770410739729414,
+      "mean_driver_seconds": 2.0142835912047303,
+      "mean_total_compute_seconds": 2.091851676457736
+    },
+    "PF": {
+      "attempts": 32,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "cost_incomplete_attempts": 0,
+      "mean_ADE3": 1.7222637409820272,
+      "mean_FDE3": 3.32508479176141,
+      "mean_calls": 2.0,
+      "mean_request_bytes": 277.0,
+      "mean_response_bytes": 78738.40625,
+      "stop_reasons": {
+        "call_budget_exhausted": 32
+      },
+      "mean_local_model_seconds": 0.023697662552876864,
+      "mean_service_seconds": 0.03534398678311845,
+      "mean_receiver_seconds": 0.07449257661937736,
+      "mean_driver_seconds": 2.059796436005854,
+      "mean_total_compute_seconds": 2.1933306619612267
+    },
+    "rule": {
+      "attempts": 32,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "cost_incomplete_attempts": 0,
+      "mean_ADE3": 1.641336001643258,
+      "mean_FDE3": 3.1921228574757046,
+      "mean_calls": 2.0,
+      "mean_request_bytes": 339.0,
+      "mean_response_bytes": 17695.40625,
+      "stop_reasons": {
+        "call_budget_exhausted": 32
+      },
+      "mean_local_model_seconds": 0.023697662552876864,
+      "mean_service_seconds": 0.03319250891217962,
+      "mean_receiver_seconds": 0.03760590750607662,
+      "mean_driver_seconds": 2.045973278749443,
+      "mean_total_compute_seconds": 2.1404693577205762
+    }
+  },
+  "paired_vs_ego": {
+    "F": {
+      "matched_attempts": 32,
+      "both_valid": 32,
+      "ego_valid_peer_failed": 0,
+      "ego_failed_peer_valid": 0,
+      "both_failed": 0,
+      "mean_ADE3_difference": 0.08005075160834285,
+      "mean_FDE3_difference": 0.044366245614516325,
+      "improved_fraction": 0.21875,
+      "harmed_fraction": 0.46875
+    },
+    "P": {
+      "matched_attempts": 32,
+      "both_valid": 32,
+      "ego_valid_peer_failed": 0,
+      "ego_failed_peer_valid": 0,
+      "both_failed": 0,
+      "mean_ADE3_difference": 0.1962309366731865,
+      "mean_FDE3_difference": 0.46607985958243686,
+      "improved_fraction": 0.28125,
+      "harmed_fraction": 0.40625
+    },
+    "PF": {
+      "matched_attempts": 32,
+      "both_valid": 32,
+      "ego_valid_peer_failed": 0,
+      "ego_failed_peer_valid": 0,
+      "both_failed": 0,
+      "mean_ADE3_difference": -0.018945772249194096,
+      "mean_FDE3_difference": -0.10984943411802534,
+      "improved_fraction": 0.25,
+      "harmed_fraction": 0.5625
+    },
+    "rule": {
+      "matched_attempts": 32,
+      "both_valid": 32,
+      "ego_valid_peer_failed": 0,
+      "ego_failed_peer_valid": 0,
+      "both_failed": 0,
+      "mean_ADE3_difference": -0.09987351158796323,
+      "mean_FDE3_difference": -0.24281136840373085,
+      "improved_fraction": 0.25,
+      "harmed_fraction": 0.53125
+    }
+  },
+  "by_recording": {
+    "testoutput_CAV_data_2022-03-17-16-06-11": {
+      "policies": {
+        "Ego": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 1.1013263371503852,
+          "mean_FDE3": 2.227755262906623,
+          "mean_calls": 0.0,
+          "mean_request_bytes": 0.0,
+          "mean_response_bytes": 0.0,
+          "stop_reasons": {
+            "fixed_sequence_completed": 16
+          },
+          "mean_local_model_seconds": 0.02511852706084028,
+          "mean_service_seconds": 0.0,
+          "mean_receiver_seconds": 0.0,
+          "mean_driver_seconds": 1.6896316507918527,
+          "mean_total_compute_seconds": 1.714750177852693
+        },
+        "F": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 0.9498398224885982,
+          "mean_FDE3": 1.7479626977867948,
+          "mean_calls": 1.0,
+          "mean_request_bytes": 138.0,
+          "mean_response_bytes": 46928.9375,
+          "stop_reasons": {
+            "fixed_sequence_completed": 16
+          },
+          "mean_local_model_seconds": 0.02511852706084028,
+          "mean_service_seconds": 0.032856796533451416,
+          "mean_receiver_seconds": 0.013585661989054643,
+          "mean_driver_seconds": 2.0669591920013772,
+          "mean_total_compute_seconds": 2.1385201775847236
+        },
+        "P": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 1.1561709597532162,
+          "mean_FDE3": 2.338265436340614,
+          "mean_calls": 1.0,
+          "mean_request_bytes": 138.0,
+          "mean_response_bytes": 54474.875,
+          "stop_reasons": {
+            "fixed_sequence_completed": 16
+          },
+          "mean_local_model_seconds": 0.02511852706084028,
+          "mean_service_seconds": 0.007803265572874807,
+          "mean_receiver_seconds": 0.05205426328757312,
+          "mean_driver_seconds": 2.0074267956078984,
+          "mean_total_compute_seconds": 2.0924028515291866
+        },
+        "PF": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 1.0248364450544185,
+          "mean_FDE3": 1.9634703171191144,
+          "mean_calls": 2.0,
+          "mean_request_bytes": 276.0,
+          "mean_response_bytes": 101403.8125,
+          "stop_reasons": {
+            "call_budget_exhausted": 16
+          },
+          "mean_local_model_seconds": 0.02511852706084028,
+          "mean_service_seconds": 0.039413524384144694,
+          "mean_receiver_seconds": 0.09394785549375229,
+          "mean_driver_seconds": 2.0638702547439607,
+          "mean_total_compute_seconds": 2.222350161682698
+        },
+        "rule": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 0.9230019375913614,
+          "mean_FDE3": 1.822023521672318,
+          "mean_calls": 2.0,
+          "mean_request_bytes": 338.5,
+          "mean_response_bytes": 23904.1875,
+          "stop_reasons": {
+            "call_budget_exhausted": 16
+          },
+          "mean_local_model_seconds": 0.02511852706084028,
+          "mean_service_seconds": 0.03577256506832782,
+          "mean_receiver_seconds": 0.04548606197931804,
+          "mean_driver_seconds": 2.056366995864664,
+          "mean_total_compute_seconds": 2.1627441499731503
+        }
+      },
+      "paired_vs_ego": {
+        "F": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": -0.15148651466178692,
+          "mean_FDE3_difference": -0.4797925651198278,
+          "improved_fraction": 0.4375,
+          "harmed_fraction": 0.3125
+        },
+        "P": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": 0.05484462260283088,
+          "mean_FDE3_difference": 0.11051017343399153,
+          "improved_fraction": 0.375,
+          "harmed_fraction": 0.375
+        },
+        "PF": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": -0.0764898920959666,
+          "mean_FDE3_difference": -0.2642849457875084,
+          "improved_fraction": 0.3125,
+          "harmed_fraction": 0.4375
+        },
+        "rule": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": -0.17832439955902374,
+          "mean_FDE3_difference": -0.4057317412343047,
+          "improved_fraction": 0.375,
+          "harmed_fraction": 0.375
+        }
+      }
+    },
+    "testoutput_CAV_data_2022-03-21-09-50-20": {
+      "policies": {
+        "Ego": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 2.381092689312058,
+          "mean_FDE3": 4.642113188852248,
+          "mean_calls": 0.0,
+          "mean_request_bytes": 0.0,
+          "mean_response_bytes": 0.0,
+          "stop_reasons": {
+            "fixed_sequence_completed": 16
+          },
+          "mean_local_model_seconds": 0.02227679804491345,
+          "mean_service_seconds": 0.0,
+          "mean_receiver_seconds": 0.0,
+          "mean_driver_seconds": 1.7076846598647535,
+          "mean_total_compute_seconds": 1.729961457909667
+        },
+        "F": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 2.6926807071905303,
+          "mean_FDE3": 5.210638245201109,
+          "mean_calls": 1.0,
+          "mean_request_bytes": 139.0,
+          "mean_response_bytes": 25834.6875,
+          "stop_reasons": {
+            "fixed_sequence_completed": 16
+          },
+          "mean_local_model_seconds": 0.02227679804491345,
+          "mean_service_seconds": 0.027148993423907086,
+          "mean_receiver_seconds": 0.006760345568181947,
+          "mean_driver_seconds": 2.0451070356357377,
+          "mean_total_compute_seconds": 2.10129317267274
+        },
+        "P": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 2.7187099400556,
+          "mean_FDE3": 5.463762734583131,
+          "mean_calls": 1.0,
+          "mean_request_bytes": 139.0,
+          "mean_response_bytes": 30238.3125,
+          "stop_reasons": {
+            "fixed_sequence_completed": 16
+          },
+          "mean_local_model_seconds": 0.02227679804491345,
+          "mean_service_seconds": 0.004529365032794885,
+          "mean_receiver_seconds": 0.043353951507015154,
+          "mean_driver_seconds": 2.0211403868015623,
+          "mean_total_compute_seconds": 2.0913005013862858
+        },
+        "PF": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 2.419691036909636,
+          "mean_FDE3": 4.686699266403705,
+          "mean_calls": 2.0,
+          "mean_request_bytes": 278.0,
+          "mean_response_bytes": 56073.0,
+          "stop_reasons": {
+            "call_budget_exhausted": 16
+          },
+          "mean_local_model_seconds": 0.02227679804491345,
+          "mean_service_seconds": 0.03127444918209221,
+          "mean_receiver_seconds": 0.055037297745002434,
+          "mean_driver_seconds": 2.0557226172677474,
+          "mean_total_compute_seconds": 2.1643111622397555
+        },
+        "rule": {
+          "attempts": 16,
+          "failures": 0,
+          "failure_rate": 0.0,
+          "cost_incomplete_attempts": 0,
+          "mean_ADE3": 2.359670065695155,
+          "mean_FDE3": 4.562222193279091,
+          "mean_calls": 2.0,
+          "mean_request_bytes": 339.5,
+          "mean_response_bytes": 11486.625,
+          "stop_reasons": {
+            "call_budget_exhausted": 16
+          },
+          "mean_local_model_seconds": 0.02227679804491345,
+          "mean_service_seconds": 0.030612452756031416,
+          "mean_receiver_seconds": 0.0297257530328352,
+          "mean_driver_seconds": 2.035579561634222,
+          "mean_total_compute_seconds": 2.118194565468002
+        }
+      },
+      "paired_vs_ego": {
+        "F": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": 0.3115880178784726,
+          "mean_FDE3_difference": 0.5685250563488605,
+          "improved_fraction": 0.0,
+          "harmed_fraction": 0.625
+        },
+        "P": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": 0.33761725074354215,
+          "mean_FDE3_difference": 0.8216495457308821,
+          "improved_fraction": 0.1875,
+          "harmed_fraction": 0.4375
+        },
+        "PF": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": 0.03859834759757838,
+          "mean_FDE3_difference": 0.04458607755145766,
+          "improved_fraction": 0.1875,
+          "harmed_fraction": 0.6875
+        },
+        "rule": {
+          "matched_attempts": 16,
+          "both_valid": 16,
+          "ego_valid_peer_failed": 0,
+          "ego_failed_peer_valid": 0,
+          "both_failed": 0,
+          "mean_ADE3_difference": -0.021422623616902725,
+          "mean_FDE3_difference": -0.07989099557315704,
+          "improved_fraction": 0.125,
+          "harmed_fraction": 0.6875
+        }
+      }
+    }
+  },
+  "motion_reference": {
+    "count": 32,
+    "ADE3": 1.532692872483377
+  },
+  "timing_scope": "sum of measured local MTR, service, receiver and driver attempt durations; excludes model loading and network transport; shared local computation charged once per counterfactual task",
+  "scope": "development open-loop imitation and real serialized query costs; not closed-loop or learned-policy benefit"
+}

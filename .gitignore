@@ -216,3 +216,18 @@ __pycache__/
 !/outputs/framework_review_2026_09_11/*.json
 !/outputs/framework_review_2026_09_11/*.jsonl
 !/outputs/framework_review_2026_09_11/*.log
+
+# Epoch-one development evaluation: small review evidence only.
+!/outputs/framework_epoch01_quick_eval_2026_09_12/
+!/outputs/framework_epoch01_quick_eval_2026_09_12/evaluation/
+!/outputs/framework_epoch01_quick_eval_2026_09_12/run.json
+!/outputs/framework_epoch01_quick_eval_2026_09_12/independent_audit.json
+!/outputs/framework_epoch01_quick_eval_2026_09_12/paired_results.csv
+!/outputs/framework_epoch01_quick_eval_2026_09_12/paired_ade.png
+!/outputs/framework_epoch01_quick_eval_2026_09_12/review_predictions.jsonl
+!/outputs/framework_epoch01_quick_eval_2026_09_12/verify_review.py
+!/outputs/framework_epoch01_quick_eval_2026_09_12/evaluation/summary.json
+!/outputs/framework_epoch01_quick_eval_2026_09_12/evaluation/rows.jsonl
+!/outputs/framework_epoch01_quick_eval_2026_09_12/evaluation/motion_reference.jsonl
+!/outputs/framework_baseline_restart_v1/
+!/outputs/framework_baseline_restart_v1/user_stop.json

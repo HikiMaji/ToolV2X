@@ -1,0 +1,39 @@
+{
+  "status": "completed",
+  "started_at": "2026-09-12T18:25:09.259641+08:00",
+  "command": [
+    "/root/autodl-tmp/conda-envs/llava/bin/python",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/code/src/planning/run_framework.py",
+    "generate",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/episodes",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_epoch01_quick_eval_2026_09_12/generations",
+    "--checkpoint",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/checkpoint-epoch01",
+    "--per-recording",
+    "16"
+  ],
+  "resources": {
+    "TOOLV2X_V2VGOT_ROOT": "/root/autodl-tmp/V2V-GoT",
+    "TOOLV2X_CMP_ROOT": "/root/autodl-tmp/CMP",
+    "TOOLV2X_LLAVA_BASE": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+    "TOOLV2X_CLIP_ROOT": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336",
+    "TOOLV2X_LLAVA_ROOT": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/code/vendor/v2vgot_llava",
+    "TOOLV2X_V2VGOT_CHECKPOINT": "/root/autodl-tmp/V2V-GoT/LLaVA/checkpoints/llava-v1.5-7b-task-lora/llava-v1.5-7b-task-lora_v2v4real_3d_grounding_v2vgot_10ep_both_shallow_f2/checkpoint-4330"
+  },
+  "code": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/code",
+  "data": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1",
+  "sampling": "16 evenly spaced frames per validation recording using existing selector, before examining errors",
+  "scope": "32-frame development diagnostic, 5 conditions, no parameter updates, no new remote queries",
+  "evaluation_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/checkpoint-epoch01",
+  "pid": 20435,
+  "evaluation_command": [
+    "/root/autodl-tmp/conda-envs/llava/bin/python",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/code/src/evaluation/framework.py",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_epoch01_quick_eval_2026_09_12/generations",
+    "/root/autodl-tmp/ToolV2X/outputs/framework_epoch01_quick_eval_2026_09_12/evaluation",
+    "--data",
+    "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1"
+  ],
+  "completed_at": "2026-09-12T18:31:41.791970+08:00",
+  "evaluation_returncode": 0
+}
