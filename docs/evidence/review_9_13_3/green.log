@@ -1,0 +1,9 @@
+test_bundle_fitter_rejects_original_validation_role_before_fit (test_bundle_data.BundleDataTests) ... ok
+test_bundle_fitter_accepts_original_train_role (test_bundle_data.BundleDataTests) ... ok
+test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit (test_query_value.DatasetTests) ... ok
+test_first_target_quality_is_recomputed_for_the_actual_chosen_continuation (test_query_value.DatasetTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 41.327s
+
+OK

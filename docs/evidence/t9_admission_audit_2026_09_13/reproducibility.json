@@ -1,0 +1,304 @@
+[
+  {
+    "plan_checks": [
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 2292,
+        "plan_index": 0,
+        "stage": 0
+      }
+    ],
+    "provider_records_match_ledger": true,
+    "receipt_stage_metadata": {},
+    "request_stage_event_binding": true,
+    "status": "PASS",
+    "task": "g5526_Ego"
+  },
+  {
+    "plan_checks": [
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 2292,
+        "plan_index": 0,
+        "stage": 0
+      },
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 3701,
+        "plan_index": 1,
+        "stage": 1
+      },
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 3573,
+        "plan_index": 2,
+        "stage": 2
+      }
+    ],
+    "provider_records_match_ledger": true,
+    "receipt_stage_metadata": {
+      "d378766f456a4530a518ad9433e98e54": {
+        "first_visible_plan_stage": 1,
+        "outer_request_id": "q0",
+        "request_stage": 0
+      },
+      "ef85c3f9f79c4325a00eb6d365df6222": {
+        "first_visible_plan_stage": 2,
+        "outer_request_id": "q1",
+        "request_stage": 1
+      }
+    },
+    "request_stage_event_binding": true,
+    "status": "PASS",
+    "task": "g5526_alternating"
+  },
+  {
+    "plan_checks": [
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 2292,
+        "plan_index": 0,
+        "stage": 0
+      },
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 3573,
+        "plan_index": 1,
+        "stage": 1
+      }
+    ],
+    "provider_records_match_ledger": true,
+    "receipt_stage_metadata": {
+      "e845d505d13a47a7b7b0b97a51681aa0": {
+        "first_visible_plan_stage": 1,
+        "outer_request_id": "bundle0",
+        "request_stage": 0
+      },
+      "fbb9771389fc43ebb21b3493e4add7ea": {
+        "first_visible_plan_stage": 1,
+        "outer_request_id": "bundle0",
+        "request_stage": 0
+      }
+    },
+    "request_stage_event_binding": true,
+    "status": "PASS",
+    "task": "g5526_one_shot"
+  },
+  {
+    "plan_checks": [
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 2300,
+        "plan_index": 0,
+        "stage": 0
+      }
+    ],
+    "provider_records_match_ledger": true,
+    "receipt_stage_metadata": {},
+    "request_stage_event_binding": true,
+    "status": "PASS",
+    "task": "g7007_Ego"
+  },
+  {
+    "plan_checks": [
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 2300,
+        "plan_index": 0,
+        "stage": 0
+      },
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 3702,
+        "plan_index": 1,
+        "stage": 1
+      },
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 3572,
+        "plan_index": 2,
+        "stage": 2
+      }
+    ],
+    "provider_records_match_ledger": true,
+    "receipt_stage_metadata": {
+      "896b9f524fe443b2bc7bbdd22fecbb9d": {
+        "first_visible_plan_stage": 2,
+        "outer_request_id": "q1",
+        "request_stage": 1
+      },
+      "d7e6863477824903b588f1cf372899d0": {
+        "first_visible_plan_stage": 1,
+        "outer_request_id": "q0",
+        "request_stage": 0
+      }
+    },
+    "request_stage_event_binding": true,
+    "status": "PASS",
+    "task": "g7007_alternating"
+  },
+  {
+    "plan_checks": [
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 2300,
+        "plan_index": 0,
+        "stage": 0
+      },
+      {
+        "checks": {
+          "admission_report": true,
+          "decoding": true,
+          "ego_motion": true,
+          "evidence_selection": true,
+          "evidence_used": true,
+          "input_layout": true,
+          "q9_prompt": true,
+          "receiver_spec": true,
+          "remote_evidence_used": true,
+          "saved_prompt_token_total": true
+        },
+        "input_tokens": 3572,
+        "plan_index": 1,
+        "stage": 1
+      }
+    ],
+    "provider_records_match_ledger": true,
+    "receipt_stage_metadata": {
+      "2471a8f4739b43b697fb85b5f9b6b8de": {
+        "first_visible_plan_stage": 1,
+        "outer_request_id": "bundle0",
+        "request_stage": 0
+      },
+      "96018637170f49a78fc966170e6bf43e": {
+        "first_visible_plan_stage": 1,
+        "outer_request_id": "bundle0",
+        "request_stage": 0
+      }
+    },
+    "request_stage_event_binding": true,
+    "status": "PASS",
+    "task": "g7007_one_shot"
+  }
+]

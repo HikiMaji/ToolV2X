@@ -17,7 +17,7 @@ names = [
     'test_query_value.BundleFeatureTests', 'test_query_value.TrainingAuditTests',
     'test_query_value.MetadataBindingTests',
     'test_bundle_data.BundlePrefixTests', 'test_bundle_data.BundleDataTests',
-    'test_bundle_data.RuntimeIdentityTests', 'test_method_run_spec',
+    'test_bundle_data.RuntimeIdentityTests', 'test_method_run_spec', 'test_t9_admission',
     'test_paired_driving.PairedInputTests',
     'test_framework_episode.EpisodeTests', 'test_framework_pipeline',
     'test_direct_planning.DirectPlanningInputTests',

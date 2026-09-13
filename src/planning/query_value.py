@@ -252,9 +252,9 @@ def _training_groups(c,folds):
         raise ValueError('training recordings overlap held-out fold or are unknown')
 
 
-def _target_terminal(row,branch,index,edges,source,utility,cache):
-    """Rebind supervision to the actual chosen suffix and measured prefix costs."""
-    from evaluation.framework import _method_cost
+def _target_terminal(row,branch,index,edges,source,archive,utility,labels):
+    """Recompute quality and costs from the actual prefix, chosen suffix and labels."""
+    from planning.query_data import _target
     terminal=branch
     if 'continuation_action' in row:
         action=row['continuation_action'];child=branch['next_state_id']
@@ -266,23 +266,12 @@ def _target_terminal(row,branch,index,edges,source,utility,cache):
                     {k:action[k] for k in ('tool','mode')} not in index[child]['state']['available_actions']):
                 raise ValueError('first label continuation is not feasible in its actual child')
             terminal=edges[(child,_action_id(action))]
-    def task(path):
-        if path not in cache:
-            value=json.loads((source/path).read_text());cache[path]=(value,_method_cost(value))
-        return cache[path]
-    end,end_cost=task(terminal['path']);_,start_cost=task(index[row['state_id']]['prefix_path'])
-    if (row['terminal_branch_id']!=terminal['branch_id'] or
-            row['terminal_plan_id']!=end['episode']['final_plan_id'] or
-            row['terminal_status']!=('completed' if end['status']=='completed' else 'recorded_failure')):
-        raise ValueError('label terminal does not match its actual continuation branch')
-    stop=row['action']['tool']=='STOP'
-    _keys(row['incremental_cost'],utility['cost_weights'],'measured incremental cost')
-    delta={k:0. if stop else end_cost[k]-start_cost[k] for k in utility['cost_weights']}
-    if any(not math.isclose(_number(row['incremental_cost'][k]),v,abs_tol=1e-9) for k,v in delta.items()):
-        raise ValueError('label cost differs from its actual source and terminal')
-    penalty=sum(utility['cost_weights'][k]*v for k,v in delta.items())
-    if not math.isclose(_number(row['cost_penalty']),penalty,abs_tol=1e-9):
-        raise ValueError('label penalty differs from its frozen utility')
+    state=index[row['state_id']]
+    identity=json.loads((source/state['prefix_path']).read_text())['row']
+    label=labels.get((identity['sample_id'],identity['role']))
+    expected=_target(source,archive,state,branch,terminal,label,utility)
+    if any(row[k]!=v for k,v in expected.items()):
+        raise ValueError('target quality/cost differs from its actual archived trajectories and offline label')
 
 
 def training_examples(targets,kind,config):
@@ -303,9 +292,16 @@ def training_examples(targets,kind,config):
     if meta['binding']!=archive['binding'] or meta['recording_folds']!=folds:
         raise ValueError('target source and configuration drift')
     selected={r['sample_id']:r for r in read_jsonl(source/'selected_index.jsonl')}
+    if meta.get('labels')!='labels.jsonl' or not (root/'labels.jsonl').is_file():
+        raise ValueError('target quality requires an independent offline labels.jsonl archive; regenerate offline targets')
+    labels={}
+    for label in read_jsonl(root/'labels.jsonl'):
+        key=(label['sample_id'],label['role'])
+        if key in labels:raise ValueError('duplicate offline label identity')
+        labels[key]=label
     stage=0 if kind=='first' else 1
     expected={(sid,aid) for (sid,aid) in edges if index[sid]['depth']==stage}
-    rows=read_jsonl(root/'targets.jsonl');seen=set();examples=[];teachers={};names=None;cost_cache={}
+    rows=read_jsonl(root/'targets.jsonl');seen=set();examples=[];teachers={};names=None
     fields={'version','sample_id','physical_recording','fold','state_id','action','source_plan_id','source_loss',
         'utility_version','terminal_branch_id','terminal_plan_id','terminal_loss','terminal_status','incremental_cost',
         'cost_penalty','target','status','reason'}
@@ -335,7 +331,7 @@ def training_examples(targets,kind,config):
         if row['status']=='infeasible':
             if row['target'] is not None:raise ValueError('infeasible action has an invented value')
             continue
-        _target_terminal(row,branch,index,edges,source,c['utility_spec'],cost_cache)
+        _target_terminal(row,branch,index,edges,source,archive,c['utility_spec'],labels)
         value=_number(row['target'])
         if row['action']['tool']=='STOP':
             if value!=0.:raise ValueError('STOP target must be zero')
@@ -591,7 +587,7 @@ def _bundle_examples(targets,c):
     if table.get('version')=='toolv2x_bundle_targets_v2':
         if isinstance(targets,dict):raise ValueError('measured bundle training requires its raw archive path')
         from planning.bundle_data import load_measured_bundle_targets
-        table=load_measured_bundle_targets(targets)
+        table=load_measured_bundle_targets(targets,train_recordings=c['train_recordings'])
         table.pop('archive');table['version']='toolv2x_bundle_targets_v1'
     elif table.get('supervision',{}).get('origin')=='measured_bundle_branches':
         raise ValueError('measured bundle labels require independently verified raw terminals')
@@ -651,9 +647,11 @@ def _bundle_examples(targets,c):
 
 
 def fit_bundle_continuation(targets,train_recordings,config):
-    """Fit an independent control copy with the same features/capacity/optimizer."""
+    """Fit from measured raw archives, including original research-role checks."""
     c=_training_config(config)
     if sorted(train_recordings)!=c['train_recordings']:raise ValueError('conditional training groups differ')
+    if isinstance(targets,dict) or json.loads(Path(targets).read_text()).get('version')!='toolv2x_bundle_targets_v2':
+        raise ValueError('bundle training requires a measured raw archive path with original research roles')
     return _fit([_bundle_examples(targets,c)],'bundle_terminal',c)
 
 

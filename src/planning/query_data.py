@@ -440,14 +440,16 @@ def _target(root,config,state,branch,terminal,label,utility):
     return result
 
 
-def _save_targets(out,root,config,utility,rows,kind,teachers=None):
+def _save_targets(out,root,config,utility,rows,kind,labels,teachers=None):
     out=Path(out)
     if out.resolve()==root.resolve() or root.resolve() in out.resolve().parents:
         raise ValueError('offline targets must be outside the online branch archive')
     out.mkdir(parents=True,exist_ok=False)
     _save_method_json(out/'config.json',dict(version='toolv2x_query_targets_v1',kind=kind,source=str(root),
         binding=config['binding'],recording_folds=config['spec']['recording_folds'],utility_spec=utility,teachers=teachers,
+        labels='labels.jsonl',
         cost_scope='toolv2x_measured_stages_v3; delta after actual source prefix; STOP=0'))
+    _write_rows(out/'labels.jsonl',list(labels.values()))
     _write_rows(out/'targets.jsonl',rows)
     initial_failures=[b for b in read_jsonl(root/'branches.jsonl') if b['state_id'] is None]
     _save_method_json(out/'coverage.json',dict(expected_source_samples=len(read_jsonl(root/'selected_index.jsonl')),
@@ -469,7 +471,7 @@ def make_terminal_targets(branch_root,labels_root,utility_spec,out):
         for (state_id,_),branch in edges.items():
             if state_id==state['state_id']:
                 rows.append(_target(root,config,state,branch,branch,label,utility))
-    return _save_targets(out,root,config,utility,rows,'terminal')
+    return _save_targets(out,root,config,utility,rows,'terminal',labels)
 
 
 def _teacher_provenance(teacher,fold,config,utility):
@@ -525,4 +527,4 @@ def make_first_targets(branch_root,labels_root,frozen_continuation,utility_spec,
         row.update(continuation_action=action,teacher_id=provenance['teacher_id'],
             teacher_training_recordings=provenance['training_recordings'])
         rows.append(row)
-    return _save_targets(out,root,config,utility,rows,'first',teachers)
+    return _save_targets(out,root,config,utility,rows,'first',labels,teachers)

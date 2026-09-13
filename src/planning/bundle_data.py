@@ -250,8 +250,13 @@ def _terminal(task,label,utility):
     return (loss,{k:result[k] for k in utility['cost_weights']}),None
 
 
-def _build_targets(root,labels,utility):
+def _build_targets(root,labels,utility,*,train_recordings=()):
     config,states,branches=validate_bundle_archive(root);rows=[];excluded=[]
+    # validate_bundle_archive already binds every state's sample, recording and
+    # fold to this original index and its actual initial/terminal task rows.
+    for identity in read_jsonl(root/'selected_index.jsonl'):
+        if recording(identity['scene']) in train_recordings and identity['role']!='train':
+            raise ValueError('validation recording cannot train a bundle continuation')
     for state in states:
         own=[b for b in branches if b['state_id']==state['state_id'] and b['feasible']]
         terminals={};reason=None
@@ -290,7 +295,7 @@ def make_bundle_targets(branch_dir, labels_root, utility_spec, out):
     return table
 
 
-def load_measured_bundle_targets(path):
+def load_measured_bundle_targets(path,*,train_recordings=()):
     """Training reloads raw sources and independently recomputes every target."""
     path=Path(path);table=json.loads(path.read_text());source=table.get('archive',{})
     if (set(source)!={'version','branches','labels'} or source['version']!='toolv2x_bundle_target_archive_v1' or
@@ -301,7 +306,8 @@ def load_measured_bundle_targets(path):
         key=(label['sample_id'],label['role'])
         if key in labels:raise ValueError('duplicate offline label identity')
         labels[key]=label
-    expected,_=_build_targets(path.parent/source['branches'],labels,validate_utility_spec(table['utility_spec']))
+    expected,_=_build_targets(path.parent/source['branches'],labels,validate_utility_spec(table['utility_spec']),
+        train_recordings=train_recordings)
     expected['archive']=source
     if table!=expected:raise ValueError('bundle labels differ from their actual archived terminals')
     return table

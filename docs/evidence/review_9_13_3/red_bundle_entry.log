@@ -1,0 +1,21 @@
+test_bundle_fitter_accepts_original_train_role (test_bundle_data.BundleDataTests) ...
+======================================================================
+FAIL: test_bundle_fitter_accepts_original_train_role (test_bundle_data.BundleDataTests) (source='dict')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/t9-supervision-admission-review/tests/test_bundle_data.py", line 255, in test_bundle_fitter_accepts_original_train_role
+    v.fit_bundle_continuation(source,groups,config)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_bundle_fitter_accepts_original_train_role (test_bundle_data.BundleDataTests) (source='PosixPath')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/t9-supervision-admission-review/tests/test_bundle_data.py", line 255, in test_bundle_fitter_accepts_original_train_role
+    v.fit_bundle_continuation(source,groups,config)
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 9.618s
+
+FAILED (failures=2)

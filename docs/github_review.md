@@ -1,5 +1,14 @@
 # GitHub 审查入口
 
+**当前审查批次（09-14，9-13-3，本地）：** 先读 [本批要求](9-13-3.md)、[修复与审计回复](review_9_13_3_response.md) 和 [admission 明细](t9_admission_audit_2026_09_13.md)。A1/A2 修复原始 role 与真实方案/标签监督绑定；B 只读重放已有六任务的 tokenizer/admission，receiver 算法不变。完整轻量 300 项与 CPU 合成契约 10 项通过，没有实际策略拟合、GoT/MTR 新执行或扩帧；本批尚未推送。下方 T9 准备和真实联调现已发布到 main，T8 的 271 项/尚缺接口等均为历史快照。
+
+```text
+请只读审查 9-13-3 本批修改，不启动训练、模型生成或新采集。
+核对 bundle 原始 selected_index/task 的 sample、physical recording、role、fold 是否在 normalization/optimizer 前验证；核对 alternating target 是否从实际 source/terminal 方案、独立 labels 和 frozen utility 复算，保留 failure/STOP/增量成本。
+核对 admission CSV 的请求来源阶段与返回后可见阶段、provider rank/field ref/context、实际与模拟 token 成本和预算，以及是否与旧 T9 保存的 Z/prompt 完全对应。
+运行 python scripts/check_review.py；CPU 合成组及原日志见本批回复。区分合成拟合测试、token 模拟与真实研究效果。receiver v2 仅候选，不在本批实现；一般边界问题做最小修复，不据此扩采集、重建缓存或增加训练。
+```
+
 **本地下一批（T9，尚未推送）：** [准备记录](t9_preparation_2026_09_13.md) 对应 `bundle_data.py`、`method_run_spec.py` 和实际入口/成本/绑定补充。独立复审已完成，真实模型/分组策略训练与方法效果仍未执行。下面的 271 项及“尚缺接口”描述专指已发布 T8 快照。
 
 **09-13 审查快照：T6 修复＋T7＋T8。** 先读 [9-12-1](9-12-1.md)、[9-12-2](9-12-2.md)、[9-13-2](9-13-2.md) 及 [T6 修复](t6_review_fixes_2026_09_13.md)、[T7 实施](t7_implementation_2026_09_13.md)、[T8 实施](t8_implementation_2026_09_13.md)。方法与因果规格以材料一为主，材料二约束 Tool 语义。T1–T8 的模块和合成契约已实现；真实方法训练/rollout 尚未执行。

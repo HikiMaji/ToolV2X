@@ -1,0 +1,15 @@
+test_fitted_teachers_feed_t7_and_shared_batches_keep_both_stages (test_query_value.ModelTests) ... ok
+test_synthetic_regression_learns_and_checkpoint_is_written_before_updates (test_query_value.ModelTests) ... ok
+test_teacher_save_reload_and_exact_resume (test_query_value.ModelTests) ... ok
+test_separate_conditional_fit_load_and_real_provider_registration (test_query_value.BundleModelTests) ... ok
+test_interruption_has_initial_checkpoint_and_rejects_changed_targets_on_resume (test_query_value.RecoveryTests) ... ok
+test_loaded_policy_rejects_runtime_drift_before_driver_or_peer_execution (test_query_value.RecoveryTests) ... ok
+test_teacher_normalization_is_only_the_used_training_features (test_query_value.RecoveryTests) ... ok
+test_distinct_fits_have_distinct_frozen_teacher_sources (test_query_value.ReviewRegressionTests) ... ok
+test_first_target_adapter_rejects_changed_continuation_terminal_and_costs (test_query_value.ReviewRegressionTests) ... ok
+test_measured_table_fits_real_tiny_checkpoint_and_freezes_identical_policy (test_bundle_data.BundleModelTests) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 122.106s
+
+OK

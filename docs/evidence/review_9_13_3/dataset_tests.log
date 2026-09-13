@@ -1,0 +1,11 @@
+test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit (test_query_value.DatasetTests) ... ok
+test_first_target_quality_is_recomputed_for_the_actual_chosen_continuation (test_query_value.DatasetTests) ... ok
+test_label_values_never_change_feature_vectors_and_missing_rows_rejected (test_query_value.DatasetTests) ... ok
+test_quality_reload_keeps_weighted_fde_failure_and_stop_contracts (test_query_value.DatasetTests) ... ok
+test_target_quality_requires_independent_matching_offline_labels (test_query_value.DatasetTests) ... ok
+test_training_rows_join_actual_online_states_and_keep_recording_holdout (test_query_value.DatasetTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 59.276s
+
+OK

@@ -70,10 +70,10 @@ class BundlePrefixTests(unittest.TestCase):
 
 
 class BundleDataTests(QueryFixture):
-    def bundle_collection(self, root, *, invalid_stage=None, cap=None):
+    def bundle_collection(self, root, *, invalid_stage=None, cap=None, role='train'):
         q=importlib.import_module('planning.bundle_data')
         scene='testoutput_CAV_data_2022-03-15-10-09-50_0'
-        rows=[dict(sample_id='sample',scene=scene,g=10,role='train',physical_split='train',local_frame=10,
+        rows=[dict(sample_id='sample',scene=scene,g=10,role=role,physical_split='train',local_frame=10,
             ego_motion=dict(speed_mps=2.,yaw_rate_rps=0.),feature_read_paths=[],motion_read_paths=[])]
         driver=EvidenceDriver([],invalid_stage=invalid_stage)
         reads=['ego']
@@ -203,6 +203,56 @@ class BundleDataTests(QueryFixture):
             terminal=json.loads(path.read_text());event=next(e for e in terminal['episode']['cost_events'] if e['kind']=='service')
             event['collection_reuse']['prefix_service_seconds']+=1.;path.write_text(json.dumps(terminal))
             with self.assertRaises(ValueError):v._bundle_examples(root/'targets/targets.json',config)
+
+    def test_bundle_fitter_rejects_original_validation_role_before_fit(self):
+        from planning import bundle_data as q, query_value as v
+        from test_query_data import utility
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);_,rows,_=self.bundle_collection(root/'branches',role='validation')
+            labels=root/'labels';labels.mkdir()
+            label={k:rows[0][k] for k in ('sample_id','scene','role','g')}
+            label.update(times_seconds=[.5,1.,1.5,2.,2.5,3.],valid=[True]*6,
+                         waypoints=[[float(i),0.] for i in range(1,7)])
+            (labels/'validation.jsonl').write_text(json.dumps(label)+'\n')
+            table=q.make_bundle_targets(root/'branches',labels,utility(),root/'targets')
+            self.assertEqual(table,q.load_measured_bundle_targets(root/'targets/targets.json'))
+            groups=list(table['recording_folds'])
+            config=v.training_config(checkpoint=str(root/'must_not_exist.pt'),train_recordings=groups,
+                binding=table['binding'],utility_spec=utility(),steps=1,policy_id='fixture_bundle_v1')
+            # _fit owns normalization and optimizer updates; exercise the public loader
+            # without performing either operation on deliberately contaminated data.
+            with patch.object(v,'_fit',return_value=None),self.assertRaisesRegex(ValueError,'validation.*train'):
+                v.fit_bundle_continuation(root/'targets/targets.json',groups,config)
+            self.assertFalse(Path(config['checkpoint']).exists())
+
+    def test_bundle_fitter_accepts_original_train_role(self):
+        from planning import bundle_data as q, query_value as v
+        from test_query_data import utility
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);_,rows,_=self.bundle_collection(root/'branches')
+            labels=root/'labels';labels.mkdir()
+            label={k:rows[0][k] for k in ('sample_id','scene','role','g')}
+            label.update(times_seconds=[.5,1.,1.5,2.,2.5,3.],valid=[True]*6,
+                         waypoints=[[float(i),0.] for i in range(1,7)])
+            (labels/'train.jsonl').write_text(json.dumps(label)+'\n')
+            table=q.make_bundle_targets(root/'branches',labels,utility(),root/'targets')
+            groups=list(table['recording_folds'])
+            config=v.training_config(checkpoint=str(root/'unused.pt'),train_recordings=groups,
+                binding=table['binding'],utility_spec=utility(),steps=1,policy_id='fixture_bundle_v1')
+            with patch.object(v,'_fit',side_effect=lambda tables,*args:tables[0]):
+                prepared=v.fit_bundle_continuation(root/'targets/targets.json',groups,config)
+            self.assertTrue(prepared['examples'])
+            self.assertEqual({e['physical_recording'] for e in prepared['examples']},set(groups))
+
+            # Relabelling a real table as a synthetic contract cannot bypass the
+            # public training entry's requirement for original research roles.
+            synthetic=copy.deepcopy(table);synthetic.pop('archive')
+            synthetic['version']='toolv2x_bundle_targets_v1'
+            synthetic['supervision']['origin']='synthetic_contract'
+            unaudited=root/'unaudited.json';unaudited.write_text(json.dumps(synthetic))
+            for source in (synthetic,unaudited):
+                with self.subTest(source=type(source).__name__),patch.object(v,'_fit',return_value=None),self.assertRaises(ValueError):
+                    v.fit_bundle_continuation(source,groups,config)
 
 
 class BundleModelTests(QueryFixture):

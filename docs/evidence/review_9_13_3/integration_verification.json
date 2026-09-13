@@ -1,0 +1,140 @@
+{
+  "status": "PASS",
+  "method": "standard-library direct comparison to original saved tasks and provider receipts; no tokenizer or model rerun",
+  "published_files_match_v2_output": 8,
+  "actual_unit_rows": 64,
+  "counterfactual_unit_rows": 64,
+  "plan_stage_checks": [
+    {
+      "task": "g5526_Ego",
+      "plan_index": 0,
+      "available_units": 0,
+      "admitted_units": 0,
+      "actual_targets": 0,
+      "simulated_targets": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_alternating",
+      "plan_index": 0,
+      "available_units": 0,
+      "admitted_units": 0,
+      "actual_targets": 0,
+      "simulated_targets": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_alternating",
+      "plan_index": 1,
+      "available_units": 8,
+      "admitted_units": 2,
+      "actual_targets": 1,
+      "simulated_targets": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_alternating",
+      "plan_index": 2,
+      "available_units": 12,
+      "admitted_units": 2,
+      "actual_targets": 1,
+      "simulated_targets": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_one_shot",
+      "plan_index": 0,
+      "available_units": 0,
+      "admitted_units": 0,
+      "actual_targets": 0,
+      "simulated_targets": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_one_shot",
+      "plan_index": 1,
+      "available_units": 12,
+      "admitted_units": 2,
+      "actual_targets": 1,
+      "simulated_targets": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_Ego",
+      "plan_index": 0,
+      "available_units": 0,
+      "admitted_units": 0,
+      "actual_targets": 0,
+      "simulated_targets": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_alternating",
+      "plan_index": 0,
+      "available_units": 0,
+      "admitted_units": 0,
+      "actual_targets": 0,
+      "simulated_targets": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_alternating",
+      "plan_index": 1,
+      "available_units": 8,
+      "admitted_units": 2,
+      "actual_targets": 1,
+      "simulated_targets": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_alternating",
+      "plan_index": 2,
+      "available_units": 12,
+      "admitted_units": 2,
+      "actual_targets": 1,
+      "simulated_targets": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_one_shot",
+      "plan_index": 0,
+      "available_units": 0,
+      "admitted_units": 0,
+      "actual_targets": 0,
+      "simulated_targets": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_one_shot",
+      "plan_index": 1,
+      "available_units": 12,
+      "admitted_units": 2,
+      "actual_targets": 1,
+      "simulated_targets": 2,
+      "status": "PASS"
+    }
+  ],
+  "token_group_ranges": "PASS",
+  "unmodified_source_files_equal_main": 50,
+  "user_spec_preserved": true,
+  "original_160_answer_recomputation": "PASS earlier in this batch; unchanged old artifacts",
+  "limitations": "This independently checks archived token totals and arithmetic; tokenization itself is covered by the dedicated offline tokenizer audit.",
+  "audit_output_version": "toolv2x_t9_admission_audit_v3",
+  "all_dropped_rows_match_original": 482,
+  "dropped_rows_by_origin": {
+    "local": 408,
+    "remote": 56,
+    "receiver_derived": 18
+  },
+  "remote_unit_and_token_tables_unchanged_by_export_fix": true,
+  "original_tracked_t9_files_unchanged": 10,
+  "final_light_tests": {
+    "passed": 300,
+    "seconds": 199.664
+  },
+  "cpu_synthetic_contract_tests": {
+    "passed": 10,
+    "seconds": 122.106
+  },
+  "final_B_scoped_tests": 4
+}

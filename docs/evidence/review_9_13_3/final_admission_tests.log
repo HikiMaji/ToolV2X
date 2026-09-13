@@ -1,0 +1,9 @@
+test_admission_skips_an_oversize_unit_and_keeps_exact_attempt_totals (test_t9_admission.T9AdmissionAuditTests) ... ok
+test_request_stage_and_first_visible_stage_follow_outer_events (test_t9_admission.T9AdmissionAuditTests) ... ok
+test_round_robin_keeps_distinct_context_units_and_cycles_targets (test_t9_admission.T9AdmissionAuditTests) ... ok
+test_two_one_shot_receipts_share_the_saved_plan_stage (test_t9_admission.T9AdmissionAuditTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK

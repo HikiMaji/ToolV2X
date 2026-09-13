@@ -1,0 +1,55 @@
+{
+  "audit_tokenizer_warning_limit": 4096,
+  "counterfactual_algorithm": {
+    "admission": "greedy; admit when actual original-tokenizer input tokens plus generation reserve fit context_limit; skip a non-fitting unit and continue",
+    "budgets": {
+      "context_limit": 4096,
+      "feature_tokens": 540,
+      "generation_reserve": 256,
+      "peer_reserve": 1536
+    },
+    "forbidden_inputs": [
+      "GT",
+      "offline labels",
+      "unbought peer information",
+      "alternating-only tau1"
+    ],
+    "input_units": "the exact paid/receiver-derived remote_units from the saved stage; context-distinct units remain distinct",
+    "name": "stable_target_round_robin_v1",
+    "rounds": "one unit per target in target order, then the second unit per target, continuing until exhausted",
+    "scope": "counterfactual admission only; no GoT call and no driving output",
+    "target_order": "first appearance in frozen receiver-v1 order: anchor distance, provider, track_handle, field kind, context identity, field identity",
+    "within_target_order": "unchanged frozen receiver-v1 order"
+  },
+  "frame_comparisons": [
+    {
+      "final_input_tokens_alternating": 3573,
+      "final_input_tokens_one_shot": 3573,
+      "final_prompt_equal": true,
+      "final_remote_evidence_equal": true,
+      "final_waypoints_equal": true,
+      "frame": 5526
+    },
+    {
+      "final_input_tokens_alternating": 3572,
+      "final_input_tokens_one_shot": 3572,
+      "final_prompt_equal": true,
+      "final_remote_evidence_equal": true,
+      "final_waypoints_equal": true,
+      "frame": 7007
+    }
+  ],
+  "frames": [
+    5526,
+    7007
+  ],
+  "input_root": "/root/autodl-tmp/ToolV2X/outputs/t9_real_smoke_2026_09_13_v1",
+  "model_execution": false,
+  "plan_stage_count": 12,
+  "released_tokenizer_warning_limit": 2048,
+  "remote_unit_row_count": 64,
+  "reproducibility": "PASS",
+  "task_count": 6,
+  "tokenizer": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+  "version": "toolv2x_t9_admission_audit_v3"
+}

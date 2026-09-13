@@ -1,0 +1,13 @@
+task,frame,arm,plan_index,plan_stage,after_request_id,remote_units_total,available_unique_targets,available_units_per_target,remote_units_retained,actual_units_retained,actual_unique_targets,actual_units_per_target,actual_max_units_per_target,actual_history,actual_receiver_subset_forecast,actual_provider_full_forecast,counterfactual_units_retained,counterfactual_unique_targets,additional_unique_targets,counterfactual_units_per_target,counterfactual_max_units_per_target,counterfactual_history,counterfactual_receiver_subset_forecast,counterfactual_provider_full_forecast,ego_only_input_tokens,empty_remote_input_tokens,final_input_tokens,generation_reserve,context_limit
+g5526_Ego,5526,Ego,0,0,,0,0,{},0,0,0,{},0,0,0,0,0,0,0,{},0,0,0,0,2292,,2292,256,4096
+g5526_alternating,5526,alternating,0,0,,0,0,{},0,0,0,{},0,0,0,0,0,0,0,{},0,0,0,0,2292,,2292,256,4096
+g5526_alternating,5526,alternating,1,1,q0,8,4,"{""0"":2,""4"":2,""6"":2,""20"":2}",2,2,1,"{""20"":2}",2,1,1,0,2,2,1,"{""6"":1,""20"":1}",1,0,2,0,2292,2405,3701,256,4096
+g5526_alternating,5526,alternating,2,2,q1,12,6,"{""0"":2,""3"":1,""4"":2,""6"":3,""8"":1,""20"":3}",2,2,1,"{""20"":2}",2,0,1,1,2,2,1,"{""6"":1,""20"":1}",1,0,0,2,2292,2405,3573,256,4096
+g5526_one_shot,5526,one_shot,0,0,,0,0,{},0,0,0,{},0,0,0,0,0,0,0,{},0,0,0,0,2292,,2292,256,4096
+g5526_one_shot,5526,one_shot,1,1,bundle0,12,5,"{""0"":2,""3"":1,""4"":3,""6"":3,""20"":3}",2,2,1,"{""20"":2}",2,0,1,1,2,2,1,"{""6"":1,""20"":1}",1,0,0,2,2292,2405,3573,256,4096
+g7007_Ego,7007,Ego,0,0,,0,0,{},0,0,0,{},0,0,0,0,0,0,0,{},0,0,0,0,2300,,2300,256,4096
+g7007_alternating,7007,alternating,0,0,,0,0,{},0,0,0,{},0,0,0,0,0,0,0,{},0,0,0,0,2300,,2300,256,4096
+g7007_alternating,7007,alternating,1,1,q0,8,4,"{""0"":2,""5"":2,""11"":2,""21"":2}",2,2,1,"{""0"":2}",2,1,1,0,2,2,1,"{""0"":1,""5"":1}",1,0,2,0,2300,2413,3702,256,4096
+g7007_alternating,7007,alternating,2,2,q1,12,4,"{""0"":3,""5"":3,""11"":3,""21"":3}",2,2,1,"{""0"":2}",2,0,1,1,2,2,1,"{""0"":1,""5"":1}",1,0,0,2,2300,2413,3572,256,4096
+g7007_one_shot,7007,one_shot,0,0,,0,0,{},0,0,0,{},0,0,0,0,0,0,0,{},0,0,0,0,2300,,2300,256,4096
+g7007_one_shot,7007,one_shot,1,1,bundle0,12,5,"{""0"":3,""2"":1,""5"":3,""11"":2,""21"":3}",2,2,1,"{""0"":2}",2,0,1,1,2,2,1,"{""0"":1,""5"":1}",1,0,0,2,2300,2413,3572,256,4096

@@ -109,6 +109,100 @@ class TrainingFixture(ValueFixture):
 
 
 class DatasetTests(TrainingFixture):
+    def test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit(self):
+        from unittest.mock import patch
+        q=self.value_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);_,_,targets,groups,binding=self.training_data(root)
+            config=self.config(root,groups[:2],binding,held_out_fold='fold2')
+            original=self.read_rows(targets/'targets.jsonl')
+            for field in ('source_loss','terminal_loss'):
+                rows=copy.deepcopy(original)
+                row=next(r for r in rows if r['action']['tool']!='STOP' and r['physical_recording']==groups[0])
+                row[field]+=1.
+                row['target']=row['source_loss']-row['terminal_loss']-row['cost_penalty']
+                (targets/'targets.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
+                with self.subTest(field=field),patch.object(q,'_fit',return_value=None),self.assertRaises(ValueError):
+                    q.fit_terminal_policy(targets,groups[:2],config)
+            self.assertFalse(Path(config['checkpoint']).exists())
+
+    def test_first_target_quality_is_recomputed_for_the_actual_chosen_continuation(self):
+        from planning.query_data import make_first_targets
+        from test_query_data import Teacher,utility
+        q=self.value_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);branches,labels,_,groups,binding=self.training_data(root)
+            teachers={}
+            for i,group in enumerate(groups):
+                teacher=Teacher(binding,action=dict(tool='F',mode='current',reason='fixture'))
+                teacher.provenance.update(held_out_fold='fold%d'%i,
+                    training_recordings=[g for g in groups if g!=group],feature_spec=q.feature_spec())
+                teachers['fold%d'%i]=teacher
+            first=root/'first';make_first_targets(branches,labels,teachers,utility(),first)
+            config=self.config(root,groups,binding)
+            self.assertTrue(q.training_examples(first,'first',config)['examples'])
+            rows=self.read_rows(first/'targets.jsonl')
+            row=next(r for r in rows if r['action']['tool']=='P')
+            self.assertEqual(row['continuation_action']['tool'],'F')
+            row['terminal_loss']+=1.
+            row['target']=row['source_loss']-row['terminal_loss']-row['cost_penalty']
+            (first/'targets.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
+            with self.assertRaises(ValueError):q.training_examples(first,'first',config)
+
+    def test_quality_reload_keeps_weighted_fde_failure_and_stop_contracts(self):
+        from test_query_data import TargetTests,utility
+        from planning.query_data import make_terminal_targets
+        q=self.value_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);branches,labels,_=TargetTests.label_data(self,root,invalid_stage=2)
+            label=self.read_rows(labels/'train.jsonl')[0]
+            label['waypoints']=[[float(i),0.] for i in range(1,7)]
+            (labels/'train.jsonl').write_text(json.dumps(label)+'\n')
+            u=utility();u['quality_weights']=dict(ADE3=.4,FDE3=.6)
+            targets=root/'terminal';rows=make_terminal_targets(branches,labels,u,targets)
+            binding=json.loads((targets/'config.json').read_text())['binding']
+            groups=sorted({r['physical_recording'] for r in rows})
+            config=self.config(root,groups,binding,held_out_fold='fold1');config['utility_spec']=u
+            examples=q.training_examples(targets,'terminal',config)['examples']
+            # Six lateral errors .1,...,.6 give ADE=.35 and FDE=.6: weighted loss=.5.
+            for row in rows:self.assertAlmostEqual(row['source_loss'],.5)
+            failed=next(r for r in rows if r['terminal_status']=='recorded_failure')
+            self.assertEqual(failed['terminal_loss'],10.)
+            self.assertIsNone(failed['terminal_plan_id'])
+            self.assertTrue(any(e['state_id']==failed['state_id'] and e['action']==failed['action'] for e in examples))
+            stop=next(r for r in rows if r['action']['tool']=='STOP')
+            self.assertEqual(stop['target'],0.)
+            self.assertTrue(all(v==0 for v in stop['incremental_cost'].values()))
+            for status in ('recorded_failure','STOP'):
+                bad=copy.deepcopy(rows)
+                row=next(r for r in bad if (r['action']['tool']=='STOP' if status=='STOP'
+                                          else r['terminal_status']==status))
+                row['terminal_loss']+=1.
+                if status!='STOP':row['target']-=1.
+                (targets/'targets.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in bad))
+                with self.subTest(status=status),self.assertRaises(ValueError):q.training_examples(targets,'terminal',config)
+
+    def test_target_quality_requires_independent_matching_offline_labels(self):
+        from test_query_data import TargetTests,utility
+        from planning.query_data import make_terminal_targets
+        q=self.value_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);branches,labels,_=TargetTests.label_data(self,root)
+            targets=root/'terminal';rows=make_terminal_targets(branches,labels,utility(),targets)
+            binding=json.loads((targets/'config.json').read_text())['binding']
+            config=self.config(root,sorted({r['physical_recording'] for r in rows}),binding)
+            self.assertTrue(q.training_examples(targets,'terminal',config)['examples'])
+            path=targets/'labels.jsonl';original=self.read_rows(path)
+            moved=copy.deepcopy(original);moved[0]['waypoints'][0][1]+=1.
+            wrong=copy.deepcopy(original);wrong[0]['role']='validation'
+            for content in (moved,wrong,original*2,[]):
+                path.write_text(''.join(json.dumps(r)+'\n' for r in content))
+                with self.subTest(content=len(content)),self.assertRaises(ValueError):
+                    q.training_examples(targets,'terminal',config)
+            path.unlink()
+            with self.assertRaisesRegex(ValueError,'independent offline'):
+                q.training_examples(targets,'terminal',config)
+
     def test_training_rows_join_actual_online_states_and_keep_recording_holdout(self):
         q=self.value_module();self.assertTrue(hasattr(q,'training_examples'),'T8 target adapter missing')
         with tempfile.TemporaryDirectory() as temp:
@@ -127,16 +221,21 @@ class DatasetTests(TrainingFixture):
     def test_label_values_never_change_feature_vectors_and_missing_rows_rejected(self):
         q=self.value_module();self.assertTrue(hasattr(q,'training_examples'),'T8 target adapter missing')
         with tempfile.TemporaryDirectory() as temp:
-            root=Path(temp);_,_,targets,groups,binding=self.training_data(root);config=self.config(root,groups[:2],binding)
+            root=Path(temp);branches,labels,targets,groups,binding=self.training_data(root);config=self.config(root,groups[:2],binding)
             before=q.training_examples(targets,'terminal',config)
-            rows=self.read_rows(targets/'targets.jsonl')
-            for r in rows:
-                if r['action']['tool']!='STOP' and r['status']=='labeled':
-                    r['source_loss']+=1.;r['target']+=1.
-            (targets/'targets.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
-            after=q.training_examples(targets,'terminal',config)
+            # Change independent synthetic labels and regenerate offline targets;
+            # hand-editing losses is invalid supervision, not a feature-isolation test.
+            from planning.query_data import make_terminal_targets
+            from test_query_data import utility
+            changed=self.read_rows(labels/'train.jsonl')
+            for label in changed:label['waypoints']=[[float(i)+2.,0.] for i in range(1,7)]
+            (labels/'train.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in changed))
+            updated=root/'updated';make_terminal_targets(branches,labels,utility(),updated)
+            after=q.training_examples(updated,'terminal',config)
             self.assertEqual([r['features'] for r in before['examples']],[r['features'] for r in after['examples']])
-            self.assertNotEqual([r['target'] for r in before['examples']],[r['target'] for r in after['examples']])
+            rows=self.read_rows(targets/'targets.jsonl')
+            self.assertNotEqual([r['source_loss'] for r in rows],
+                                [r['source_loss'] for r in self.read_rows(updated/'targets.jsonl')])
             (targets/'targets.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows[:-1]))
             with self.assertRaises(ValueError):q.training_examples(targets,'terminal',config)
 
@@ -272,7 +371,9 @@ class BundleModelTests(ValueFixture):
                     stop_reference='first_return_then_final_driver',cost_scope='outer_wire_and_complete_terminal_compute'))
             config=q.training_config(checkpoint=str(root/'bundle.pt'),train_recordings=groups[:1],binding=binding,
                 utility_spec=utility(),steps=5,policy_id='bundle_value_v1')
-            fitted=q.fit_bundle_continuation(table,groups[:1],config)
+            # The public fitter requires research-role-bearing raw archives.
+            # This explicitly synthetic optimizer contract exercises private helpers.
+            fitted=q._fit([q._bundle_examples(table,config)],'bundle_terminal',config)
             loaded=q.load_query_policy(config['checkpoint'],policy_kind='bundle_terminal',expected_binding=binding)
             self.assertEqual(loaded(visible),fitted(visible))
             self.assertIn({k:v for k,v in loaded(visible).items() if k!='reason'},visible['available_actions'])
@@ -296,9 +397,9 @@ class BundleModelTests(ValueFixture):
             self.assertEqual(result['cost']['rpc_rounds'],1)
             self.assertLessEqual(result['cost']['capability_calls'],2)
             wrong=copy.deepcopy(table);wrong['kind']='terminal'
-            with self.assertRaises(ValueError):q.fit_bundle_continuation(wrong,groups[:1],dict(config,checkpoint=str(root/'bad.pt')))
+            with self.assertRaises(ValueError):q._bundle_examples(wrong,config)
             wrong=copy.deepcopy(table);wrong['rows'].pop()
-            with self.assertRaises(ValueError):q.fit_bundle_continuation(wrong,groups[:1],dict(config,checkpoint=str(root/'bad.pt')))
+            with self.assertRaises(ValueError):q._bundle_examples(wrong,config)
 
 
 class TrainingAuditTests(unittest.TestCase):
@@ -334,7 +435,7 @@ class RecoveryTests(TrainingFixture):
             for r in rows:
                 if r['physical_recording']==groups[0] and r['action']['tool']!='STOP':r['source_loss']+=1.;r['target']+=1.
             (targets/'targets.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
-            with self.assertRaisesRegex(ValueError,'same data'):
+            with self.assertRaisesRegex(ValueError,'actual archived trajectories'):
                 q.fit_terminal_policy(targets,groups[:2],dict(config,resume_from=config['checkpoint']))
 
     def test_teacher_normalization_is_only_the_used_training_features(self):

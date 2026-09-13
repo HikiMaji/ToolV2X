@@ -1,0 +1,40 @@
+test_bundle_fitter_rejects_original_validation_role_before_fit (test_bundle_data.BundleDataTests) ... FAIL
+test_bundle_fitter_accepts_original_train_role (test_bundle_data.BundleDataTests) ... ok
+test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit (test_query_value.DatasetTests) ... test_first_target_quality_is_recomputed_for_the_actual_chosen_continuation (test_query_value.DatasetTests) ... FAIL
+
+======================================================================
+FAIL: test_bundle_fitter_rejects_original_validation_role_before_fit (test_bundle_data.BundleDataTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/t9-supervision-admission-review/tests/test_bundle_data.py", line 225, in test_bundle_fitter_rejects_original_validation_role_before_fit
+    v.fit_bundle_continuation(root/'targets/targets.json',groups,config)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit (test_query_value.DatasetTests) (field='source_loss')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/t9-supervision-admission-review/tests/test_query_value.py", line 126, in test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit
+    q.fit_terminal_policy(targets,groups[:2],config)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit (test_query_value.DatasetTests) (field='terminal_loss')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/t9-supervision-admission-review/tests/test_query_value.py", line 126, in test_algebraically_consistent_terminal_loss_contamination_is_rejected_before_fit
+    q.fit_terminal_policy(targets,groups[:2],config)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_first_target_quality_is_recomputed_for_the_actual_chosen_continuation (test_query_value.DatasetTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/t9-supervision-admission-review/tests/test_query_value.py", line 150, in test_first_target_quality_is_recomputed_for_the_actual_chosen_continuation
+    with self.assertRaises(ValueError):q.training_examples(first,'first',config)
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 40.343s
+
+FAILED (failures=4)
