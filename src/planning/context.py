@@ -88,7 +88,7 @@ def build_plan_input(tokenizer, motion, evidence, feature_tokens, context_limit=
         q9_executed=False, language_model_executed=False, status='prepared')
 
 
-def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None, *, token_counter=None):
+def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None, *, token_counter=None, extra_prompt_reserve=0):
     """Shared deterministic v2 receiver; never runs a driver or a predictor.
 
     The optional counter is for resource-independent contract tests, explicitly
@@ -118,6 +118,9 @@ def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None
     else:
         counting = 'injected_contract_counter'
 
+    if type(extra_prompt_reserve) is not int or extra_prompt_reserve < 0:
+        raise ValueError('invalid explicit extra prompt reserve')
+
     def rounded(value):
         # Same two-decimal numeric projection as the existing v1 receiver.
         if isinstance(value, float):
@@ -145,7 +148,7 @@ def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None
         obj = grouped.setdefault(ref['track_handle'], dict(source='ego', track_id=ref['track_handle']))
         obj.update({k: v for k, v in record['value'].items() if k != 'context_scope'})
     local_objects = sorted(rounded(list(grouped.values())), key=lambda o: (float(np.hypot(*o['box'][:2])), o['track_id']))
-    local_limit = config['context_limit'] - config['generation_reserve'] - config['peer_reserve']
+    local_limit = config['context_limit'] - config['generation_reserve'] - config['peer_reserve'] - extra_prompt_reserve
     if size(local) > local_limit:
         raise ValueError('local header exceeds configured receiver budget')
     for obj in local_objects:
@@ -186,11 +189,11 @@ def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None
 
     selected = []
     empty = remote_view([])
-    if size(local, empty[0] if empty else None) + config['generation_reserve'] > config['context_limit']:
+    if size(local, empty[0] if empty else None) + config['generation_reserve'] + extra_prompt_reserve > config['context_limit']:
         raise ValueError('paid remote observation header exceeds receiver budget')
     for unit in units:
         trial, _ = remote_view(selected + [unit])
-        if size(local, trial) + config['generation_reserve'] <= config['context_limit']:
+        if size(local, trial) + config['generation_reserve'] + extra_prompt_reserve <= config['context_limit']:
             selected.append(unit)
     built = remote_view(selected)
     remote, positions = built if built else (None, [])

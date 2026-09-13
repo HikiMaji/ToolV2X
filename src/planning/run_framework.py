@@ -415,8 +415,14 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
     if role not in ('train', 'validation'):
         raise ValueError('interaction requires a predefined research role')
     spec = json.loads(spec_path.read_text())
-    if set(spec) != {'limits', 'local_provenance'}:
+    if set(spec) not in ({'limits', 'local_provenance'},{'limits','local_provenance','control'}):
         raise ValueError('interaction spec requires limits and local_provenance')
+    from planning.method_controls import normalize_control, make_control_policy, diagnostic_bundle_continuation
+    control=normalize_control(spec.get('control'))
+    if control is not None:
+        spec['control']=control
+        if control['name']=='ego_max_context':
+            spec['limits']['receiver_spec']['peer_reserve']=0
     validate_limits(spec['limits'])
     validate_provenance(spec['local_provenance'])
     if spec['limits']['policy_id'] not in ('stop', 'p_current', 'p_current_f_change'):
@@ -429,6 +435,9 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
         mtr_checkpoint=source_config['mtr_checkpoint'], spec=spec, role=role, per_recording=per_recording,
         scope='T4 diagnostic delegation; no learned request policy or method benefit claim',
         actual_rgb_input=False, gt_labels_read=False)
+    if control is not None:
+        config['branch_id']=control['name'] + (':'+control['baseline'] if control['name']=='legacy_v2' else '')
+        config['scope']='T6 explicit control; diagnostic injected policy until fitted T8 policy is provided'
     previous = completed_method_prefix(resume_from, rows, config) if resume_from else []
     if resume_from:
         # Compare literal source files; no partial state restoration or weight fingerprint claims.
@@ -480,9 +489,16 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
                         task.update(episode=ep, status='running')
                         _save_method_json(path, task)
                     # Persist failures in the executor; callback/I/O failures propagate and leave a partial tail.
+                    policy=make_control_policy(control,diagnostic_policy) if control is not None else diagnostic_policy
+                    if control is not None and control['name']=='one_shot':
+                        policy_id=control['bundle']['continuation_policy_id']
+                        registry=getattr(runtime,'bundle_policies',{'diagnostic_conditional_v1':diagnostic_bundle_continuation})
+                        if policy_id not in registry:
+                            raise ValueError('unregistered frozen bundle policy')
+                        inputs['service'].register_bundle_policy(policy_id,registry[policy_id])
                     episode = run_task_episode(**inputs, predictor=runtime.predictor, driver=runtime.driver,
-                        policy=diagnostic_policy, limits=spec['limits'], local_provenance=spec['local_provenance'],
-                        sample_id=row['sample_id'], branch_id=spec['limits']['policy_id'], on_progress=persist)
+                        policy=policy, control_spec=control, limits=spec['limits'], local_provenance=spec['local_provenance'],
+                        sample_id=row['sample_id'], branch_id=config.get('branch_id',spec['limits']['policy_id']), on_progress=persist)
                     task.update(episode=episode, status='completed' if episode['status'] == 'completed' else 'failed')
                     _save_method_json(path, task)
             progress.update(status='running', terminal_tasks=index+1,
@@ -507,11 +523,11 @@ if __name__ == '__main__':
     gen_parser.add_argument('--checkpoint', type=Path, required=True)
     gen_parser.add_argument('--role', choices=('train', 'validation'), default='validation')
     gen_parser.add_argument('--per-recording', type=int, default=0)
-    interact_parser = commands.add_parser('interact', help='T4 diagnostic alternating P/F and GoT; executes real models when invoked')
+    interact_parser = commands.add_parser('interact', help='Explicit T4 interaction or T6 control configuration; executes real models when invoked')
     interact_parser.add_argument('out', type=Path)
     interact_parser.add_argument('--data', type=Path, default=ROOT / 'outputs/paired_driving_data_v1')
     interact_parser.add_argument('--checkpoint', type=Path, required=True)
-    interact_parser.add_argument('--spec', type=Path, required=True, help='JSON with complete limits and local_provenance')
+    interact_parser.add_argument('--spec', type=Path, required=True, help='JSON with complete limits, local_provenance, and optional versioned control')
     interact_parser.add_argument('--role', choices=('train', 'validation'), default='validation')
     interact_parser.add_argument('--per-recording', type=int, default=1)
     interact_parser.add_argument('--resume-from', type=Path, help='reuse terminal samples only, preserving failures and the partial tail')

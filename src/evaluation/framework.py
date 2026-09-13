@@ -121,13 +121,14 @@ def evaluate(generations, out, data):
     print(json.dumps(report['policies'],indent=2),flush=True)
 
 # v2 has its own reader and summary. The historical v1 functions above keep their semantics.
-METHOD_COST_FIELDS = ('driver_calls', 'calls', 'local_model_seconds', 'input_build_seconds',
+METHOD_COST_FIELDS = ('driver_calls', 'calls', 'rpc_rounds', 'control_seconds', 'local_model_seconds', 'input_build_seconds',
     'driver_seconds', 'generation_seconds', 'service_seconds', 'peer_model_seconds',
     'receiver_seconds', 'receiver_model_seconds', 'request_bytes', 'response_bytes',
     'input_tokens', 'output_tokens', 'feature_tokens', 'total_compute_seconds')
 METHOD_TIMING_SCOPE = ('sum of measured local MTR, input construction, driver attempts, service attempts and receiver updates; '
-    'generation and peer/receiver MTR are nested diagnostics, not added again; excludes model loading, '
-    'policy/executor bookkeeping, persistence I/O and network transport; shared local MTR charged once per task')
+    'plus explicitly recorded T6 control decisions/candidate construction; generation and peer/receiver MTR '
+    'are nested diagnostics, not added again; excludes model loading, unrecorded executor bookkeeping, '
+    'persistence I/O and network transport; old runs have no measured policy stage; shared local MTR charged once per task')
 
 
 def _number(value):
@@ -160,7 +161,21 @@ def _method_cost(task):
                     service=len(ep.get('requests', [])), receiver=len(ep.get('responses', [])),
                     input_build=sum(e['kind']=='input_started' for e in events))
     put('driver_calls', [expected['driver']])
-    put('calls', [expected['service']])
+    put('rpc_rounds', [expected['service']])
+    primitive_counts=[]
+    for request in ep.get('requests', []):
+        if request.get('version')=='toolv2x_bundle_v1':
+            event=next((e for e in groups['service'] if e.get('request_id')==request['request_id']),{})
+            primitive_counts.append((event.get('service_cost') or {}).get('capability_calls'))
+        else:
+            primitive_counts.append(1)
+    put('calls', primitive_counts)
+    control_events=[e for e in charges if e['kind']=='control']
+    control_stages={e['stage'] for e in control_events}
+    expected_control={e['stage'] for e in events if e['kind']=='decision'} if ep.get('control_spec') else set()
+    if len(control_stages)!=len(control_events):
+        issues.append('duplicate control cost stage')
+    put('control_seconds', [e.get('seconds') for e in control_events] + [None]*len(expected_control-control_stages))
     if expected['driver'] != len(plans):
         issues.append('driver attempts and plan records disagree')
     for kind, field, value_key in [('driver','driver_seconds','attempt_seconds'),
@@ -216,7 +231,7 @@ def _method_cost(task):
                 response_values.append(None)
     put('request_bytes', request_values)
     put('response_bytes', response_values)
-    timing = ('local_model_seconds','input_build_seconds','driver_seconds','service_seconds','receiver_seconds')
+    timing = ('local_model_seconds','input_build_seconds','driver_seconds','service_seconds','receiver_seconds','control_seconds')
     put('total_compute_seconds', [costs[k] for k in timing])
     known['total_compute_seconds'] = sum(known[k] for k in timing)
     complete = (ep.get('status') != 'running' and ep.get('cost', {}).get('complete') is True and not issues and
@@ -290,7 +305,7 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
         final_plan_id=ep.get('final_plan_id'), raw_plan_id=None, ADE3=None, FDE3=None, raw_ADE3=None, raw_FDE3=None,
         label_status=label_status, valid_label_points=sum(usable_label['valid']), plans=[],
         stop_reason=ep.get('stop_reason'), error=task.get('error') or ep.get('error'),
-        execution_kind=ep.get('execution_kind'), reported_cost=ep.get('cost'), **cost)
+        execution_kind=ep.get('execution_kind'), control_spec=ep.get('control_spec'), reported_cost=ep.get('cost'), **cost)
     if not ep:
         if task.get('status') != 'failed':
             result['artifact_status'] = 'incomplete'
@@ -375,7 +390,8 @@ def evaluate_method(episodes_root, out, labels_root):
     if config.get('version') != 'toolv2x_interact_run_v1':
         raise ValueError('expected explicit T4 interaction run; v1 uses the legacy evaluator')
     policy = config['spec']['limits']['policy_id']
-    # T4 interact fixes branch_id to policy_id; future branch trees must declare their own expected manifest.
+    # Each run declares one arm; future branch trees require their own expected manifest.
+    branch=config.get('branch_id',policy)
     expected = read_jsonl(root/'selected_index.jsonl')
     if not expected or len({r['sample_id'] for r in expected}) != len(expected):
         raise ValueError('empty/duplicate expected interaction samples')
@@ -422,13 +438,15 @@ def evaluate_method(episodes_root, out, labels_root):
                     raise ValueError('task identity or causal index differs from expected row')
                 if task.get('episode') and task['episode']['limits'] != config['spec']['limits']:
                     raise ValueError('task execution spec differs from frozen run config')
-                row = evaluate_method_task(task, label, policy_id=policy, branch_id=policy)
+                if task.get('episode') and task['episode'].get('control_spec') != config['spec'].get('control'):
+                    raise ValueError('task control differs from frozen run config')
+                row = evaluate_method_task(task, label, policy_id=policy, branch_id=branch)
             except FileNotFoundError:
                 status = 'missing_artifact'
             except (ValueError, KeyError, TypeError, IndexError) as exc:
                 status, message = 'invalid_artifact', str(exc)
         if status:
-            row = evaluate_method_task(fallback, label, policy_id=policy, branch_id=policy)
+            row = evaluate_method_task(fallback, label, policy_id=policy, branch_id=branch)
             row.update(artifact_status=status, artifact_error=message)
         row.update(task_paths=paths, source_run=str(root))
         rows.append(row)
@@ -441,7 +459,7 @@ def evaluate_method(episodes_root, out, labels_root):
         **summarize_method(rows), archive_issues=issues, source_progress=progress,
         by_recording={group:summarize_method([r for r in rows if r['recording']==group])
                       for group in sorted({r['recording'] for r in rows})},
-        timing_scope=METHOD_TIMING_SCOPE, cost_scope='toolv2x_measured_stages_v1',
+        timing_scope=METHOD_TIMING_SCOPE, cost_scope='toolv2x_measured_stages_v2' if config['spec'].get('control') else 'toolv2x_measured_stages_v1',
         task_success_definition='actual terminal STOP with valid direct answer and configured admissibility; not safety or low-error success',
         raw_metric_scope='last recorded driver attempt may be only a failed episode prefix; never substituted for successful final metrics',
         label_scope='offline only; missing/partial labels change metric coverage, not parsing or execution success',

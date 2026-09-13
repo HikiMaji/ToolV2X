@@ -10,6 +10,8 @@
 
 > **T5 执行更新（2026-09-13）：** 用户授权“开始 T5”后，v2 离线评价、全部 driver/服务/receiver 成本、缺失失败分母及旧指标兼容已完成；见 [T5 实施记录](../../t5_implementation_2026_09_13.md)。191 项轻量测试通过，未训练、未执行真实模型或新方法效果实验；停止在 T5，T6 以后不自动执行。
 
+> **T6 执行更新（2026-09-13）：** 用户授权“先实现 T6”；关键对照及共享真实前缀、同槽 refinement、单轮条件委托和 T5 成本/分支接入完成，见 [T6 实施记录](../../t6_implementation_2026_09_13.md)。226 项轻量、2 项原 tokenizer/planner 契约和旧 160 条回答复算通过；未训练、未真实模型执行或新方法效果实验。停止在 T6，T7 以后不自动执行。
+
 **Goal:** 在现有 P/F、CMP MTR 和 V2V-GoT 上实现最多两次远端能力调用，验证任务参数与真实驾驶修订反馈的作用。
 
 **Architecture:** 保留旧五策略执行路径；增加参数化 P/F 接口及交替调用同一 GoT 的执行路径。使用一个普通本车请求价值模块，提供方保持确定性检索；累计取得的字段、接收端派生字段、实际驾驶输入和全部成本分别留痕。
@@ -20,7 +22,7 @@
 
 ## Global Constraints
 
-- 计划经用户逐批授权已实施 T1–T5；本批到 T5 停止。未授权恢复训练或执行真实新方法实验，T6 以后不自动执行。
+- 计划经用户逐批授权已实施 T1–T6；本批到 T6 停止。未授权恢复训练或执行真实新方法实验，T7 以后不自动执行。
 - 首版只有远端 P/F；current/change 是任务参数，不是新增工具。
 - 固定决策时刻 t、ego_at_t 坐标、同一冻结 GoT 和同一冻结 MTR；最多两次远端能力调用。
 - 请求前只能使用本车信息、已经合法取得/计算的信息、公共配置和预算；未来 GT 只进入独立离线评价/监督。
@@ -466,6 +468,8 @@ assert report['attempts'] == len(expected_episode_keys)
 
 ### T6：关键反方、旧基线兼容与等证据控制【仅实验对照代码】
 
+**状态：已完成代码与契约验证。** 单轮冻结策略可注入但尚未拟合；所有模型结果是契约替身。实际增补文件/成本范围及前缀接口见实施记录。
+
 **修改文件：** 新建 `src/planning/method_controls.py`、`tests/test_method_controls.py`；在 `src/tools/vehicle.py` 增加 controls-only `query_bundle(envelope)`；扩展 `src/planning/inputs.py` 和 `v2vgot.py` 的显式 refinement 输入校验；`run_framework.py` 注册对照配置，不改变主方法默认 direct 提示。`episode.py:choose_action` 作为旧策略被复用，行为不改。
 
 **API / 数据：**
@@ -479,13 +483,13 @@ build_refinement_input(prepared, previous_plan)       # 固定 E/Z，加明确�
 
 bundle 只执行本地登记的有限条件程序/冻结策略 ID，不执行请求携带的任意 Python；策略实现复用 T8，先以注入确定性函数做契约测试。候选/摘要固定在请求前，内部最多两原语；不能读取 ego 未发送内容或中途再访问 ego driver。
 
-- [ ] 冻结反馈对照共享相同首轮 prefix，只替换方案条件；状态摘要中的 τ1/差分也被一致屏蔽。current+old、current+union 的末步动作数与 current+change 相同，union 确实按两个方案逐时刻关系评分。
-- [ ] bundle 在两种第一真实返回下分别 STOP/第二 P 或 F；只产生一个外发 request/response，原语数为 1/2，全部内部计算被记录。禁止以免费 F 预测构造 if 条件。
-- [ ] 不能取得未返回的目标 handle、ego 私有 features 或未来；合法摘要/候选的大小计 request；变更 budget 可限制候选/第二动作，不能事后调额度。
-- [ ] exact-repeat 精确相同 prompt/Z/features 且 service 从不调用；self-refinement 仅多上一模型输出，Z 引用与值不变，固定最后一次回答，GT 不可用。
-- [ ] 对照双方 refinement 槽容量相同、传入新证据与固定证据路径的模板相同；额外调用、token、耗时进入 T5。
-- [ ] 旧 v1 五条件的工具时序和提示黄金样本不变；共同 receiver 兼容版本标 `receiver=v2`，不能复用旧轨迹宣称新 receiver 有效。Ego-max-context 不留 peer 预算。
-- [ ] 运行 `PYTHONPATH=src:tests python -m unittest test_method_controls test_method_episode -v`，并回归 `test_direct_planning`，保持 direct 无 Q8 假父回答。
+- [x] 冻结反馈对照共享相同首轮 prefix，只替换方案条件；状态摘要中的 τ1/差分也被一致屏蔽。current+old、current+union 的末步动作数与 current+change 相同，union 确实按两个方案逐时刻关系评分。
+- [x] bundle 在两种第一真实返回下分别 STOP/第二 P 或 F；只产生一个外发 request/response，原语数为 1/2，全部内部计算被记录。禁止以免费 F 预测构造 if 条件。
+- [x] 不能取得未返回的目标 handle、ego 私有 features 或未来；合法摘要/候选的大小计 request；变更 budget 可限制候选/第二动作，不能事后调额度。
+- [x] exact-repeat 精确相同 prompt/Z/features 且 service 从不调用；self-refinement 仅多上一模型输出，Z 引用与值不变，固定最后一次回答，GT 不可用。
+- [x] 对照双方 refinement 槽容量相同、传入新证据与固定证据路径的模板相同；额外调用、token、耗时进入 T5。
+- [x] 旧 v1 五条件的工具时序和提示黄金样本不变；共同 receiver 兼容版本标 `receiver=v2`，不能复用旧轨迹宣称新 receiver 有效。Ego-max-context 不留 peer 预算。
+- [x] 运行 `PYTHONPATH=src:tests python -m unittest test_method_controls.ControlTests test_method_episode -v`，并回归 `test_direct_planning`，保持 direct 无 Q8 假父回答。
 
 ```python
 assert bundle_result['cost']['rpc_rounds'] == 1

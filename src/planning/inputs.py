@@ -303,3 +303,53 @@ def parse_q9(text):
         return value
     except (ValueError, SyntaxError, TypeError, OverflowError) as exc:
         raise ValueError('invalid Q9 trajectory') from exc
+
+
+def refinement_prompt(prepared):
+    """Regenerate the explicit controls-only model-answer slot; never accept free text."""
+    r = prepared['refinement']
+    if (set(r) != {'version','slot_tokens','previous_plan'} or r['version'] != 'toolv2x_refinement_v1' or
+            type(r['slot_tokens']) is not int or r['slot_tokens'] <= 0):
+        raise ValueError('invalid refinement specification')
+    previous = r['previous_plan']
+    if previous is not None:
+        points = np.asarray(previous, dtype=float)
+        if points.shape != (6,2) or not np.isfinite(points).all():
+            raise ValueError('invalid model-generated refinement parent')
+    origin = 'model_generated' if previous is not None else 'none_initial'
+    if prepared['previous_plan_origin'] != origin:
+        raise ValueError('refinement parent origin mismatch')
+    slot = ('Review the trajectory using only the existing evidence. The previous trajectory '
+            'below is a model output, not an observation. Produce a new six-point answer.\n'
+            'Previous model trajectory: ' + json.dumps(previous, separators=(',',':'),allow_nan=False) + '\n')
+    base = make_prompt('Trajectory', prepared['ego_motion'], prepared['evidence_used'],
+                      evidence_format='compact', remote_evidence=prepared.get('remote_evidence_used'))
+    return slot + base
+
+
+def build_refinement_input(prepared, previous_plan, *, tokenizer=None, token_counter=None, slot_tokens=256):
+    """Fixed E/Z; reject overflow instead of selecting or dropping any evidence."""
+    if prepared['input_layout'] not in ('source_blocks_v2','source_blocks_v2_refinement'):
+        raise ValueError('refinement requires common v2 receiver')
+    result=copy.deepcopy(prepared)
+    points=None
+    if previous_plan is not None:
+        points=parse_q9(previous_plan['raw']).tolist()
+        if points != previous_plan['waypoints']:
+            raise ValueError('refinement parent differs from actual model answer')
+    result.update(input_layout='source_blocks_v2_refinement',
+        previous_plan_origin='model_generated' if points is not None else 'none_initial',
+        refinement=dict(version='toolv2x_refinement_v1',slot_tokens=slot_tokens,previous_plan=points))
+    base=make_prompt('Trajectory',result['ego_motion'],result['evidence_used'],
+        evidence_format='compact',remote_evidence=result.get('remote_evidence_used'))
+    if token_counter is None:
+        from planning.v2vgot import prompt_tokens
+        token_counter=lambda text:len(prompt_tokens(tokenizer,text))-1
+    prompt=refinement_prompt(result)
+    count=token_counter(prompt)+result['evidence_selection']['feature_tokens']
+    if (token_counter(prompt)-token_counter(base)>slot_tokens or
+            count+result['receiver_spec']['generation_reserve']>result['receiver_spec']['context_limit']):
+        raise ValueError('refinement slot/context overflow; evidence cannot be changed')
+    result['q9_prompt']=prompt
+    result['evidence_selection']['input_tokens']=count
+    return result

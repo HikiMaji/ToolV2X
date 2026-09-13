@@ -13,6 +13,7 @@ import numpy as np
 from probe.kinematic_tools import encode, history_packet
 
 TASK_VERSION = 'toolv2x_task_v2'
+CONTROL_TASK_VERSION = 'toolv2x_control_task_v1'
 TIMES = [.5, 1., 1.5, 2., 2.5, 3.]
 FUTURE_INDICES = [4, 9, 14, 19, 24, 29]
 SCORE_DECIMALS = 12
@@ -160,9 +161,12 @@ def field_key(ref):
 
 def _request_spec(request):
     _check_json_native(request)
-    _keys(request, REQUEST_FIELDS, 'task request')
-    if (request['version'] != TASK_VERSION or request['coordinate_frame'] != 'ego_at_t' or
-            request['tool'] not in ('P', 'F') or request['mode'] not in ('current', 'change')):
+    control = isinstance(request, dict) and request.get('version') == CONTROL_TASK_VERSION
+    roi = control and request.get('mode') == 'roi'
+    _keys(request, REQUEST_FIELDS | ({'roi'} if roi else set()), 'task request')
+    modes = ('current', 'change', 'old', 'union', 'roi') if control else ('current', 'change')
+    if (request['version'] not in (TASK_VERSION, CONTROL_TASK_VERSION) or request['coordinate_frame'] != 'ego_at_t' or
+            request['tool'] not in ('P', 'F') or request['mode'] not in modes):
         raise ValueError('invalid task protocol/time/coordinate contract')
     for key in ('request_id', 'provider', 'scene'):
         _text(request[key])
@@ -171,14 +175,18 @@ def _request_spec(request):
         raise ValueError('invalid request time axis')
     spec = ExecutionSpec.from_dict(request['execution_spec'])
     paths = [_array(request['tau_new'], (6, 2))]
-    if request['mode'] == 'change':
+    if request['mode'] in ('change', 'old', 'union'):
         paths.append(_array(request['tau_old'], (6, 2)))
-        if np.array_equal(paths[0], paths[1]):
+        if request['mode'] == 'change' and np.array_equal(paths[0], paths[1]):
             raise ValueError('change requires different old/new plans')
     elif request['tau_old'] is not None:
         raise ValueError('current must not contain an old plan')
     for path in paths:
         validate_plan(path, spec)
+    if roi and request['roi'] is not None:
+        bounds = _array(request['roi'], (4,))
+        if not (bounds[0] < bounds[2] and bounds[1] < bounds[3]):
+            raise ValueError('ROI must have increasing finite bounds')
     if not isinstance(request['acquired_field_manifest'], list):
         raise ValueError('invalid acquired-field manifest')
     try:
@@ -334,9 +342,21 @@ def rank_targets(window, request, forecast=None):
             return np.exp(-.5 * (distance / spec.sigma_m) ** 2)
 
     new = relation(request['tau_new'])
-    old = relation(request['tau_old']) if request['mode'] == 'change' else new
+    old = relation(request['tau_old']) if request['mode'] in ('change', 'old', 'union') else new
     current, change = relation_scores(old, new)
     scores = current if request['mode'] == 'current' else change
+    if request['mode'] == 'old':
+        scores = old.max(axis=(1, 2))
+    elif request['mode'] == 'union':
+        scores = np.maximum(old, new).max(axis=(1, 2))
+    if request['mode'] == 'roi':
+        # Controls compatibility retains v1 source order; this score is ordinal,
+        # not a trajectory relation. The common receiver applies its own order.
+        scores = 1. / (np.arange(n) + 1)
     rows = [dict(track_handle=int(handle), score=round(float(scores[i]), SCORE_DECIMALS),
                  proxy_status=status[i]) for i, handle in enumerate(window['track_ids'])]
+    if request['mode'] == 'roi' and request['roi'] is not None:
+        xmin, ymin, xmax, ymax = request['roi']
+        rows = [r for i, r in enumerate(rows)
+                if xmin <= states[i, -1, 0] <= xmax and ymin <= states[i, -1, 1] <= ymax]
     return sorted(rows, key=lambda row: (-row['score'], row['track_handle']))

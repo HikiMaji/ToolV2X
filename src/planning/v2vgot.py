@@ -256,17 +256,23 @@ class V2VGoTPlanner:
             feature_tokens=int(tensors['active_agent_mask'].sum()) * 270)
 
     def plan_prepared(self, features, prepared):
-        if (prepared.get('input_layout') not in ('source_blocks_v1', 'source_blocks_v2') or prepared.get('decoding') != 'direct' or
+        if (prepared.get('input_layout') not in ('source_blocks_v1', 'source_blocks_v2', 'source_blocks_v2_refinement') or prepared.get('decoding') != 'direct' or
                 prepared.get('q8_executed') is not False or prepared.get('q8_raw')):
             raise ValueError('expected a source-separated direct input')
         expected = make_prompt('Trajectory', prepared['ego_motion'], prepared['evidence_used'],
                                evidence_format='compact', remote_evidence=prepared.get('remote_evidence_used'))
+        if prepared['input_layout'] == 'source_blocks_v2_refinement':
+            from planning.inputs import refinement_prompt
+            base = expected
+            expected = refinement_prompt(prepared)
+            if len(prompt_tokens(self.tokenizer, expected)) - len(prompt_tokens(self.tokenizer, base)) > prepared['refinement']['slot_tokens']:
+                raise ValueError('refinement answer exceeds its reserved slot')
         selection = prepared['evidence_selection']
         feature_count = int(np.asarray(features['active_agent_mask']).sum()) * 270
         if (expected != prepared['q9_prompt'] or selection['context_limit'] != self.context_limit or
                 selection['feature_tokens'] != feature_count):
             raise ValueError('prepared input differs from the model input contract')
-        if prepared['input_layout'] == 'source_blocks_v2':
+        if prepared['input_layout'] in ('source_blocks_v2', 'source_blocks_v2_refinement'):
             receiver = prepared['receiver_spec']
             exact_tokens = len(prompt_tokens(self.tokenizer, expected)) - 1 + feature_count
             remote = prepared.get('remote_evidence_used')

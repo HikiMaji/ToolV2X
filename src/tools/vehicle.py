@@ -64,6 +64,30 @@ class VehicleTools:
         self._task_records = []
         self._task_spec = None
         self._task_bytes = 0
+        self._bundle_policies = {}
+        self._bundle_records = []
+
+    @property
+    def bundle_records(self):
+        """Detached outer wire/cost archives, including failed bundle attempts."""
+        return copy.deepcopy(self._bundle_records)
+
+    def register_bundle_policy(self, policy_id, policy):
+        """Register a trusted local frozen control callable, never request code.
+
+        As with the ego policy API, Python callables are trusted dependencies,
+        not sandboxed programs. Only detached sent data is supplied to them.
+        """
+        from tools.task_spec import _version
+        _version(policy_id)
+        if self._bundle_records or policy_id in self._bundle_policies or not callable(policy):
+            raise ValueError('bundle policies must be registered once before execution')
+        self._bundle_policies[policy_id] = policy
+
+    def query_bundle(self, envelope):
+        """Controls-only one external round trip with at most two paid primitives."""
+        from tools.control_bundle import execute_bundle
+        return execute_bundle(self, envelope)
 
     @property
     def task_records(self):
@@ -78,6 +102,12 @@ class VehicleTools:
         No receiver-derived equivalence, driver execution or future labels here.
         Requests use JSON-native types; predictor fields use CMP's NumPy arrays.
         """
+        if self._bundle_records:
+            raise ValueError('a bundle service cannot start an additional external task')
+        return self._execute_task(request)
+
+    def _execute_task(self, request, *, response_cap=None, internal=False):
+        """Shared deterministic P/F executor; internal calls still consume attempts."""
         from tools.task_spec import (ExecutionSpec, validate_task_request, validate_provenance,
                                      field_key, rank_targets, _check_window, FrozenPredictor)
         begin = perf_counter()
@@ -88,6 +118,7 @@ class VehicleTools:
                 self._predict.descriptor['model_version'] != self._task_provenance['prediction']):
             raise ValueError('predictor binding and provider model version differ')
         spec = ExecutionSpec.from_dict(request['execution_spec'])
+        cap = spec.max_response_bytes if response_cap is None else min(response_cap, spec.max_response_bytes)
         if (request['provider'], request['scene'], request['g']) != (self.provider, self.scene, self.g):
             raise ValueError('request and provider source/scene/time differ')
         if self._task_spec is not None and self._task_spec != request['execution_spec']:
@@ -97,7 +128,7 @@ class VehicleTools:
         if any(r['request']['request_id'] == request['request_id'] for r in self._task_records):
             raise ValueError('duplicate request ID in v2 episode')
         request_bytes = len(encode(request))
-        if self._task_bytes + request_bytes + spec.max_response_bytes > spec.max_episode_bytes:
+        if not internal and self._task_bytes + request_bytes + spec.max_response_bytes > spec.max_episode_bytes:
             raise ValueError('remaining episode budget cannot reserve response cap')
         packet = dict(version='toolv2x_task_response_v2', request=request, receipt_id=uuid4().hex,
             provenance=copy.deepcopy(self._task_provenance), records=[], references=[], ranking=[],
@@ -105,7 +136,7 @@ class VehicleTools:
         if request['tool'] == 'F' and isinstance(self._predict, FrozenPredictor):
             packet['predictor_binding'] = self._predict.descriptor
         # This is the longest empty-status header, requiring no private window.
-        if len(encode(packet)) > spec.max_response_bytes:
+        if len(encode(packet)) > cap:
             raise ValueError('response cap cannot hold the complete header')
         cost = dict(request_bytes=request_bytes, response_bytes=0, service_seconds=0.,
             model_seconds=0., model_targets_computed=0, fallback_targets_computed=0,
@@ -113,7 +144,8 @@ class VehicleTools:
         record = dict(request=request, status='started', cost=cost)
         self._task_records.append(record)
         self._task_spec = copy.deepcopy(request['execution_spec'])
-        self._task_bytes += request_bytes
+        if not internal:
+            self._task_bytes += request_bytes
         stage = 'window_loading'
         try:
             if self._task_window is None:
@@ -147,7 +179,7 @@ class VehicleTools:
             if tool == 'F' and self._task_forecast is None:
                 self._task_forecast = copy.deepcopy(forecast)
                 cost['model_targets_computed'] = int(np.asarray(forecast['model_used']).sum())
-                cost['fallback_targets_computed'] = len(ranked) - cost['model_targets_computed']
+                cost['fallback_targets_computed'] = len(w['track_ids']) - cost['model_targets_computed']
             stage = 'response_packing'
             acknowledged = {field_key(entry['ref']): entry for entry in request['acquired_field_manifest']}
             positions = {int(handle): i for i, handle in enumerate(w['track_ids'])}
@@ -185,6 +217,8 @@ class VehicleTools:
             def with_certificate(candidate):
                 if tool != 'P' or candidate['truncated']:
                     return candidate
+                if request['mode'] == 'roi' and len(ranked) != len(w['track_ids']):
+                    return candidate
                 # A complete P covers every history through returned records or
                 # authenticated acknowledgements. This order reveals no unbought IDs.
                 certificate = dict(version='toolv2x_full_context_v1',
@@ -194,7 +228,7 @@ class VehicleTools:
                     has_eligible='eligible' in w,
                     predictor_binding=self._predict.descriptor if isinstance(self._predict, FrozenPredictor) else None)
                 trial = dict(candidate, context_certificate=certificate)
-                return trial if len(encode(trial)) <= spec.max_response_bytes else candidate
+                return trial if len(encode(trial)) <= cap else candidate
             for records, references, rank in candidates:
                 if len(packet['ranking']) >= spec.max_targets:
                     continue
@@ -203,7 +237,7 @@ class VehicleTools:
                     truncated=len(packet['ranking']) + 1 < len(candidates))
                 trial = with_certificate(trial)
                 # Atomic target: shared anchor plus the complete history/forecast bundle.
-                if len(encode(trial)) <= spec.max_response_bytes:
+                if len(encode(trial)) <= cap:
                     packet = trial
             if not packet['records']:
                 packet['status'] = ('no_observed_targets' if not ranked else
@@ -214,7 +248,8 @@ class VehicleTools:
             # Only fields in the final returned packet acquire a receipt. Not candidates,
             # clipped records, receiver predictions or references to older receipts.
             self._task_receipts[packet['receipt_id']] = copy.deepcopy([r['ref'] for r in packet['records']])
-            self._task_bytes += len(wire)
+            if not internal:
+                self._task_bytes += len(wire)
             cost.update(response_bytes=len(wire), returned_targets=len(packet['ranking']), complete=True)
             record.update(status='completed', response=copy.deepcopy(packet))
         except Exception as exc:
@@ -437,6 +472,8 @@ def decode_task_response(wire, request):
                 if key in acknowledged:
                     raise ValueError('response retransmitted an acknowledged field')
                 _validate_task_value(kind, item['value'])
+                if request['mode'] == 'roi' and kind == 'anchor' and not in_roi(item['value']['box'], request['roi']):
+                    raise ValueError('returned anchor is outside the controls ROI')
                 new_targets.add(handle)
             all_fields[key] = item
             target_fields.setdefault(handle, {})[kind] = item
