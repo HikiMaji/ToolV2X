@@ -22,8 +22,15 @@ def control_spec(name, **options):
             type(value['refinement_slot_tokens']) is not int or value['refinement_slot_tokens'] <= 0 or
             value['baseline'] not in ('Ego','P','F','PF','rule')):
         raise ValueError('invalid versioned control specification')
-    if name == 'one_shot' and not isinstance(value['bundle'], dict):
-        raise ValueError('one-shot requires an explicit registered bundle specification')
+    if name == 'one_shot':
+        if not isinstance(value['bundle'],dict):
+            raise ValueError('one-shot requires an explicit registered bundle specification')
+        value['bundle']=copy.deepcopy(value['bundle'])
+        value['bundle'].setdefault('summary_spec',dict(version='toolv2x_bundle_summary_v1',
+            selection='distance_then_field',field_kinds=['anchor','forecast'],max_fields=8,max_bytes=1536))
+        value['bundle'].setdefault('response_budget',dict(version='toolv2x_bundle_budget_v1',
+            mode='per_rpc',outer_response_cap=None,primitive_response_caps=None))
+        validate_bundle_config(value['bundle'])
     return copy.deepcopy(value)
 
 
@@ -96,6 +103,10 @@ def make_control_policy(control_spec, value_policy):
             decision=legacy_decision(state,spec['baseline'])
             return dict(tool=decision['tool'],mode=None if decision['tool']=='STOP' else 'roi',reason=decision['reason'])
         return value_policy(copy.deepcopy(state))
+    if hasattr(value_policy, 'validate_runtime'):
+        policy.validate_runtime=value_policy.validate_runtime
+    if hasattr(value_policy, 'provenance'):
+        policy.provenance=copy.deepcopy(value_policy.provenance)
     return policy
 
 
@@ -118,7 +129,7 @@ def make_bundle(state, public_summary, candidates, continuation_policy_id, limit
         tau_new=copy.deepcopy(state['current_plan']['waypoints']),tau_old=None,
         execution_spec=copy.deepcopy(limits['execution_spec']),acquired_field_manifest=manifest)
     config={k:copy.deepcopy(v) for k,v in limits.items() if k!='first_tool'}
-    return dict(version='toolv2x_bundle_v1',request_id='bundle0',bundle_id='bundle0',first_request=first,
+    return dict(version='toolv2x_bundle_v2' if 'budget_mode' in config else 'toolv2x_bundle_v1',request_id='bundle0',bundle_id='bundle0',first_request=first,
         public_summary=copy.deepcopy(public_summary),candidates=copy.deepcopy(candidates),
         continuation_policy_id=continuation_policy_id,limits=config)
 
@@ -127,7 +138,7 @@ def episode_bundle(state, spec, tool):
     """Cheap initial/slowdown/constant-motion candidates; all construction is timed by caller."""
     from tools.task_spec import TIMES, validate_plan
     bundle=spec['bundle']
-    required={'continuation_policy_id','candidate_sources','slowdown_scale','max_candidates','wrapper_reserve_bytes','extra_generation'}
+    required={'continuation_policy_id','candidate_sources','slowdown_scale','max_candidates','wrapper_reserve_bytes','extra_generation','summary_spec','response_budget'}
     if set(bundle)!=required or bundle['extra_generation'] not in (None,'exact_repeat','self_refinement'):
         raise ValueError('invalid bundle control configuration')
     if (not isinstance(bundle['candidate_sources'],list) or not bundle['candidate_sources'] or
@@ -150,17 +161,80 @@ def episode_bundle(state, spec, tool):
             points=np.column_stack((speed*t,np.zeros(6))) if abs(yaw)<1e-8 else np.column_stack((speed*np.sin(yaw*t)/yaw,speed*(1-np.cos(yaw*t))/yaw))
         else: raise ValueError('unknown causal candidate source')
         candidates.append(dict(candidate_id=name,waypoints=validate_plan(points.tolist(),state['execution_spec'])))
-    cap=state['execution_spec']['max_response_bytes']-bundle['wrapper_reserve_bytes']
     calls=min(2,state['remaining_budget']['calls'])
-    if calls<1 or cap<calls:
-        raise ValueError('bundle response budget cannot fund primitives')
-    caps=[cap//calls]*calls
-    caps[-1]+=cap-sum(caps)
+    if calls<1:
+        raise ValueError('bundle has no remaining capability allowance')
+    budget=bundle['response_budget']
+    primitive_cap=state['execution_spec']['max_response_bytes']
+    outer=budget['outer_response_cap']
+    if outer is None:
+        outer=primitive_cap if budget['mode']=='per_rpc' else calls*primitive_cap+bundle['wrapper_reserve_bytes']
+    caps=budget['primitive_response_caps']
+    if caps is None:
+        if budget['mode']=='episode_aggregate':
+            caps=[primitive_cap]*calls
+        else:
+            payload=outer-bundle['wrapper_reserve_bytes']
+            if payload<calls:
+                raise ValueError('bundle response budget cannot fund primitives')
+            caps=[payload//calls]*calls
+            caps[-1]+=payload-sum(caps)
     limits=dict(execution_spec=state['execution_spec'],max_calls=calls,max_candidates=bundle['max_candidates'],
-        remaining_bytes=state['remaining_budget']['bytes'],primitive_response_caps=caps,
-        wrapper_reserve_bytes=bundle['wrapper_reserve_bytes'],first_tool=tool)
-    summary={key:copy.deepcopy(state[key]) for key in ('ego_motion','local_evidence','current_plan')}
-    return make_bundle(state,summary,candidates,bundle['continuation_policy_id'],limits)
+        remaining_bytes=state['remaining_budget']['bytes'],primitive_response_caps=copy.deepcopy(caps),
+        wrapper_reserve_bytes=bundle['wrapper_reserve_bytes'],first_tool=tool,
+        budget_mode=budget['mode'],outer_response_cap=outer)
+    summary=dict(ego_motion=copy.deepcopy(state['ego_motion']),local_evidence=[],
+        summary_status=dict(version='toolv2x_local_summary_v1',selected_fields=0,truncated=bool(state['local_evidence'])))
+    request=make_bundle(state,summary,candidates,bundle['continuation_policy_id'],limits)
+    # Initial trajectory is already in first_request/candidates; do not duplicate its raw text.
+    select_bundle_summary(request,state['local_evidence'],bundle['summary_spec'])
+    return request
+
+
+def validate_bundle_config(bundle):
+    summary=bundle['summary_spec']
+    if (set(summary)!={'version','selection','field_kinds','max_fields','max_bytes'} or
+            summary['version']!='toolv2x_bundle_summary_v1' or summary['selection']!='distance_then_field' or
+            summary['field_kinds'] not in (['anchor'],['anchor','forecast']) or
+            any(type(summary[k]) is not int or summary[k]<1 for k in ('max_fields','max_bytes'))):
+        raise ValueError('invalid versioned summary configuration')
+    budget=bundle['response_budget']
+    if (set(budget)!={'version','mode','outer_response_cap','primitive_response_caps'} or
+            budget['version']!='toolv2x_bundle_budget_v1' or budget['mode'] not in ('per_rpc','episode_aggregate') or
+            budget['outer_response_cap'] is not None and (type(budget['outer_response_cap']) is not int or budget['outer_response_cap']<1)):
+        raise ValueError('invalid versioned bundle response budget')
+    caps=budget['primitive_response_caps']
+    if caps is not None and (not isinstance(caps,list) or not 1<=len(caps)<=2 or any(type(c) is not int or c<1 for c in caps)):
+        raise ValueError('invalid predeclared primitive response capacities')
+
+
+def select_bundle_summary(request, local_fields, spec):
+    """Deterministic atomic local fields; both summary and complete wire must fit."""
+    from probe.kinematic_tools import encode
+    from tools.task_spec import field_key
+    summary=request['public_summary']
+    anchors={r['ref']['track_handle']:r for r in local_fields if r['ref']['field_kind']=='anchor'}
+    eligible=[r for r in local_fields if r['ref']['field_kind'] in spec['field_kinds']]
+    def order(record):
+        ref=record['ref'];anchor=anchors.get(ref['track_handle'])
+        distance=float(np.hypot(*anchor['value']['box'][:2])) if anchor else float('inf')
+        return (distance,ref['track_handle'],spec['field_kinds'].index(ref['field_kind']),field_key(ref))
+    selected=[]
+    if len(encode(summary))>spec['max_bytes']:
+        raise ValueError('summary capacity cannot hold the mandatory causal header')
+    cap=min(request['limits']['execution_spec']['max_request_bytes'],
+            request['limits']['remaining_bytes']-request['limits']['outer_response_cap'])
+    for record in sorted(eligible,key=order):
+        if len(selected)>=spec['max_fields']:break
+        if record['ref']['field_kind']!='anchor' and not any(
+                r['ref']['track_handle']==record['ref']['track_handle'] and r['ref']['field_kind']=='anchor' for r in selected):
+            continue
+        summary['local_evidence']=selected+[copy.deepcopy(record)]
+        summary['summary_status'].update(selected_fields=len(selected)+1,truncated=len(selected)+1<len(local_fields))
+        if len(encode(summary))<=spec['max_bytes'] and len(encode(request))<=cap:
+            selected=summary['local_evidence']
+    summary['local_evidence']=selected
+    summary['summary_status'].update(selected_fields=len(selected),truncated=len(selected)<len(local_fields))
 
 
 def diagnostic_bundle_continuation(state):
@@ -172,13 +246,23 @@ def diagnostic_bundle_continuation(state):
     return dict(tool='STOP',mode=None,candidate_id=None,reason='diagnostic_no_second_action')
 
 
-def capture_control_prefix(**episode_inputs):
-    """Capture live first-response revision for paired controls, not disk resumption.
+def register_value_continuation(service, checkpoint, expected_binding):
+    """Install a separately fitted frozen control, with no ego-driver callback."""
+    from planning.query_value import load_query_policy
+    policy=load_query_policy(checkpoint,expected_binding=expected_binding,policy_kind='bundle_terminal')
+    service.register_bundle_policy(policy.config['policy_id'],policy)
+    return policy
+
+
+def capture_control_prefix(*, after_calls=1, **episode_inputs):
+    """Capture a live initial or first-response plan, not disk resumption.
 
     Bind copies of the actual feature values and the same live driver. This
     in-memory handle is not serialized; branch archives keep the real prefix.
     """
     from planning.method_episode import run_task_episode
+    if type(after_calls) is not int or after_calls not in (0,1):
+        raise ValueError('capture requires zero or one completed remote call')
     class PrefixReady(Exception):
         pass
     episode_inputs=dict(episode_inputs,features=copy.deepcopy(episode_inputs['features']))
@@ -187,14 +271,15 @@ def capture_control_prefix(**episode_inputs):
     def capture(episode):
         if original is not None:
             original(episode)
-        if episode['events'][-1]['kind']=='driver_completed' and len(episode['plans'])==2 and episode['plans'][-1]['status']=='valid':
+        if (episode['events'][-1]['kind']=='driver_completed' and len(episode['requests'])==after_calls and
+                len(episode['plans'])==after_calls+1 and episode['plans'][-1]['status']=='valid'):
             captured.update(episode=copy.deepcopy(episode),features=copy.deepcopy(episode_inputs['features']),driver=episode_inputs['driver'])
             raise PrefixReady()
     try:
         run_task_episode(**dict(episode_inputs,on_progress=capture))
     except PrefixReady:
         return captured
-    raise ValueError('execution did not reach a valid first-response revision')
+    raise ValueError('execution did not reach the requested valid driver prefix')
 
 
 def validate_control_prefix(prefix, features, driver):

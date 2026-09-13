@@ -437,6 +437,8 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
         actual_rgb_input=False, gt_labels_read=False)
     if control is not None:
         config['branch_id']=control['name'] + (':'+control['baseline'] if control['name']=='legacy_v2' else '')
+        if control['name']=='one_shot':
+            config['branch_id']+=':'+control['bundle']['response_budget']['mode']
         config['scope']='T6 explicit control; diagnostic injected policy until fitted T8 policy is provided'
     previous = completed_method_prefix(resume_from, rows, config) if resume_from else []
     if resume_from:
@@ -508,6 +510,26 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
 
 
 
+def collect_method(data,out,checkpoint,spec_path,role='train',per_recording=1):
+    """Explicit T7 branch collection; invoking this command executes real models."""
+    import shutil
+    from planning.query_data import collect_branches,collection_spec
+    spec=collection_spec(json.loads(spec_path.read_text()))
+    if role not in ('train','validation'):
+        raise ValueError('collection requires a predefined research role')
+    rows=[r for r in select_rows(data,per_recording) if r['role']==role]
+    source=json.loads((data/'config.json').read_text())
+    config=dict(version='toolv2x_collect_method_run_v1',source_data=str(data),checkpoint=str(checkpoint),
+        mtr_checkpoint=source['mtr_checkpoint'],spec=spec,role=role,per_recording=per_recording,
+        scope='T7 finite causal branches; no value training or mechanism-benefit claim',gt_labels_read=False)
+    def initialize():
+        _save_method_json(out/'launch.json',config)
+        for name in ('src','vendor/cmp_mtr','vendor/v2vgot_llava/llava'):
+            shutil.copytree(ROOT/name,out/'code_snapshot'/name,ignore=shutil.ignore_patterns('__pycache__'))
+        return _load_interaction_runtime(out,config)
+    return collect_branches(rows,out,initialize,spec)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest='command', required=True)
@@ -531,11 +553,21 @@ if __name__ == '__main__':
     interact_parser.add_argument('--role', choices=('train', 'validation'), default='validation')
     interact_parser.add_argument('--per-recording', type=int, default=1)
     interact_parser.add_argument('--resume-from', type=Path, help='reuse terminal samples only, preserving failures and the partial tail')
+    collect_parser=commands.add_parser('collect-method',help='T7 finite branch collection; executes real models only when explicitly invoked')
+    collect_parser.add_argument('out',type=Path)
+    collect_parser.add_argument('--data',type=Path,default=ROOT/'outputs/paired_driving_data_v1')
+    collect_parser.add_argument('--checkpoint',type=Path,required=True)
+    collect_parser.add_argument('--spec',type=Path,required=True,help='complete versioned collection spec including recording_folds')
+    collect_parser.add_argument('--role',choices=('train','validation'),default='train')
+    collect_parser.add_argument('--per-recording',type=int,default=1)
     args = parser.parse_args()
     try:
         if args.command == 'prepare':
             prepare(args.data.resolve(), args.out.resolve(), args.per_recording, args.p_processing == 'local_mtr',
                     resume_from=args.resume_from.resolve() if args.resume_from else None)
+        elif args.command == 'collect-method':
+            collect_method(args.data.resolve(),args.out.resolve(),args.checkpoint.resolve(),args.spec.resolve(),
+                           args.role,args.per_recording)
         elif args.command == 'interact':
             interact(args.data.resolve(), args.out.resolve(), args.checkpoint.resolve(), args.spec.resolve(),
                      args.role, args.per_recording, args.resume_from.resolve() if args.resume_from else None)

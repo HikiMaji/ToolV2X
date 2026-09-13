@@ -14,7 +14,11 @@
 
 **Goal:** 在现有 P/F、CMP MTR 和 V2V-GoT 上实现最多两次远端能力调用，验证任务参数与真实驾驶修订反馈的作用。
 
+> **T6 复审修复（2026-09-13）：** 用户授权依据 9-13-2 定向修复；已补预算化单轮摘要、真实请求长度动作 mask、排除快照保存的分段计时，以及每包/episode 聚合两种预算配置，见 [修复记录](../../t6_review_fixes_2026_09_13.md)。完整轻量 237 项与旧 160 条回答复算通过。旧控制时间不追溯伪校正；未训练、未真实方法执行，T7 仍未实施。
+
 **Architecture:** 保留旧五策略执行路径；增加参数化 P/F 接口及交替调用同一 GoT 的执行路径。使用一个普通本车请求价值模块，提供方保持确定性检索；累计取得的字段、接收端派生字段、实际驾驶输入和全部成本分别留痕。
+
+> **T7 执行更新（2026-09-13）：** 用户“开始 T7”授权本批代码与契约测试。合法分支采集、原 runtime CLI、末步/首步监督接口已完成，见 [T7 实施记录](../../t7_implementation_2026_09_13.md)。22 项新增、完整轻量 259 项与旧 160 条回答复算通过；未真实采集、未训练，T8 尚未实施。首步接口测试使用冻结合成教师，真实标签仍依赖后续 T8 教师。
 
 **Tech Stack:** 现有 Python 3.8、标准库、NumPy、unittest；沿用现有 PyTorch、CMP MTR、LLaVA/GoT、tokenizer 和 compact 表示，不增加依赖。
 
@@ -22,7 +26,7 @@
 
 ## Global Constraints
 
-- 计划经用户逐批授权已实施 T1–T6；本批到 T6 停止。未授权恢复训练或执行真实新方法实验，T7 以后不自动执行。
+- 计划经用户逐批授权已实施 T1–T7 代码与契约测试；本批到 T7 停止。未授权恢复训练或执行真实新方法实验，T8 以后不自动执行。
 - 首版只有远端 P/F；current/change 是任务参数，不是新增工具。
 - 固定决策时刻 t、ego_at_t 坐标、同一冻结 GoT 和同一冻结 MTR；最多两次远端能力调用。
 - 请求前只能使用本车信息、已经合法取得/计算的信息、公共配置和预算；未来 GT 只进入独立离线评价/监督。
@@ -505,6 +509,8 @@ assert repeat_events.count('service_query') == 0
 
 ### T7：合法分支台账和末步/首步监督接口【实验基础】
 
+**状态：代码与契约测试已完成。** 见 [T7 实施记录](../../t7_implementation_2026_09_13.md)。以下勾选仅表示接口与合成契约通过，不表示真实分支或真实教师标签已生成。每次 collection 采用一个交替动作语法；T6 的 bundle/固定生成图保留独立入口。只复用实际前缀，未添加跨兄弟分支的等价结果缓存。
+
 **修改文件：** 新建 `src/planning/query_data.py`、`tests/test_query_data.py`；`run_framework.py` 增加明确 `collect-method` 入口；复用 `common.audit_protocol.recording`、已有 online_index/独立 offline_labels，不更改原数据划分或原标签。
 
 **API / 数据：**
@@ -517,12 +523,12 @@ make_first_targets(branch_root, labels_root, frozen_continuation, utility_spec, 
 
 branch 行保存 prefix、动作、request/response、E/derived/Z、实际 plan_id、全部成本、有效/失败原因、driver/MTR/receiver/query 版本和 physical_recording。离线目标表与在线状态表分目录；不能把首步价值标签塞回 request 特征。
 
-- [ ] fake 小树无失败/去重/复用时，初始 1、两种首步 2、每首步四种末步 8，合计 11 次 driver；STOP 只引用现有方案。它不包含额外对照输出。
-- [ ] 相同 first prefix 的孩子共享其真实回执/τ1；不同分支不共享本来未购买的缓存，不提前把全部响应交给 selector。
-- [ ] 失败节点保留，不展开其非法子树；预算屏蔽动作标 infeasible，不能以预测未知结果屏蔽；等价请求合法复用需记录理由及部署应付成本，而非把回放成本当实际成本。
-- [ ] 末步标签核对正/负改善、失败惩罚和每阶段费用。首步刻意设置“GT 最优动作”不同于冻结 teacher 的动作，必须用 teacher 实际选择的终态。
-- [ ] 两车、相邻帧、同录制不同 scene 段、所有分支不能跨 fold；修改 GT 只改变标签，不改变 collect 的查询/生成路径。
-- [ ] 使用缺失权重配置、缺失成本、缺失实际 Z 或错误 teacher 录制来源时标签制作拒绝，而不是静默填值。运行 `PYTHONPATH=src:tests python -m unittest test_query_data -v`。
+- [x] fake 小树无失败/去重/复用时，初始 1、两种首步 2、每首步四种末步 8，合计 11 次 driver；STOP 只引用现有方案。它不包含额外对照输出。
+- [x] 相同 first prefix 的孩子共享其真实回执/τ1；不同分支不共享本来未购买的缓存，不提前把全部响应交给 selector。
+- [x] 失败节点保留，不展开其非法子树；预算屏蔽动作标 infeasible，不能以预测未知结果屏蔽；等价请求合法复用需记录理由及部署应付成本，而非把回放成本当实际成本。
+- [x] 末步标签核对正/负改善、失败惩罚和每阶段费用。首步刻意设置“GT 最优动作”不同于冻结 teacher 的动作，必须用 teacher 实际选择的终态。
+- [x] 两车、相邻帧、同录制不同 scene 段、所有分支不能跨 fold；修改 GT 只改变标签，不改变 collect 的查询/生成路径。
+- [x] 使用缺失权重配置、缺失成本、缺失实际 Z 或错误 teacher 录制来源时标签制作拒绝，而不是静默填值。运行 `PYTHONPATH=src:tests python -m unittest test_query_data -v`。
 
 ```python
 assert fake_tree['driver_calls'] == 1 + 2 + 2 * 4
@@ -537,7 +543,9 @@ assert record_group not in target['teacher_training_recordings']
 
 ### T8：普通请求价值模块、分组教师与实际策略接口【标准求解器，不作为独立创新】
 
-**修改文件：** 新建 `src/planning/query_value.py`、`tests/test_query_value.py`；接入 `method_episode.py` 的 policy callable 和 `method_controls.py` 的冻结条件 continuation。使用现有训练环境，**不修改 `train_driver.py`，不联合训练 GoT/MTR**。
+**执行状态（2026-09-13）：** 已完成 T8 代码与 CPU 合成验证，完整轻量 271 项及专门 CPU 检查 9 项通过。普通 action-conditioned MLP 共用主线与对照的容量；补充具体冻结教师来源和 provider 绑定。真实分组教师/共享策略与独立 bundle 标签尚未运行，不自动进入 T9。详见 [T8 实施记录](../../t8_implementation_2026_09_13.md)。
+
+**修改文件：** 新建 `src/planning/query_value.py`、`tests/test_query_value.py`；复审补充 `query_data.py` 的 v2 教师来源校验及 `vehicle.py/control_bundle.py` 的实际 provider/预算绑定；接入 `method_episode.py` 的 policy callable 和 `method_controls.py` 的冻结条件 continuation。使用现有训练环境，**不修改 `train_driver.py`，不联合训练 GoT/MTR**。
 
 **API / 数据：**
 
@@ -551,12 +559,12 @@ load_query_policy(checkpoint)                            # 返回 policy(visible
 
 一份 feature_spec 明确列出 τold/τcurrent 的 24 个坐标、运动值/缺失位、方案差分统计、已购/派生/入模/丢弃按字段类型的计数与合法关系摘要、剩余资源、首个工具和阶段；规范化只用训练侧统计。不能以网络拿不到具体前景为由给它全部未购 peer 张量。确需更丰富状态也只能来自已知字段，并让所有学习对照同步可用。
 
-- [ ] 用污染测试给输入附上 GT/未购预测/候选实际 bytes，白名单应拒绝而不是忽略后误用；改变标签不改变 state_features。
-- [ ] STOP=0、全部负值停止、平局停止、初始 change mask、用尽预算停止；所有选择只在 feasible_actions 中。
-- [ ] 物理录制留一/分组折：teacher 训练组不得含当前组；保存教师权重来源与特征/查询/receiver/driver 版本，版本漂移拒绝用旧标签。
-- [ ] 共享网络训练 batches 同时保留首步和末步监督；最终保存单网络及合法动作定义。对照替换 task templates 时同特征、容量、训练组、更新预算和候选监督数量。
-- [ ] 保存/重载输出数值一致，resume 的优化器/进度/随机状态可恢复，不能再次出现长跑无检查点。小网络优先简单完整 checkpoint，不复制 7B 的复杂管理框架。
-- [ ] CPU 合成监督只验证回归/保存/选择契约，不写入真实实验目录；轻量特征/选择测试不导入 torch，模型测试分开运行。
+- [x] 用污染测试给输入附上 GT/未购预测/候选实际 bytes，白名单应拒绝而不是忽略后误用；改变标签不改变 state_features。
+- [x] STOP=0、全部负值停止、平局停止、初始 change mask、用尽预算停止；所有选择只在 feasible_actions 中。
+- [x] 物理录制留一/分组折：teacher 训练组不得含当前组；保存教师权重来源与特征/查询/receiver/driver 版本，版本漂移拒绝用旧标签。
+- [x] 共享网络训练 batches 同时保留首步和末步监督；最终保存单网络及合法动作定义。对照替换 task templates 时同特征、容量、训练组、更新预算和候选监督数量。
+- [x] 保存/重载输出数值一致，resume 的优化器/进度/随机状态可恢复，不能再次出现长跑无检查点。小网络优先简单完整 checkpoint，不复制 7B 的复杂管理框架。
+- [x] CPU 合成监督只验证回归/保存/选择契约，不写入真实实验目录；轻量特征/选择测试不导入 torch，模型测试分开运行。
 
 ```python
 assert choose_query({'P_current': -0.2, 'F_current': 0.0},

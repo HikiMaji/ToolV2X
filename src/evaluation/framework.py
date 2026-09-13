@@ -164,7 +164,7 @@ def _method_cost(task):
     put('rpc_rounds', [expected['service']])
     primitive_counts=[]
     for request in ep.get('requests', []):
-        if request.get('version')=='toolv2x_bundle_v1':
+        if request.get('version') in ('toolv2x_bundle_v1','toolv2x_bundle_v2'):
             event=next((e for e in groups['service'] if e.get('request_id')==request['request_id']),{})
             primitive_counts.append((event.get('service_cost') or {}).get('capability_calls'))
         else:
@@ -175,7 +175,8 @@ def _method_cost(task):
     expected_control={e['stage'] for e in events if e['kind']=='decision'} if ep.get('control_spec') else set()
     if len(control_stages)!=len(control_events):
         issues.append('duplicate control cost stage')
-    put('control_seconds', [e.get('seconds') for e in control_events] + [None]*len(expected_control-control_stages))
+    put('control_seconds', [e.get('seconds') if e.get('timing_version')=='toolv2x_control_compute_v2' else None
+                            for e in control_events] + [None]*len(expected_control-control_stages))
     if expected['driver'] != len(plans):
         issues.append('driver attempts and plan records disagree')
     for kind, field, value_key in [('driver','driver_seconds','attempt_seconds'),
@@ -237,6 +238,7 @@ def _method_cost(task):
     complete = (ep.get('status') != 'running' and ep.get('cost', {}).get('complete') is True and not issues and
                 all(v is not None for v in costs.values()) and all(e.get('complete') is True for e in charges))
     return dict(costs, cost_complete=complete, known_cost=known, cost_issues=issues,
+                reported_control_seconds=sum(e['seconds'] for e in control_events if _number(e.get('seconds'))),
                 policy_seconds=None, end_to_end_seconds=None)
 
 
@@ -459,7 +461,7 @@ def evaluate_method(episodes_root, out, labels_root):
         **summarize_method(rows), archive_issues=issues, source_progress=progress,
         by_recording={group:summarize_method([r for r in rows if r['recording']==group])
                       for group in sorted({r['recording'] for r in rows})},
-        timing_scope=METHOD_TIMING_SCOPE, cost_scope='toolv2x_measured_stages_v2' if config['spec'].get('control') else 'toolv2x_measured_stages_v1',
+        timing_scope=METHOD_TIMING_SCOPE, cost_scope='toolv2x_measured_stages_v3' if config['spec'].get('control') else 'toolv2x_measured_stages_v1',
         task_success_definition='actual terminal STOP with valid direct answer and configured admissibility; not safety or low-error success',
         raw_metric_scope='last recorded driver attempt may be only a failed episode prefix; never substituted for successful final metrics',
         label_scope='offline only; missing/partial labels change metric coverage, not parsing or execution success',

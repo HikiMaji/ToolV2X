@@ -82,6 +82,9 @@ class VehicleTools:
         _version(policy_id)
         if self._bundle_records or policy_id in self._bundle_policies or not callable(policy):
             raise ValueError('bundle policies must be registered once before execution')
+        if hasattr(policy, 'validate_provider'):
+            policy.validate_provider(copy.deepcopy(getattr(self._predict, 'descriptor', None)),
+                copy.deepcopy(self._task_provenance))
         self._bundle_policies[policy_id] = policy
 
     def query_bundle(self, envelope):
@@ -93,6 +96,21 @@ class VehicleTools:
     def task_records(self):
         """Detached run records, including full ExecutionSpec and failed attempts."""
         return copy.deepcopy(self._task_records)
+
+    def fork_task(self):
+        """Offline branch continuation from this actual prefix; no sibling cache reuse.
+
+        Keep the same frozen model/loader, but detach receipts, computed context
+        and counters. This does not issue a receipt or preview an unbought field.
+        """
+        if self._bundle_records or len(self._task_records)>1 or any(
+                r.get('status')!='completed' for r in self._task_records):
+            raise ValueError('branch service requires a successful zero/one-call task prefix')
+        result=VehicleTools(self._load,self._predict,self.scene,self.g,self.provider,
+                            task_provenance=self._task_provenance)
+        for name in ('_task_window','_task_forecast','_task_receipts','_task_records','_task_spec','_task_bytes'):
+            setattr(result,name,copy.deepcopy(getattr(self,name)))
+        return result
 
     def query_task(self, request):
         """Execute one task at fixed t; only issued remote-field receipts deduplicate.

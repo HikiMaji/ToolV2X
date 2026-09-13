@@ -17,7 +17,7 @@ from tools.task_spec import (CONTROL_TASK_VERSION, ExecutionSpec, _check_json_na
 
 def _public_summary(summary, request):
     allowed = {'ego_motion', 'local_evidence', 'admission_report', 'current_plan',
-               'previous_plan', 'acquired_fields', 'derived_fields', 'remaining_budget'}
+               'previous_plan', 'acquired_fields', 'derived_fields', 'remaining_budget', 'summary_status'}
     if not isinstance(summary, dict) or set(summary) - allowed:
         raise ValueError('unsupported causal public-summary fields')
     known = {field_key(x['ref']) for x in request['acquired_field_manifest']}
@@ -40,6 +40,11 @@ def _public_summary(summary, request):
     check(summary)
 
 
+def bundle_response_cap(envelope):
+    """Outer transport cap is distinct from the shared per-primitive output cap."""
+    return envelope['limits'].get('outer_response_cap',envelope['limits']['execution_spec']['max_response_bytes'])
+
+
 def validate_bundle_envelope(envelope):
     """Validate only sent content and public caps, without any private access.
 
@@ -50,13 +55,15 @@ def validate_bundle_envelope(envelope):
     _check_json_native(envelope)
     _keys(envelope, ('version', 'request_id', 'bundle_id', 'first_request', 'public_summary',
                      'candidates', 'continuation_policy_id', 'limits'), 'bundle envelope')
-    if (envelope['version'] != 'toolv2x_bundle_v1' or
+    if (envelope['version'] not in ('toolv2x_bundle_v1','toolv2x_bundle_v2') or
             _text(envelope['request_id']) != _text(envelope['bundle_id'])):
         raise ValueError('invalid bundle protocol or request identity')
     _version(envelope['continuation_policy_id'])
     limits = envelope['limits']
-    _keys(limits, ('execution_spec', 'max_calls', 'max_candidates', 'remaining_bytes',
-                   'primitive_response_caps', 'wrapper_reserve_bytes'), 'bundle limits')
+    names={'execution_spec','max_calls','max_candidates','remaining_bytes','primitive_response_caps','wrapper_reserve_bytes'}
+    if envelope['version']=='toolv2x_bundle_v2':
+        names.update(('budget_mode','outer_response_cap'))
+    _keys(limits,names,'bundle limits')
     spec = ExecutionSpec.from_dict(limits['execution_spec'])
     if _integer(limits['max_calls'], 1) > 2:
         raise ValueError('bundle permits at most two primitive attempts')
@@ -67,7 +74,13 @@ def validate_bundle_envelope(envelope):
     if (not isinstance(caps, list) or len(caps) != limits['max_calls'] or
             any(_integer(cap, 1) > spec.max_response_bytes for cap in caps)):
         raise ValueError('one frozen response capacity per possible primitive is required')
-    if sum(caps) + limits['wrapper_reserve_bytes'] > spec.max_response_bytes:
+    outer=bundle_response_cap(envelope)
+    if envelope['version']=='toolv2x_bundle_v2':
+        if limits['budget_mode'] not in ('per_rpc','episode_aggregate') or _integer(outer,1)>spec.max_episode_bytes:
+            raise ValueError('invalid aggregate response configuration')
+        if limits['budget_mode']=='per_rpc' and outer!=spec.max_response_bytes:
+            raise ValueError('per-RPC control must use the ordinary response cap')
+    if sum(caps) + limits['wrapper_reserve_bytes'] > outer:
         raise ValueError('primitive capacities and outer wrapper exceed the external response cap')
     first = envelope['first_request']
     _request_spec(first)
@@ -89,7 +102,7 @@ def validate_bundle_envelope(envelope):
     _public_summary(envelope['public_summary'], first)
     size = len(encode(envelope))
     if (size > spec.max_request_bytes or
-            size + spec.max_response_bytes > min(limits['remaining_bytes'], spec.max_episode_bytes)):
+            size + outer > min(limits['remaining_bytes'], spec.max_episode_bytes)):
         raise ValueError('complete external envelope or reserved response exceeds the remaining budget')
     return spec
 
@@ -136,7 +149,7 @@ def decode_bundle_response(wire, envelope):
     """Rebuild receiver inputs from the actual outer wire, never a return sidecar."""
     from tools.vehicle import decode_task_response
     spec = validate_bundle_envelope(envelope)
-    if not isinstance(wire, bytes) or len(wire) > spec.max_response_bytes:
+    if not isinstance(wire, bytes) or len(wire) > bundle_response_cap(envelope):
         raise ValueError('bundle response must be UTF-8 bytes within the full response cap')
     packet = json.loads(wire.decode('utf-8'))
     # Canonical encoding rejects duplicate keys, non-finite numbers, trailing JSON
@@ -144,7 +157,7 @@ def decode_bundle_response(wire, envelope):
     if encode(packet) != wire:
         raise ValueError('bundle wire must use canonical JSON encoding')
     _keys(packet, ('version', 'request_id', 'bundle_id', 'continuation', 'responses'), 'bundle response')
-    if (packet['version'] != 'toolv2x_bundle_response_v1' or
+    if (packet['version'] != ('toolv2x_bundle_response_v2' if envelope['version']=='toolv2x_bundle_v2' else 'toolv2x_bundle_response_v1') or
             packet['bundle_id'] != envelope['bundle_id'] or packet['request_id'] != envelope['request_id']):
         raise ValueError('bundle response identity mismatch')
     decision = _decision(packet['continuation'], bundle_actions(envelope))
@@ -207,6 +220,11 @@ def execute_bundle(service, envelope):
     if (first['provider'], first['scene'], first['g']) != (service.provider, service.scene, service.g):
         raise ValueError('bundle provider/source/time mismatch')
     policy = service._bundle_policies[envelope['continuation_policy_id']]
+    if hasattr(policy, 'validate_provider'):
+        policy.validate_provider(copy.deepcopy(getattr(service._predict, 'descriptor', None)),
+            copy.deepcopy(service._task_provenance))
+    if hasattr(policy, 'validate_envelope'):
+        policy.validate_envelope(copy.deepcopy(envelope))
     request_wire = encode(envelope)
     # The actual transport boundary is one serialization/deserialization. No
     # later ego callback or arbitrary request code is invoked by the provider.
@@ -220,7 +238,7 @@ def execute_bundle(service, envelope):
     service._bundle_records.append(record)
     service._task_bytes += len(request_wire)
     decision = dict(tool='STOP', mode=None, candidate_id=None, reason='call_budget_exhausted')
-    packet = dict(version='toolv2x_bundle_response_v1', request_id=envelope['request_id'],
+    packet = dict(version='toolv2x_bundle_response_v2' if envelope['version']=='toolv2x_bundle_v2' else 'toolv2x_bundle_response_v1', request_id=envelope['request_id'],
                   bundle_id=envelope['bundle_id'], continuation=decision, responses=[])
     phase = 'first_primitive'
     def run(request, i):
@@ -262,7 +280,7 @@ def execute_bundle(service, envelope):
         wire = encode(packet)
         # Check every wrapper and inner cost field, rather than assuming the
         # chosen run reserve covered them. Failure charges executed computations.
-        if (len(wire) > spec.max_response_bytes or
+        if (len(wire) > bundle_response_cap(envelope) or
                 len(request_wire) + len(wire) > min(envelope['limits']['remaining_bytes'], spec.max_episode_bytes)):
             raise ValueError('complete aggregate bundle response exceeds the external byte cap')
         decoded = decode_bundle_response(wire, envelope)

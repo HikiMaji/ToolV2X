@@ -46,6 +46,74 @@ def diagnostic_policy(state):
     return dict(tool='STOP', mode=None, reason='diagnostic_done_or_unchanged')
 
 
+def prepare_request(state, action, request_id, manifest, control_spec=None):
+    """Bind only visible time-t inputs; no service or prediction access."""
+    from planning.method_controls import episode_bundle, legacy_decision
+    if control_spec and control_spec['name']=='one_shot':
+        return episode_bundle(state,control_spec,action['tool'])
+    request=dict(version=TASK_VERSION if action['mode'] in ('current','change') else 'toolv2x_control_task_v1',
+        request_id=request_id,provider=state['provider'],scene=state['scene'],g=state['g'],coordinate_frame='ego_at_t',
+        tool=action['tool'],mode=action['mode'],times=list(TIMES),
+        tau_new=copy.deepcopy(state['current_plan']['waypoints']),
+        tau_old=copy.deepcopy(state['previous_plan']['waypoints']) if action['mode'] in ('change','old','union') else None,
+        execution_spec=copy.deepcopy(state['execution_spec']),acquired_field_manifest=copy.deepcopy(manifest))
+    if action['mode']=='roi':
+        request['roi']=legacy_decision(state,control_spec['baseline'])['roi']
+    return request
+
+
+def request_budget(request, remaining_bytes):
+    """Public reservations, not a preview of an unknown actual response."""
+    spec=request.get('execution_spec',request.get('limits',{}).get('execution_spec'))
+    size=len(encode(request))
+    response_cap=request.get('limits',{}).get('outer_response_cap',spec['max_response_bytes'])
+    reason=('request_byte_limit' if size>spec['max_request_bytes'] else
+            'byte_budget_exhausted' if size+response_cap>remaining_bytes else None)
+    return dict(request_bytes=size,response_reserve_bytes=response_cap,feasible=reason is None,reason=reason)
+
+
+def decision_state(episode):
+    """Build the policy whitelist and request mask from an actual known prefix.
+
+    Shared with offline archive validation; no service, model, labels or child
+    outcomes are arguments. The returned requests remain local until selected.
+    """
+    from planning.method_controls import control_state
+    limits=episode['limits'];control=episode.get('control_spec')
+    ledger=episode['ledger_snapshots'][-1];plans=episode['plans'];prepared=plans[-1]['prepared']
+    def plan(record):
+        return dict(plan_id=record['plan_id'],waypoints=copy.deepcopy(record['output']['waypoints']),raw=record['output']['q9_raw'])
+    current=plan(plans[-1]);previous=plan(plans[-2]) if len(plans)>1 else None
+    remaining=limits['max_calls']-len(episode['requests'])
+    if remaining<0:raise ValueError('prefix already exceeds the call allowance')
+    if control and (len(plans)>=control['driver_calls'] or control['name']=='one_shot' and episode['requests']):
+        remaining=0
+    actions=[dict(tool='STOP',mode=None)]
+    if remaining:
+        actions += [dict(tool=t,mode='current') for t in ('P','F')]
+        if previous is not None and previous['waypoints']!=current['waypoints']:
+            actions += [dict(tool=t,mode='change') for t in ('P','F')]
+    state=dict(sample_id=episode['sample_id'],branch_id=episode['branch_id'],scene=episode['scene'],g=episode['g'],
+        provider=episode['provider'],policy_id=limits['policy_id'],ego_motion=copy.deepcopy(episode['ego_motion']),
+        local_evidence=copy.deepcopy(ledger['local_fields']),current_plan=current,previous_plan=previous,
+        acquired_fields=copy.deepcopy(ledger['acquired_fields']),derived_fields=copy.deepcopy(ledger['derived_fields']),
+        admission_report=copy.deepcopy(prepared['admission_report']),response_receipts=copy.deepcopy(ledger['receipts']),
+        cost_ledger=copy.deepcopy(episode['cost_events']),remaining_budget=dict(calls=remaining,
+            bytes=limits['execution_spec']['max_episode_bytes']-episode['cost']['request_bytes']-episode['cost']['response_bytes']),
+        available_actions=actions,execution_spec=copy.deepcopy(limits['execution_spec']))
+    state=control_state(state,control,plan(plans[0]))
+    candidates={};preflight=[]
+    for action in state['available_actions']:
+        if action['tool']=='STOP':continue
+        request=prepare_request(state,action,'q%d'%len(episode['requests']),known_field_manifest(ledger),control)
+        budget=request_budget(request,state['remaining_budget']['bytes'])
+        preflight.append(dict(action=copy.deepcopy(action),**budget))
+        if budget['feasible']:candidates[(action['tool'],action['mode'])]=request
+    state['available_actions']=[a for a in state['available_actions'] if a['tool']=='STOP' or (a['tool'],a['mode']) in candidates]
+    state['action_feasibility']=copy.deepcopy(preflight)
+    return state,candidates,preflight
+
+
 def run_task_episode(local_window, local_prediction, motion, features,
                      service, predictor, driver, policy, limits, on_progress=None, *,
                      local_provenance, sample_id=None, branch_id='main', token_counter=None, control_spec=None, prefix=None):
@@ -55,13 +123,16 @@ def run_task_episode(local_window, local_prediction, motion, features,
     durable record. Partial episodes are never resumed by inventing service state.
     token_counter is only for resource-independent contracts; actual GoT rejects it.
     """
-    from planning.method_controls import (normalize_control, uses_refinement, control_state,
-        repeat_generation, legacy_decision, episode_bundle, validate_control_prefix)
+    from planning.method_controls import normalize_control, uses_refinement, repeat_generation, validate_control_prefix
     from planning.inputs import build_refinement_input
     control_spec = normalize_control(control_spec)
     limits = validate_limits(limits)
     if control_spec and control_spec['name'] == 'ego_max_context':
         limits['receiver_spec']['peer_reserve'] = 0
+    if hasattr(policy, 'validate_runtime'):
+        policy.validate_runtime(driver_provenance=copy.deepcopy(driver.provenance),
+            predictor_descriptor=copy.deepcopy(predictor.descriptor), limits=copy.deepcopy(limits),
+            local_provenance=copy.deepcopy(local_provenance), control_spec=copy.deepcopy(control_spec))
     ledger = new_ledger(local_window, local_prediction, predictor=predictor,
                         local_provenance=local_provenance)
     scene, g = ledger['scene'], ledger['g']
@@ -97,14 +168,15 @@ def run_task_episode(local_window, local_prediction, motion, features,
     fixed_generation = False
     if prefix is not None:
         prefix=validate_control_prefix(prefix,features,driver)
-        # Only a completed first-response/driver prefix, not arbitrary process recovery.
+        # Only live initial/first-response driver prefixes, not process recovery.
+        prefix_calls=len(prefix.get('requests', []))
         if (prefix.get('version') != 'toolv2x_episode_v2' or prefix.get('status') != 'running' or
-                len(prefix.get('plans', [])) != 2 or len(prefix.get('responses', [])) != 1 or
-                len(prefix.get('requests', [])) != 1 or prefix['events'][-1]['kind'] != 'driver_completed' or
+                prefix_calls not in (0,1) or len(prefix.get('plans', [])) != prefix_calls+1 or
+                len(prefix.get('responses', [])) != prefix_calls or prefix['events'][-1]['kind'] != 'driver_completed' or
                 any(prefix.get(k) != episode[k] for k in ('sample_id','scene','g','provider','driver_provenance','predictor_binding','ego_motion','feature_tokens')) or
                 any(prefix['limits'][k] != limits[k] for k in limits if k != 'policy_id') or
                 prefix['ledger_snapshots'][0] != ledger):
-            raise ValueError('control branch requires the same actual first-response prefix')
+            raise ValueError('control branch requires the same actual driver prefix')
         if uses_refinement(control_spec) and any(
                 p['prepared'].get('refinement',{}).get('slot_tokens') != control_spec['refinement_slot_tokens']
                 for p in prefix['plans']):
@@ -115,21 +187,24 @@ def run_task_episode(local_window, local_prediction, motion, features,
                 raise ValueError('invalid driver prefix')
             validate_plan(output['waypoints'], limits['execution_spec'])
         records=service.task_records
-        response=prefix['responses'][0]
-        if (len(records)!=1 or records[0]['request']!=prefix['requests'][0] or
-                encode(records[0].get('response')) != bytes.fromhex(response['wire_hex'])):
+        if len(records)!=prefix_calls or any(
+                record['request']!=request or encode(record.get('response'))!=bytes.fromhex(response['wire_hex'])
+                for record,request,response in zip(records,prefix['requests'],prefix['responses'])):
             raise ValueError('prefix service receipts must come from the same actual response')
         episode=copy.deepcopy(prefix)
         episode.update(branch_id=branch_id,policy_id=limits['policy_id'],limits=limits,
-            control_spec=copy.deepcopy(control_spec),prefix_origin=dict(branch_id=prefix['branch_id'],plan_id='plan_1'))
+            control_spec=copy.deepcopy(control_spec),prefix_origin=dict(branch_id=prefix['branch_id'],plan_id='plan_%d'%prefix_calls))
         costs=episode['cost']
         ledger=copy.deepcopy(episode['ledger_snapshots'][-1])
-        stage=1
-        for i in (0,1):
+        stage=prefix_calls
+        for i in range(prefix_calls+1):
             out=episode['plans'][i]['output']
             plan=dict(plan_id=episode['plans'][i]['plan_id'],waypoints=out['waypoints'],raw=out['q9_raw'])
             previous,current=current,plan
         reuse_plan=True
+
+    if hasattr(policy, 'provenance'):
+        episode['value_policy'] = copy.deepcopy(policy.provenance)
 
     def emit(kind, plan_id=None, request_id=None):
         events = episode['events']
@@ -237,73 +312,52 @@ def run_task_episode(local_window, local_prediction, motion, features,
             emit('same_evidence_generation', plan_id, caused_by_request)
             stage += 1
             continue
+        control_elapsed = 0.
         control_begin = perf_counter()
-        remaining = limits['max_calls'] - len(episode['requests'])
-        if control_spec and (len(episode['plans'])>=control_spec['driver_calls'] or
-                control_spec['name']=='one_shot' and episode['requests']):
-            remaining=0
-        actions = [dict(tool='STOP', mode=None)]
-        if remaining:
-            actions += [dict(tool=t, mode='current') for t in ('P', 'F')]
-            if previous is not None and previous['waypoints'] != current['waypoints']:
-                actions += [dict(tool=t, mode='change') for t in ('P', 'F')]
-        state = dict(sample_id=episode['sample_id'], branch_id=branch_id, scene=scene, g=g,
-            provider=service.provider, policy_id=limits['policy_id'], ego_motion=copy.deepcopy(motion),
-            local_evidence=copy.deepcopy(ledger['local_fields']), current_plan=copy.deepcopy(current),
-            previous_plan=copy.deepcopy(previous), acquired_fields=copy.deepcopy(ledger['acquired_fields']),
-            derived_fields=copy.deepcopy(ledger['derived_fields']), admission_report=copy.deepcopy(prepared['admission_report']),
-            response_receipts=copy.deepcopy(ledger['receipts']), cost_ledger=copy.deepcopy(episode['cost_events']),
-            remaining_budget=dict(calls=remaining, bytes=limits['execution_spec']['max_episode_bytes'] -
-                                  costs['request_bytes'] - costs['response_bytes']),
-            available_actions=actions, execution_spec=copy.deepcopy(limits['execution_spec']))
-        initial_output=episode['plans'][0]['output']
-        initial=dict(plan_id='plan_0',waypoints=initial_output['waypoints'],raw=initial_output['q9_raw'])
-        state=control_state(state, control_spec, initial)
-        actions=state['available_actions']
         try:
-            decision = (dict(tool='STOP', mode=None, reason='call_budget_exhausted') if not remaining
-                        else policy(copy.deepcopy(state)))
+            state,candidates,preflight=decision_state(episode)
+            actions=state['available_actions'];remaining=state['remaining_budget']['calls']
+            forced_reason=None
+            if not remaining:
+                forced_reason='call_budget_exhausted'
+            elif not candidates:
+                forced_reason=('request_byte_limit' if preflight and all(p['reason']=='request_byte_limit' for p in preflight)
+                               else 'byte_budget_exhausted')
+            decision=(dict(tool='STOP',mode=None,reason=forced_reason) if forced_reason else policy(copy.deepcopy(state)))
             _check_json_native(decision)
             if (set(decision) != {'tool', 'mode', 'reason'} or not isinstance(decision['reason'], str) or
                     dict(tool=decision['tool'], mode=decision['mode']) not in actions):
                 raise ValueError('policy must select an available action, not request content')
         except Exception as exc:
             if control_spec:
-                episode['cost_events'].append(dict(kind='control',stage=stage,seconds=perf_counter()-control_begin,complete=False))
-            return fail('policy_error', exc, 'policy', plan_id)
-        episode['decisions'].append(dict(state=state, action=copy.deepcopy(decision)))
-        emit('decision', plan_id)
-        if decision['tool'] != 'STOP':
+                episode['cost_events'].append(dict(kind='control',stage=stage,timing_version='toolv2x_control_compute_v2',seconds=control_elapsed+perf_counter()-control_begin,complete=False))
+            return fail('policy_error',exc,'request_preflight_or_policy',plan_id)
+        recorded=dict(state=state,action=copy.deepcopy(decision),executed_action=None,
+            policy_called=forced_reason is None,forced_reason=forced_reason,
+            request_preflight=preflight,infeasible_actions=[p for p in preflight if not p['feasible']],execution_override=None)
+        episode['decisions'].append(recorded)
+        control_elapsed += perf_counter()-control_begin
+        emit('decision',plan_id)
+        control_begin=perf_counter()
+        if decision['tool']!='STOP':
             try:
                 frozen_driver()
+                request=candidates[(decision['tool'],decision['mode'])]
+                final_budget=request_budget(request,state['remaining_budget']['bytes'])
+                size=final_budget['request_bytes']
+                is_bundle=request['version'] in ('toolv2x_bundle_v1','toolv2x_bundle_v2')
+                if not final_budget['feasible']:
+                    recorded['execution_override']=final_budget['reason']
+                    decision=dict(tool='STOP',mode=None,reason=final_budget['reason'])
+                elif not is_bundle:
+                    validate_task_request(request,{r['receipt_id']:r['record_refs'] for r in ledger['receipts']})
             except Exception as exc:
-                return fail('driver_error', exc, 'frozen_configuration', plan_id)
-            request = dict(version=TASK_VERSION if decision['mode'] in ('current','change') else 'toolv2x_control_task_v1', request_id='q%d' % len(episode['requests']),
-                provider=service.provider, scene=scene, g=g, coordinate_frame='ego_at_t',
-                tool=decision['tool'], mode=decision['mode'], times=list(TIMES),
-                tau_new=copy.deepcopy(state['current_plan']['waypoints']),
-                tau_old=copy.deepcopy(state['previous_plan']['waypoints']) if decision['mode'] in ('change','old','union') else None,
-                execution_spec=copy.deepcopy(limits['execution_spec']), acquired_field_manifest=known_field_manifest(ledger))
-            if decision['mode']=='roi':
-                request['roi']=legacy_decision(state,control_spec['baseline'])['roi']
-            is_bundle=control_spec is not None and control_spec['name']=='one_shot'
-            if is_bundle:
-                try:
-                    request=episode_bundle(state,control_spec,decision['tool'])
-                except Exception as exc:
-                    episode['cost_events'].append(dict(kind='control',stage=stage,seconds=perf_counter()-control_begin,complete=False))
-                    return fail('policy_error',exc,'bundle_construction',plan_id)
-            size = len(encode(request))
-            spec = limits['execution_spec']
-            if size > spec['max_request_bytes']:
-                decision = dict(tool='STOP', mode=None, reason='request_byte_limit')
-            elif size + spec['max_response_bytes'] > state['remaining_budget']['bytes']:
-                decision = dict(tool='STOP', mode=None, reason='byte_budget_exhausted')
-            else:
-                if not is_bundle:
-                    validate_task_request(request, {r['receipt_id']: r['record_refs'] for r in ledger['receipts']})
+                if control_spec:
+                    episode['cost_events'].append(dict(kind='control',stage=stage,timing_version='toolv2x_control_compute_v2',seconds=control_elapsed+perf_counter()-control_begin,complete=False))
+                return fail('driver_error',exc,'frozen_configuration_or_dispatch',plan_id)
+        recorded['executed_action']=copy.deepcopy(decision)
         if control_spec:
-            episode['cost_events'].append(dict(kind='control',stage=stage,seconds=perf_counter()-control_begin,complete=True))
+            episode['cost_events'].append(dict(kind='control',stage=stage,timing_version='toolv2x_control_compute_v2',seconds=control_elapsed+perf_counter()-control_begin,complete=True))
         if decision['tool'] == 'STOP':
             episode.update(status='completed', final_plan_id=current['plan_id'], stop_reason=decision['reason'])
             emit('STOP', plan_id)

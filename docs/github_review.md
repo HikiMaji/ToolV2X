@@ -1,8 +1,20 @@
 # GitHub 审查入口
 
-**09-13 新增审查范围：T1/T2。** 先读 [9-12-1](9-12-1.md)、[9-12-2](9-12-2.md) 与 [实际实施报告](t1_t2_implementation_2026_09_13.md)，再检查 `src/tools/task_spec.py`、`src/tools/vehicle.py` 和对应测试。方法/因果规格以材料一为主，材料二约束 Tool 语义；用户补充硬约束及实际 API 以实施报告为准。重点检查 ExecutionSpec 与协议分离、provider 自有回执真实性、P 不调用 MTR、F 完整上下文先于排序、current/change 实际选包、最终 UTF-8 cap、失败成本和旧 v1 兼容。
+**09-13 审查快照：T6 修复＋T7＋T8。** 先读 [9-12-1](9-12-1.md)、[9-12-2](9-12-2.md)、[9-13-2](9-13-2.md) 及 [T6 修复](t6_review_fixes_2026_09_13.md)、[T7 实施](t7_implementation_2026_09_13.md)、[T8 实施](t8_implementation_2026_09_13.md)。方法与因果规格以材料一为主，材料二约束 Tool 语义。T1–T8 的模块和合成契约已实现；真实方法训练/rollout 尚未执行。
 
-T3 及以后未实施：不要将 E/derived/Z ledger、真实 GoT 修订反馈、强单轮对照或方法效果视为已完成。运行 `python scripts/check_review.py` 应通过 126 项轻量检查；新 fake predictor 测试只证明契约，不是模型效果证据。下面保留旧框架的审查入口。
+```text
+请只读审查这次 T6 修复、T7 分支监督和 T8 价值模块，不修改代码、不启动训练或真实模型推理。
+重点追踪 src/planning/{method_episode,method_controls,query_data,query_value}.py、src/tools/{vehicle,control_bundle}.py 和对应测试：
+1. P 无 MTR、F 完整 context 后排序；实际回执去重与 acquired/derived/admitted 分离，旧 v1 保留。
+2. 第一返回、driver 修订、第二请求/STOP 的真实因果关系；不能把多一次生成本身当机制收益。
+3. first 目标使用按物理录制折隔离的冻结续策略；教师具体 fit/step、规范化和外层留出隔离；终态与增量成本真实绑定。
+4. ordinary MLP 的在线输入、动作 mask、STOP=0、首末步共同训练与精确 checkpoint/resume。
+5. single-round bundle 的预算/真实 provider 绑定、独立 STOP 基准，以及 frozen feedback、same-evidence 对照和全部 driver 费用。
+运行 python scripts/check_review.py（当前 271 项）；需要 torch 的 T8 CPU 契约组见实施记录。不要将测试替身或旧 32 帧效果混作新方法结果。
+区分阻断方法有效性的实现缺陷、未验证研究假设和已声明后置内容。一般边界问题给最小修复，不据此建议重建缓存、增加模型训练或暂停全部推进。
+```
+
+当前尚缺正式运行命令的价值策略选择、独立 bundle 分支监督采集及真实有限验证，这些属于下一批 T9 接入。已上传历史证据保持不变。以下入口及数值是早期发布记录。
 
 **最新发布范围：** 先读 [09-12 更新说明](github_update_2026_09_12.md)、[第一轮评价](epoch01_quick_evaluation_2026_09_12.md) 和 [主线候选](mainline_innovation_search_2026_09_12.md)。当前训练已按用户要求停止；160 条实际轨迹与离线标签已随精选证据上传，可运行更新说明中的标准库复算。候选机制尚未实现，不把研究报告当现有算法。下文保留历史审查入口和核验记录。
 
