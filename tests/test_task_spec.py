@@ -223,6 +223,25 @@ class TaskSpecTests(unittest.TestCase):
         w['states'] = w['states'].tolist()
         self.assertEqual(self.api.rank_targets(w, task_request(tool='F'), forecast)[0]['track_handle'], 7)
 
+    def test_numeric_arrays_reject_mixed_boolean_leaves(self):
+        for value in ([True, 0.], (0., np.bool_(False)), np.array([True, False])):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                self.api._array(value, (2,))
+        np.testing.assert_array_equal(self.api._array([1, 0.], (2,)), [1., 0.])
+
+    def test_causal_window_rejects_boolean_numeric_lists(self):
+        for field in ('states', 'scores', 'time_seconds'):
+            w = window()
+            w[field] = w[field].tolist()
+            if field == 'states':
+                w[field][0][0][1] = False
+            elif field == 'scores':
+                w[field][0][0] = True
+            else:
+                w[field][-1] = False
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.api.history_proxy(w)
+
 
 if __name__ == '__main__':
     unittest.main()

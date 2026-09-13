@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT / 'src'))
 
 names = [
     'test_compact_evidence', 'test_planning_inputs', 'test_protocol',
-    'test_task_spec', 'test_vehicle_tools', 'test_vehicle_probe', 'test_learned_probe',
+    'test_task_spec', 'test_vehicle_tools', 'test_evidence_ledger', 'test_method_episode', 'test_method_evaluation', 'test_vehicle_probe', 'test_learned_probe',
     'test_review_portability', 'test_saved_review_evidence', 'test_wire_comparison',
     'test_prediction_evaluation', 'test_planning_evaluation',
     'test_evidence_audit',

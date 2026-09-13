@@ -456,6 +456,119 @@ class TaskVehicleTests(unittest.TestCase):
             service.query_task(second)
         self.assertEqual(len(service.task_records), 1)
 
+    def test_mixed_boolean_request_arrays_rejected_before_private_read(self):
+        for field in ('times', 'tau_new', 'tau_old'):
+            req = self.request(mode='change' if field == 'tau_old' else 'current')
+            if field == 'times':
+                req[field][1] = True
+            else:
+                req[field] = [list(point) for point in req[field]]
+                req[field][0][1] = False
+            reads = []
+            service = VehicleTools(lambda: reads.append(1) or window(), fixture_prediction,
+                'scene', 10, 'peer', task_provenance=self.provenance)
+            with self.subTest(field=field):
+                with self.assertRaises(ValueError):
+                    service.query_task(req)
+                self.assertEqual(reads, [])
+                self.assertEqual(service.task_records, [])
+
+    def test_request_requires_json_native_containers_before_private_read(self):
+        for field in ('times', 'tau_new', 'tau_old'):
+            req = self.request(mode='change' if field == 'tau_old' else 'current')
+            req[field] = tuple(req[field]) if field == 'times' else [tuple(p) for p in req[field]]
+            reads = []
+            service = VehicleTools(lambda: reads.append(1) or window(), fixture_prediction,
+                'scene', 10, 'peer', task_provenance=self.provenance)
+            with self.subTest(field=field):
+                with self.assertRaises(ValueError):
+                    service.query_task(req)
+                self.assertEqual(reads, [])
+                self.assertEqual(service.task_records, [])
+
+    def test_list_predictor_fields_rejected_without_poisoning_cache(self):
+        for field in ('track_ids', 'states', 'means', 'scores', 'model_used'):
+            calls = []
+            def predictor(w):
+                calls.append(1)
+                result = fixture_prediction(w)
+                if len(calls) == 1:
+                    result[field] = result[field].tolist()
+                return result
+            service = self.service(predictor=predictor)
+            with self.subTest(field=field):
+                # Catch the old packing TypeError too, then assert the contract error.
+                with self.assertRaises(Exception) as failure:
+                    service.query_task(self.request(tool='F'))
+                self.assertIsInstance(failure.exception, ValueError)
+                self.assertIsNone(service._task_forecast)
+                self.assertEqual(service.task_records[0]['error']['stage'], 'prediction')
+                packet, result = self.packet(service, self.request(tool='F', request_id='q1'))
+                self.assertEqual(packet['status'], 'ok')
+                self.assertEqual(len(calls), 2)
+                self.assertFalse(result['cost']['within_decision_forecast_cache_hit'])
+
+    def test_decoder_rejects_boolean_numeric_payloads(self):
+        for tool in ('P', 'F'):
+            req = self.request(tool=tool)
+            packet, _ = self.packet(self.service(), req)
+            fields = [('anchor', 'box'), ('history', 'history'), ('history', 'history_scores'),
+                      ('history', 'history_times')] if tool == 'P' else [('forecast', 'forecast'),
+                                                                        ('forecast', 'forecast_scores')]
+            for kind, field in fields:
+                bad = copy.deepcopy(packet)
+                value = next(r['value'][field] for r in bad['records'] if r['ref']['field_kind'] == kind)
+                if field == 'history':
+                    value[0][1] = False
+                elif field == 'forecast':
+                    value[0][0][1] = False
+                else:
+                    value[-1] = False
+                with self.subTest(field=field), self.assertRaises(ValueError):
+                    self.decode(json.dumps(bad).encode('utf-8'), req)
+
+    def test_valid_history_dimensions_positive_missing_placeholders_allowed(self):
+        for dimension in (3, 4, 5):
+            for size in (0., -4.):
+                w = window()
+                w['states'][0, 0, dimension] = size
+                with self.subTest(dimension=dimension, size=size), self.assertRaises(ValueError):
+                    self.service(w).query_task(self.request())
+        w = window()
+        w['valid'][0, 0] = False
+        w['states'][0, 0] = 0.
+        w['scores'][0, 0] = 0.
+        req = self.request()
+        packet, _ = self.packet(self.service(w), req)
+        history = next(r['value'] for r in packet['records'] if r['ref']['field_kind'] == 'history')
+        self.assertFalse(history['history_valid'][0])
+        self.assertEqual(history['history'][0], [0.] * 7)
+
+    def test_decoder_rejects_nonpositive_valid_history_dimensions(self):
+        req = self.request()
+        packet, _ = self.packet(self.service(), req)
+        for dimension in (3, 4, 5):
+            bad = copy.deepcopy(packet)
+            history = next(r['value'] for r in bad['records'] if r['ref']['field_kind'] == 'history')
+            history['history'][0][dimension] = -4.
+            with self.subTest(dimension=dimension), self.assertRaises(ValueError):
+                self.decode(json.dumps(bad).encode('utf-8'), req)
+
+    def test_budget_empty_response_preserves_valid_prediction_cache(self):
+        calls = []
+        def predictor(w):
+            calls.append(1)
+            return fixture_prediction(w)
+        service = self.service(predictor=predictor)
+        for i in range(2):
+            req = self.request(tool='F', request_id='q' + str(i))
+            req['execution_spec']['max_response_bytes'] = 1600
+            packet, result = self.packet(service, req)
+            self.assertEqual(packet['status'], 'budget_empty')
+            self.assertEqual(packet['records'], [])
+            self.assertEqual(result['cost']['within_decision_forecast_cache_hit'], i == 1)
+        self.assertEqual(len(calls), 1)
+
 
 if __name__ == '__main__':
     unittest.main()

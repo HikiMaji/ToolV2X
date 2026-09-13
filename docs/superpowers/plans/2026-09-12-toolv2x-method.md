@@ -4,6 +4,12 @@
 
 > **执行更新（2026-09-13）：** 用户已授权且仅授权 T1/T2；两步代码与契约测试已完成，详见 [实施记录](../../t1_t2_implementation_2026_09_13.md)。T3 及以后未实施，不自动继续。以下采用用户补充硬约束：协议与完整版本化 ExecutionSpec 分开；provider 的 manifest 只接受自身真实远端响应回执；本地派生等价留给 T3，不能作为 T2 回执；provenance/model/context 使用稳定结构版本，路径不作为语义身份。默认数值只用于当前契约配置，不是模型效果已验证的实验参数。
 
+> **T3 执行更新（2026-09-13）：** 用户随后授权 T3。已实现已购 E、派生父链、共同 receiver/Z 和最小完整 P 上下文证明，详见 [T3 实施记录](../../t3_implementation_2026_09_13.md)。T4 以后仍未实施、不自动执行。下方此前仅授权 T1/T2 的表述是当时批次边界。
+
+> **T4 执行更新（2026-09-13）：** 用户“继续下一步”授权 T4。本批交替执行、原 driver 的 v2 适配、interact 与逐阶段持久化已完成代码和契约验证，详见 [T4 实施记录](../../t4_implementation_2026_09_13.md)。没有运行真实模型、训练或新方法实验；停止在 T4，T5 以后未执行。
+
+> **T5 执行更新（2026-09-13）：** 用户授权“开始 T5”后，v2 离线评价、全部 driver/服务/receiver 成本、缺失失败分母及旧指标兼容已完成；见 [T5 实施记录](../../t5_implementation_2026_09_13.md)。191 项轻量测试通过，未训练、未执行真实模型或新方法效果实验；停止在 T5，T6 以后不自动执行。
+
 **Goal:** 在现有 P/F、CMP MTR 和 V2V-GoT 上实现最多两次远端能力调用，验证任务参数与真实驾驶修订反馈的作用。
 
 **Architecture:** 保留旧五策略执行路径；增加参数化 P/F 接口及交替调用同一 GoT 的执行路径。使用一个普通本车请求价值模块，提供方保持确定性检索；累计取得的字段、接收端派生字段、实际驾驶输入和全部成本分别留痕。
@@ -14,7 +20,7 @@
 
 ## Global Constraints
 
-- 原计划阶段只阅读和设计；随后用户仅授权实施 T1/T2，现已完成。T3 以后仍未获实施授权，不启动训练、不生成新实验。
+- 计划经用户逐批授权已实施 T1–T5；本批到 T5 停止。未授权恢复训练或执行真实新方法实验，T6 以后不自动执行。
 - 首版只有远端 P/F；current/change 是任务参数，不是新增工具。
 - 固定决策时刻 t、ego_at_t 坐标、同一冻结 GoT 和同一冻结 MTR；最多两次远端能力调用。
 - 请求前只能使用本车信息、已经合法取得/计算的信息、公共配置和预算；未来 GT 只进入独立离线评价/监督。
@@ -357,13 +363,15 @@ assert len(second['wire']) <= request_change_with_first_receipt['execution_spec'
 
 ### T3：E/派生/Z 台账与共同 receiver【工程基础，不能独立列创新】
 
+**状态：已完成代码与契约测试，未运行真实模型。** 实际 API、工具端最小证明扩展和验证边界见 T3 实施记录。
+
 **修改文件：** 新建 `src/planning/evidence.py`、`tests/test_evidence_ledger.py`；修改 `src/planning/context.py`、`src/planning/inputs.py`；扩展 `tests/test_compact_evidence.py`、`tests/test_framework_episode.py:SharedContextTests`。`scripts/check_review.py` 只注册无需模型/tokenizer 资源的类。
 
 **API / 数据：**
 
 ```python
-new_ledger(local_window, local_prediction)                 # 返回 ledger 字典
-apply_response(ledger, response, predictor, p_processing)   # 返回新 ledger；不接 GT
+new_ledger(local_window, local_prediction, *, predictor, local_provenance)                 # 返回 ledger 字典
+apply_response(ledger, response, predictor, p_processing=None)   # response={request, wire, cost}；返回新 ledger，不接 GT
 known_field_manifest(ledger)                               # 只输出 provider 可验证的 acquired 远端回执
 build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits)
 # 返回 source_blocks_v2 prepared，含精确 admitted/dropped 与字段到对象/提示位置映射
@@ -371,12 +379,12 @@ build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits)
 
 `apply_response` 读取已验证响应；只在新购 P 改变已知历史集合时重算本地 MTR。`p_processing` 在整个比较中冻结为 local_mtr，observations-only 只作明确标记的诊断。旧 make_evidence 与 build_plan_input 默认行为不改。
 
-- [ ] 构造同目标同上下文 P_local/F，断言 E 保留购买事实、derived 保留父引用，而 Z 不重复放同一 forecast；同目标不同上下文预测不能被去掉。
-- [ ] 用一个只能放一条完整字段 bundle 的小容量测试：第二轮收到新字段后 E 增长、Z 可替换，旧入模引用进入 dropped；再次引用旧字段不会增加 E。
-- [ ] 验证每个 Z 项可还原到本车或 acquired/derived 的父链；把未购 F 注入 Z 必须失败。历史 scores、mask、mode 顺序、数值舍入与原始 bytes 的区别分别核对。
-- [ ] v2 对相同 E 不受 policy 名称、报文到达顺序、request_id/current/change 标签影响；同 source 同 id 的不同计算上下文仍可解码区分。
-- [ ] 完整 P/F 同信息测试先用上下文敏感 fake predictor 检查数据路径；真实同 MTR 数组对照留到后续获准的模型验证，不在本步骤假称已经验证真实模型。
-- [ ] 验证新接收器对各方法共享，Ego-max-context 真为 peer_reserve=0；旧 v1 保存提示逐字回归。运行 `PYTHONPATH=src:tests python -m unittest test_evidence_ledger test_compact_evidence -v`；模型环境另运行 SharedContextTests。
+- [x] 构造同目标同上下文 P_local/F，断言 E 保留购买事实、derived 保留父引用，而 Z 不重复放同一 forecast；同目标不同上下文预测不能被去掉。
+- [x] 用一个只能放一条完整字段 bundle 的小容量测试：第二轮收到新字段后 E 增长、Z 可替换，旧入模引用进入 dropped；再次引用旧字段不会增加 E。
+- [x] 验证每个 Z 项可还原到本车或 acquired/derived 的父链；把未购 F 注入 Z 必须失败。历史 scores、mask、mode 顺序、数值舍入与原始 bytes 的区别分别核对。
+- [x] v2 对相同 E 不受 policy 名称、报文到达顺序、request_id/current/change 标签影响；同 source 同 id 的不同计算上下文仍可解码区分。
+- [x] 完整 P/F 同信息测试先用上下文敏感 fake predictor 检查数据路径；真实同 MTR 数组对照留到后续获准的模型验证，不在本步骤假称已经验证真实模型。
+- [x] 验证新接收器对各方法共享，Ego-max-context 真为 peer_reserve=0；旧 v1 保存提示逐字回归。运行 `PYTHONPATH=src:tests python -m unittest test_evidence_ledger test_compact_evidence -v`；模型环境另运行 SharedContextTests。
 
 ```python
 # 容量替换的关键不变量；fixture 让新字段排在旧字段前且不能同时装下。
@@ -394,6 +402,8 @@ assert prepared_after['evidence_selection']['input_tokens'] + 256 <= context_lim
 
 ### T4：真实 GoT 交替、STOP 与失败时序【Method 核心】
 
+**状态：已完成代码、契约及原 tokenizer/driver 适配接口验证，未执行真实模型。** 恢复粒度、诊断策略和成本记录边界见 T4 实施记录。
+
 **修改文件：** 新建 `src/planning/method_episode.py`、`tests/test_method_episode.py`；修改 `src/planning/run_framework.py` 增加显式 `interact` 子命令，修改 `src/planning/v2vgot.py:plan_prepared` 校验共同 v2 输入。原 `episode.py` 五策略和 prepare/generate 子命令不迁移、不替换。
 
 **API / 数据：**
@@ -407,7 +417,7 @@ run_task_episode(local_window, local_prediction, motion, features,
 
 运行器加载一次 driver，再多次调用 `plan_prepared`。每个事件包含 sample/branch/stage/request_id/plan_id，来源指向实际前一步；生成前后及真实响应到达后立即持久化，不等全部分支完成。无效初始输出也有 completion/失败记录。
 
-- [ ] 用可记录事件的 fake service/driver 检查真实顺序，不能仅检查调用次数：
+- [x] 用可记录事件的 fake service/driver 检查真实顺序，不能仅检查调用次数：
 
 ```python
 assert events == ['driver:0', 'query:P_current', 'driver:1',
@@ -418,11 +428,11 @@ assert second_request['tau_new'] == plans[1]['waypoints']
 
 fixture 的 driver 输出依赖实际收到的字段，policy 读取实际修订；更改第一响应必须能改变第二 request 参数或 STOP，不用硬编码动作测试冒充反馈。
 
-- [ ] 零/一/两调用分别最多执行 1/2/3 次 GoT；STOP 零额外远端读取/生成；第三请求被硬拦；初始 τ0 无效时 service 从不读取。
-- [ ] 中间修订格式/动力范围失败阻止下次请求，保留原始回答和全部成本；同证据重复生成允许不变，不伪造修订。
-- [ ] 修改未来标签文件不影响在线执行；给 runner 注入禁止打开 offline_labels 的访问钩子；请求策略参数中不得有 service/完整树/GT。
-- [ ] 打断在 response_received 与 driver_started 之间，归档可判断未完成；恢复只复用完整前缀，不能补造中间方案或覆盖失败。
-- [ ] 运行 `PYTHONPATH=src:tests python -m unittest test_method_episode test_framework_episode.EpisodeTests -v`；真实模型短链留待代码确认和单独安排执行后验证。
+- [x] 零/一/两调用分别最多执行 1/2/3 次 GoT；STOP 零额外远端读取/生成；第三请求被硬拦；初始 τ0 无效时 service 从不读取。
+- [x] 中间修订格式/动力范围失败阻止下次请求，保留原始回答和全部成本；同证据重复生成允许不变，不伪造修订。
+- [x] 修改未来标签文件不影响在线执行；给 runner 注入禁止打开 offline_labels 的访问钩子；请求策略参数中不得有 service/完整树/GT。
+- [x] 打断在 response_received 与 driver_started 之间，归档可判断未完成；恢复只复用完整前缀，不能补造中间方案或覆盖失败。
+- [x] 运行 `PYTHONPATH=src:tests python -m unittest test_method_episode test_framework_episode.EpisodeTests -v`；真实模型短链留待代码确认和单独安排执行后验证。
 
 **该步可验证：** C0，及 H2 的执行前提：确有真实驾驶修订参与下一任务。
 
@@ -430,16 +440,18 @@ fixture 的 driver 输出依赖实际收到的字段，policy 读取实际修订
 
 ### T5：多次生成与失败成本评价【工程基础＋实验评价】
 
+**状态：代码与契约/旧结果回归完成，未执行真实新模型。** 当前统计范围、未知费用和预期分母定义详见 T5 实施记录。
+
 **修改文件：** 扩展 `src/evaluation/framework.py` 增加显式 v2 episode 读取/评价；复用 `src/evaluation/planning.py` 数值指标；新建 `tests/test_method_evaluation.py`，扩展 `tests/test_framework_pipeline.py`。旧 evaluate/summarize 路径的历史口径不回写。
 
 **API / 数据：** `evaluate_method(episodes_root, out, labels_root)`；`summarize_method(rows)`。行主键为 `(sample_id, policy_id, branch_id)`，计划事件另有 stage；保存 parse_valid、task_success、admissibility、raw ADE/FDE、缺标签情况、完整分母和 cost_complete。
 
-- [ ] 3 次 driver 时长 1/2/3 秒的合成 episode 断言 driver_seconds=6；只有一次的旧基线仍=1，不能只记最终输出。
-- [ ] service=2 秒且其中 peer MTR=1 秒时，总时间只加 2；receiver 内 P_local 同理，子项另报。
-- [ ] 失败发生在请求、响应后接收、生成三个位置，已发生次数/bytes/time 都保留；unknown 成本不能用 0 参与成本均值/价值训练。
-- [ ] 预期任务集合有无效 τ0、缺文件、重复分支、不同 recording 的同 g；缺失不能以“完成样本”替代 expected denominator。
-- [ ] 相同结果按旧/新 reader 的可比指标一致，旧 160 条归档的便携复算仍可运行；本轮只计划，实施时再运行。
-- [ ] 运行 `PYTHONPATH=src:tests python -m unittest test_method_evaluation test_framework_pipeline -v`。
+- [x] 3 次 driver 时长 1/2/3 秒的合成 episode 断言 driver_seconds=6；只有一次的旧基线仍=1，不能只记最终输出。
+- [x] service=2 秒且其中 peer MTR=1 秒时，总时间只加 2；receiver 内 P_local 同理，子项另报。
+- [x] 失败发生在请求、响应后接收、生成三个位置，已发生次数/bytes/time 都保留；unknown 成本不能用 0 参与成本均值/价值训练。
+- [x] 预期任务集合有无效 τ0、缺文件、重复分支、不同 recording 的同 g；缺失不能以“完成样本”替代 expected denominator。
+- [x] 相同结果按旧/新 reader 的可比指标一致，旧 160 条归档的便携复算仍可运行；本批已完成原便携复算。
+- [x] 运行 `PYTHONPATH=src:tests python -m unittest test_method_evaluation test_framework_pipeline -v`。
 
 ```python
 assert row['driver_calls'] == 3

@@ -76,13 +76,17 @@ class VehicleTools:
         One instance owns one v2 episode (at most two attempts). The manifest
         acknowledges receipt fields; omitted acknowledgements permit retransmission.
         No receiver-derived equivalence, driver execution or future labels here.
+        Requests use JSON-native types; predictor fields use CMP's NumPy arrays.
         """
         from tools.task_spec import (ExecutionSpec, validate_task_request, validate_provenance,
-                                     field_key, rank_targets, _check_window)
+                                     field_key, rank_targets, _check_window, FrozenPredictor)
         begin = perf_counter()
         request = copy.deepcopy(request)
         validate_task_request(request, self._task_receipts)
         validate_provenance(self._task_provenance)
+        if isinstance(self._predict, FrozenPredictor) and (
+                self._predict.descriptor['model_version'] != self._task_provenance['prediction']):
+            raise ValueError('predictor binding and provider model version differ')
         spec = ExecutionSpec.from_dict(request['execution_spec'])
         if (request['provider'], request['scene'], request['g']) != (self.provider, self.scene, self.g):
             raise ValueError('request and provider source/scene/time differ')
@@ -98,6 +102,8 @@ class VehicleTools:
         packet = dict(version='toolv2x_task_response_v2', request=request, receipt_id=uuid4().hex,
             provenance=copy.deepcopy(self._task_provenance), records=[], references=[], ranking=[],
             status='no_observed_targets', coverage='not_established', truncated=False)
+        if request['tool'] == 'F' and isinstance(self._predict, FrozenPredictor):
+            packet['predictor_binding'] = self._predict.descriptor
         # This is the longest empty-status header, requiring no private window.
         if len(encode(packet)) > spec.max_response_bytes:
             raise ValueError('response cap cannot hold the complete header')
@@ -176,18 +182,33 @@ class VehicleTools:
             # Compute the truncation flag for each actual tentative selection. JSON
             # false/true differ in size; cap checks must use the final flag's bytes.
             packet['truncated'] = bool(candidates)
+            def with_certificate(candidate):
+                if tool != 'P' or candidate['truncated']:
+                    return candidate
+                # A complete P covers every history through returned records or
+                # authenticated acknowledgements. This order reveals no unbought IDs.
+                certificate = dict(version='toolv2x_full_context_v1',
+                    track_order=[int(t) for t in w['track_ids']],
+                    array_dtypes={k: np.asarray(w[k]).dtype.name
+                                  for k in ('track_ids', 'states', 'scores', 'valid', 'time_seconds')},
+                    has_eligible='eligible' in w,
+                    predictor_binding=self._predict.descriptor if isinstance(self._predict, FrozenPredictor) else None)
+                trial = dict(candidate, context_certificate=certificate)
+                return trial if len(encode(trial)) <= spec.max_response_bytes else candidate
             for records, references, rank in candidates:
                 if len(packet['ranking']) >= spec.max_targets:
                     continue
                 trial = dict(packet, records=packet['records'] + records,
                     references=packet['references'] + references, ranking=packet['ranking'] + [rank], status='ok',
                     truncated=len(packet['ranking']) + 1 < len(candidates))
+                trial = with_certificate(trial)
                 # Atomic target: shared anchor plus the complete history/forecast bundle.
                 if len(encode(trial)) <= spec.max_response_bytes:
                     packet = trial
             if not packet['records']:
                 packet['status'] = ('no_observed_targets' if not ranked else
                                     'no_new_fields' if not candidates else 'budget_empty')
+                packet = with_certificate(packet)
             wire = encode(packet)
             decode_task_response(wire, request)
             # Only fields in the final returned packet acquire a receipt. Not candidates,
@@ -375,8 +396,9 @@ def decode_task_response(wire, request):
         return result
 
     packet = json.loads(wire.decode('utf-8'), object_pairs_hook=unique_object)
-    _keys(packet, ('version', 'request', 'receipt_id', 'provenance', 'records', 'references',
-                   'ranking', 'status', 'coverage', 'truncated'), 'task response')
+    expected = {'version', 'request', 'receipt_id', 'provenance', 'records', 'references',
+                'ranking', 'status', 'coverage', 'truncated'}
+    _keys(packet, expected | (set(packet) & {'context_certificate', 'predictor_binding'}), 'task response')
     _request_spec(packet['request'])
     if (packet['version'] != 'toolv2x_task_response_v2' or packet['request'] != request or
             packet['coverage'] != 'not_established' or type(packet['truncated']) is not bool):
@@ -460,7 +482,49 @@ def decode_task_response(wire, request):
                     np.asarray(forecast['forecast']) == np.asarray(values['anchor']['value']['box'][:2])):
                 raise ValueError('static fallback does not equal current anchor')
     encode(packet)  # Reject non-finite JSON anywhere, including unused metadata.
+    if 'context_certificate' in packet:
+        _validate_context_certificate(packet)
+    if 'predictor_binding' in packet:
+        if packet['request']['tool'] != 'F':
+            raise ValueError('forecast binding belongs to F')
+        _validate_predictor_binding(packet['predictor_binding'], packet['provenance'])
     return packet
+
+
+def _validate_context_certificate(packet):
+    from tools.task_spec import _keys, _integer, _version_pair, _text, _check_json_native
+    c = packet['context_certificate']
+    _keys(c, ('version', 'track_order', 'array_dtypes', 'has_eligible', 'predictor_binding'), 'context certificate')
+    if (c['version'] != 'toolv2x_full_context_v1' or packet['request']['tool'] != 'P' or
+            packet['truncated'] or type(c['track_order']) is not list or type(c['has_eligible']) is not bool):
+        raise ValueError('invalid complete P context certificate')
+    ids = [_integer(t) for t in c['track_order']]
+    available = [r['ref'] for r in packet['records']] + [r['ref'] for r in packet['request']['acquired_field_manifest']]
+    histories = {r['track_handle'] for r in available if r['field_kind'] == 'history'
+                 and r['context_version'] == packet['provenance']['context']
+                 and r['producer_version'] == packet['provenance']['tracking']}
+    if len(set(ids)) != len(ids) or set(ids) != histories:
+        raise ValueError('context certificate must cover exactly the acquired histories')
+    _keys(c['array_dtypes'], ('track_ids', 'states', 'scores', 'valid', 'time_seconds'), 'context dtypes')
+    for key, value in c['array_dtypes'].items():
+        if type(value) is not str:
+            raise ValueError('invalid context dtype')
+        dtype = np.dtype(value)
+        allowed = 'iu' if key == 'track_ids' else 'b' if key == 'valid' else 'fi'
+        if dtype.kind not in allowed or dtype.name != value:
+            raise ValueError('unsupported context dtype')
+    if c['predictor_binding'] is not None:
+        _validate_predictor_binding(c['predictor_binding'], packet['provenance'])
+
+
+def _validate_predictor_binding(binding, provenance):
+    from tools.task_spec import _keys, _text, _version_pair, _check_json_native
+    _keys(binding, ('binding_id', 'model_version', 'settings'), 'predictor binding')
+    _text(binding['binding_id'])
+    _version_pair(binding['model_version'])
+    _check_json_native(binding['settings'])
+    if binding['model_version'] != provenance['prediction'] or not isinstance(binding['settings'], dict):
+        raise ValueError('context predictor identity mismatch')
 
 
 def _validate_task_value(kind, value):
@@ -478,7 +542,7 @@ def _validate_task_value(kind, value):
         times = _array(value['history_times'], (11,))
         valid = np.asarray(value['history_valid'])
         if (valid.shape != (11,) or valid.dtype != np.dtype(bool) or not valid[-1] or
-                (history[-1, 3:6] <= 0).any() or (scores < 0).any() or (scores > 1).any() or
+                (history[valid, 3:6] <= 0).any() or (scores < 0).any() or (scores > 1).any() or
                 times[-1] != 0 or (times > 0).any() or not np.allclose(times, np.arange(-10, 1) / 10.)):
             raise ValueError('invalid causal tracking-state history')
         expected = 'causal_tracking_state_motion_proxy' if valid.sum() >= 2 else 'single_state_static_proxy'

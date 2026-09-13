@@ -4,7 +4,9 @@ P uses a causal tracking-state motion proxy, not detector-hit history or MTR.
 Receipt validation requires the provider's own issued-response registry.
 """
 from dataclasses import asdict, dataclass, fields
+import copy
 import re
+from uuid import uuid4
 
 import numpy as np
 
@@ -19,6 +21,29 @@ REQUEST_FIELDS = {'version', 'request_id', 'provider', 'scene', 'g', 'coordinate
                   'acquired_field_manifest'}
 REF_FIELDS = {'provider', 'scene', 'g', 'track_handle', 'field_kind',
               'producer_version', 'context_version'}
+
+
+class FrozenPredictor:
+    """Bind one frozen callable/configuration to a local run, without loading a model.
+
+    The caller must keep weights and execution settings frozen. The opaque binding
+    is run-local evidence of sharing this callable, not a checkpoint fingerprint.
+    """
+    def __init__(self, predictor, model_version, settings):
+        _version_pair(model_version)
+        _check_json_native(settings)
+        if not callable(predictor) or not isinstance(settings, dict):
+            raise ValueError('frozen predictor callable and settings required')
+        self._predict = predictor
+        self._descriptor = dict(binding_id=uuid4().hex, model_version=copy.deepcopy(model_version),
+                                settings=copy.deepcopy(settings))
+
+    @property
+    def descriptor(self):
+        return copy.deepcopy(self._descriptor)
+
+    def __call__(self, window):
+        return self._predict(window)
 
 
 def _keys(value, names, label):
@@ -52,12 +77,30 @@ def _version_pair(value):
 
 def _array(value, shape):
     try:
+        # Inspect raw leaves before NumPy can coerce mixed bool/numeric lists.
+        if not isinstance(value, np.ndarray) and any(
+                isinstance(item, (bool, np.bool_)) for item in np.asarray(value, dtype=object).flat):
+            raise ValueError('boolean values are not numeric coordinates or scores')
         array = np.asarray(value)
         if array.shape != shape or array.dtype.kind not in 'fi' or not np.isfinite(array).all():
             raise ValueError('invalid finite numeric array')
         return array.astype(float)
     except (TypeError, OverflowError) as exc:
         raise ValueError('invalid numeric array') from exc
+
+
+def _check_json_native(value):
+    """Requests must survive JSON round trips without container/type conversion."""
+    if type(value) is dict:
+        if any(type(key) is not str for key in value):
+            raise ValueError('request object keys must be strings')
+        for item in value.values():
+            _check_json_native(item)
+    elif type(value) is list:
+        for item in value:
+            _check_json_native(item)
+    elif value is not None and type(value) not in (str, int, float, bool):
+        raise ValueError('task requests require JSON-native types')
 
 
 @dataclass(frozen=True)
@@ -116,6 +159,7 @@ def field_key(ref):
 
 
 def _request_spec(request):
+    _check_json_native(request)
     _keys(request, REQUEST_FIELDS, 'task request')
     if (request['version'] != TASK_VERSION or request['coordinate_frame'] != 'ego_at_t' or
             request['tool'] not in ('P', 'F') or request['mode'] not in ('current', 'change')):
@@ -134,10 +178,7 @@ def _request_spec(request):
     elif request['tau_old'] is not None:
         raise ValueError('current must not contain an old plan')
     for path in paths:
-        velocity = np.diff(np.vstack([np.zeros((1, 2)), path]), axis=0) / .5
-        if (np.linalg.norm(velocity, axis=1).max() > spec.max_plan_speed_mps or
-                np.linalg.norm(np.diff(velocity, axis=0) / .5, axis=1).max() > spec.max_plan_acceleration_mps2):
-            raise ValueError('plan exceeds configured admissibility bounds')
+        validate_plan(path, spec)
     if not isinstance(request['acquired_field_manifest'], list):
         raise ValueError('invalid acquired-field manifest')
     try:
@@ -147,6 +188,19 @@ def _request_spec(request):
     if size > spec.max_request_bytes:
         raise ValueError('complete request exceeds byte limit')
     return spec
+
+
+
+def validate_plan(waypoints, spec):
+    """Same six-point numerical/admissibility contract for STOP and sent requests."""
+    if not isinstance(spec, ExecutionSpec):
+        spec = ExecutionSpec.from_dict(spec)
+    path = _array(waypoints, (6, 2))
+    velocity = np.diff(np.vstack([np.zeros((1, 2)), path]), axis=0) / .5
+    if (np.linalg.norm(velocity, axis=1).max() > spec.max_plan_speed_mps or
+            np.linalg.norm(np.diff(velocity, axis=0) / .5, axis=1).max() > spec.max_plan_acceleration_mps2):
+        raise ValueError('plan exceeds configured admissibility bounds')
+    return path.tolist()
 
 
 def validate_task_request(request, known_receipts):
@@ -183,12 +237,15 @@ def _check_window(window):
     _text(window['source'])
     _text(window['scene'])
     ids = np.asarray(window['track_ids'])
-    _array(window['states'], (len(ids), 11, 7))
+    states = _array(window['states'], (len(ids), 11, 7))
     _array(window['scores'], (len(ids), 11))
+    _array(window['time_seconds'], (11,))
     if (ids.dtype.kind not in 'iu' or (ids < 0).any() or
             np.asarray(window['valid']).dtype != np.dtype(bool) or
             (np.asarray(window['time_seconds']) > 0).any()):
         raise ValueError('invalid causal tracking-state identities/mask/time')
+    if (states[np.asarray(window['valid'])][:, 3:6] <= 0).any():
+        raise ValueError('valid historical tracking states require positive dimensions')
     if 'eligible' in window:
         eligible = np.asarray(window['eligible'])
         if (eligible.dtype != np.dtype(bool) or
@@ -227,6 +284,30 @@ def relation_scores(rho_old, rho_new):
     return new.max(axis=(1, 2)), np.abs(new - old).max(axis=(1, 2))
 
 
+def validate_prediction(window, forecast):
+    """Validate the complete CMP array output before caching or deriving evidence."""
+    n = len(window['track_ids'])
+    states = np.asarray(window['states'], dtype=float)
+    # Match the original CMP output contract before any v2 cache write or packing.
+    if (not isinstance(forecast, dict) or
+            not {'track_ids', 'states', 'means', 'scores', 'model_used'} <= set(forecast) or
+            any(not isinstance(forecast[key], np.ndarray)
+                for key in ('track_ids', 'states', 'means', 'scores', 'model_used')) or
+            not np.array_equal(forecast['track_ids'], window['track_ids']) or
+            not np.array_equal(forecast['states'], states[:, -1])):
+        raise ValueError('F requires an aligned complete-context prediction')
+    means = _array(forecast['means'], (n, 6, 50, 2))
+    scores = _array(forecast['scores'], (n, 6))
+    used = np.asarray(forecast['model_used'])
+    if (used.shape != (n,) or used.dtype != np.dtype(bool) or (scores < 0).any() or
+            (scores.sum(axis=1) > 1.0001).any()):
+        raise ValueError('invalid predictor mode metadata')
+    if (not np.array_equal(used, np.asarray(window['valid']).sum(axis=1) >= 2) or
+            not np.all(means[~used] == states[~used, None, -1:, :2])):
+        raise ValueError('predictor fallback disagrees with causal history/static anchor')
+    return means, scores, used
+
+
 def rank_targets(window, request, forecast=None):
     """Pure provider-side scoring; callers authenticate receipts before private access."""
     spec = _request_spec(request)
@@ -239,20 +320,7 @@ def rank_targets(window, request, forecast=None):
     if request['tool'] == 'P':
         xy, status = history_proxy(window)
     else:
-        if (not isinstance(forecast, dict) or
-                not {'track_ids', 'states', 'means', 'scores', 'model_used'} <= set(forecast) or
-                not np.array_equal(forecast['track_ids'], window['track_ids']) or
-                not np.array_equal(forecast['states'], states[:, -1])):
-            raise ValueError('F requires an aligned complete-context prediction')
-        means = _array(forecast['means'], (n, 6, 50, 2))
-        scores = _array(forecast['scores'], (n, 6))
-        used = np.asarray(forecast['model_used'])
-        if (used.shape != (n,) or used.dtype != np.dtype(bool) or (scores < 0).any() or
-                (scores.sum(axis=1) > 1.0001).any()):
-            raise ValueError('invalid predictor mode metadata')
-        if (not np.array_equal(used, np.asarray(window['valid']).sum(axis=1) >= 2) or
-                not np.all(means[~used] == states[~used, None, -1:, :2])):
-            raise ValueError('predictor fallback disagrees with causal history/static anchor')
+        means, _, used = validate_prediction(window, forecast)
         xy = means[:, :, FUTURE_INDICES, :]
         status = ['mtr' if value else 'stationary_short_history' for value in used]
     radii = np.hypot(states[:, -1, 3], states[:, -1, 4]) * .5

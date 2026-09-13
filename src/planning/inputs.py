@@ -12,6 +12,7 @@ SPEEDS = ('fast', 'moderate', 'slow', 'very slow', 'stop')
 STEERING = ('left', 'slightly left', 'straight', 'slightly right', 'right')
 OBJECT_FIELDS = {'source', 'track_id', 'box', 'score', 'history', 'history_valid',
                  'history_times', 'forecast', 'forecast_scores', 'forecast_times', 'model_used'}
+TASK_OBJECT_FIELDS = OBJECT_FIELDS | {'history_scores', 'proxy_status', 'field_metadata'}
 
 
 def frame_location(root, split, g):
@@ -83,6 +84,8 @@ def load_ego_motion(root, split, g):
 
 
 def validate_evidence(evidence):
+    if isinstance(evidence, dict) and evidence.get('evidence_version') == 'toolv2x_driver_evidence_v2':
+        return _validate_task_evidence(evidence)
     allowed = {'as_of_g', 'coordinate_frame', 'objects', 'relations', 'queries'}
     if not isinstance(evidence, dict) or set(evidence) - allowed or 'as_of_g' not in evidence or 'objects' not in evidence:
         raise ValueError('invalid evidence fields')
@@ -98,6 +101,61 @@ def validate_evidence(evidence):
         if set(query) - {'tool', 'roi', 'response_bytes', 'status'}:
             raise ValueError('unexpected query fields')
     # Fail on NaN/inf rather than sending nonstandard JSON to the driving model.
+    json.dumps(evidence, allow_nan=False)
+
+
+def _validate_task_evidence(evidence):
+    from tools.task_spec import _keys, _integer, _text, _version_pair, _array
+    from tools.vehicle import _validate_task_value
+    _keys(evidence, ('evidence_version', 'as_of_g', 'coordinate_frame', 'objects', 'observations'), 'driver v2 evidence')
+    _integer(evidence['as_of_g'])
+    if evidence['coordinate_frame'] != 'ego_at_t' or not isinstance(evidence['objects'], list):
+        raise ValueError('invalid v2 driver coordinates/objects')
+    for obj in evidence['objects']:
+        if set(obj) - TASK_OBJECT_FIELDS or not {'source', 'track_id', 'box', 'score', 'field_metadata'} <= set(obj):
+            raise ValueError('invalid v2 driver object fields')
+        _text(obj['source'])
+        _integer(obj['track_id'])
+        _validate_task_value('anchor', dict(box=obj['box'], score=obj['score']))
+        kinds = {k for k in ('history', 'forecast') if k in obj}
+        if not kinds:
+            raise ValueError('driver object has no primary bundle')
+        _keys(obj['field_metadata'], kinds, 'driver field metadata')
+        expected = {'source', 'track_id', 'box', 'score', 'field_metadata'}
+        for kind in kinds:
+            meta = obj['field_metadata'][kind]
+            _keys(meta, ('context_version', 'producer_version', 'context_scope') if kind == 'forecast'
+                  else ('context_version', 'producer_version'), 'driver field provenance')
+            for key in ('context_version', 'producer_version'):
+                _version_pair(meta[key])
+            fields = {'history', 'history_valid', 'history_scores', 'history_times', 'proxy_status'} if kind == 'history' else {
+                'forecast', 'forecast_scores', 'forecast_times', 'model_used'}
+            if not fields <= set(obj):
+                raise ValueError('incomplete driver primary bundle')
+            value = {k: obj[k] for k in fields}
+            if kind == 'forecast':
+                if meta['context_scope'] not in ('provider_full_at_t', 'receiver_acquired_subset'):
+                    raise ValueError('unknown driver forecast context scope')
+                paths = _array(value['forecast'], (6, 6, 2))
+                scores = _array(value['forecast_scores'], (6,))
+                # Display rounding can add at most 0.005 per mode. Never normalize.
+                if ((scores < 0).any() or (scores > 1).any() or scores.sum() > 1.0001 + 6 * .005 or
+                        not np.array_equal(_array(value['forecast_times'], (6,)), [.5, 1., 1.5, 2., 2.5, 3.]) or
+                        type(value['model_used']) is not bool or
+                        (not value['model_used'] and not np.all(paths == np.asarray(obj['box'][:2])))):
+                    raise ValueError('invalid rounded driver forecast')
+            else:
+                _validate_task_value(kind, value)
+            expected |= fields
+        if set(obj) != expected:
+            raise ValueError('orphan driver numeric fields')
+    if not isinstance(evidence['observations'], list) or not evidence['observations']:
+        raise ValueError('remote v2 evidence requires paid source observations')
+    for item in evidence['observations']:
+        _keys(item, ('provider', 'coverage', 'history_complete'), 'driver observation')
+        _text(item['provider'])
+        if item['coverage'] != 'not_established' or type(item['history_complete']) is not bool:
+            raise ValueError('invalid driver observation boundary')
     json.dumps(evidence, allow_nan=False)
 
 
@@ -137,8 +195,9 @@ def unpack_evidence(packed):
     if packed.get('evidence_format') != 'compact_v1':
         raise ValueError('unknown evidence format')
     columns, shared = packed['object_columns'], packed['object_shared']
+    allowed = TASK_OBJECT_FIELDS if packed.get('evidence_version') == 'toolv2x_driver_evidence_v2' else OBJECT_FIELDS
     if (len(set(columns)) != len(columns) or set(columns) & set(shared) or
-            (set(columns) | set(shared)) - OBJECT_FIELDS):
+            (set(columns) | set(shared)) - allowed):
         raise ValueError('invalid evidence columns')
     objects = []
     for row in packed['object_rows']:
@@ -180,12 +239,13 @@ def make_prompt(task, ego_state, evidence, q8_answer=None, evidence_format='json
                + json.dumps(rendered, sort_keys=True, separators=(',', ':'), allow_nan=False) + '\n')
     if remote_evidence is not None:
         validate_evidence(remote_evidence)
+        task_evidence = remote_evidence.get('evidence_version') == 'toolv2x_driver_evidence_v2'
         if (task != 'Trajectory' or evidence.get('queries') or evidence.get('relations') or
                 any(obj.get('source') != 'ego' for obj in evidence['objects']) or
                 any(obj.get('source') == 'ego' for obj in remote_evidence['objects']) or
                 evidence.get('coordinate_frame') != 'ego_at_t' or
                 any(remote_evidence.get(key) != evidence.get(key) for key in ('as_of_g', 'coordinate_frame')) or
-                not remote_evidence.get('queries')):
+                (not remote_evidence.get('queries') and not task_evidence)):
             raise ValueError('paired direct prompt requires an isolated ego block and a queried same-time remote block')
         remote = remote_evidence if evidence_format == 'json' else pack_evidence(remote_evidence)
         # Encode separately: adding peer objects must not change the local block's

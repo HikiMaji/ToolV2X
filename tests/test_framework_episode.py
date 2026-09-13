@@ -176,6 +176,99 @@ class SharedContextTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             planner.plan_prepared(features, poisoned)
 
+    def test_task_receiver_uses_original_tokenizer_without_model_generation(self):
+        from planning.context import build_task_plan_input
+        from planning.evidence import new_ledger, apply_response
+        from planning.v2vgot import prompt_tokens
+        from tools.task_spec import FrozenPredictor
+        from test_task_spec import task_request, provenance
+        predictor = FrozenPredictor(fixture_prediction, provenance()['prediction'],
+                                    dict(adapter='cmp_causal_window_v1'))
+        ego = window('ego')
+        ledger = new_ledger(ego, predictor(ego), predictor=predictor, local_provenance=provenance())
+        service = VehicleTools(window, predictor, 'scene', 10, 'peer', task_provenance=provenance())
+        # Default execution/receiver budgets; test only tokenizer plus fake predictor.
+        ledger = apply_response(ledger, service.query_task(task_request()), predictor)
+        prepared = build_task_plan_input(self.tokenizer, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 64)
+        exact = len(prompt_tokens(self.tokenizer, prepared['q9_prompt'])) - 1 + 64
+        self.assertEqual(prepared['evidence_selection']['input_tokens'], exact)
+        self.assertLessEqual(exact + 256, 4096)
+        self.assertGreater(prepared['evidence_selection']['remote_units_retained'], 0)
+        self.assertEqual(prepared['evidence_selection']['token_counting'], 'original_got_prompt_tokens')
+        self.assertFalse(prepared['language_model_executed'])
+        before = prepared['q9_prompt']
+        ledger = apply_response(ledger, service.query_task(task_request(tool='F', request_id='q1')), predictor)
+        after = build_task_plan_input(self.tokenizer, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 64)
+        self.assertEqual(before, after['q9_prompt'])
+
+
+    def test_v2_driver_adapter_validates_original_budget_before_generation(self):
+        from planning.context import build_task_plan_input
+        from planning.evidence import new_ledger
+        from planning.v2vgot import V2VGoTPlanner
+        from tools.task_spec import FrozenPredictor
+        from test_task_spec import provenance
+        predictor = FrozenPredictor(fixture_prediction, provenance()['prediction'], dict(adapter='fixture'))
+        ego = window('ego')
+        ledger = new_ledger(ego, predictor(ego), predictor=predictor, local_provenance=provenance())
+        features = dict(active_agent_mask=np.array([[[True], [False]]]))
+        prepared = build_task_plan_input(self.tokenizer, dict(speed_mps=2., yaw_rate_rps=0.), ledger, 270)
+        planner = V2VGoTPlanner.__new__(V2VGoTPlanner)
+        planner.tokenizer, planner.context_limit = self.tokenizer, 4096
+        seen = []
+        def generate(features, prompt, budget):
+            seen.append((prompt, budget))
+            return 'The suggested trajectory is: [(1,0),(2,0),(3,0),(4,0),(5,0),(6,0)]', dict(output_tokens=40)
+        planner._generate = generate
+        output = planner.plan_prepared(features, prepared)
+        self.assertEqual(output['status'], 'parsed')
+        self.assertEqual(seen, [(prepared['q9_prompt'], 256)])
+        for area, key, bad in [('evidence_selection', 'token_counting', 'injected_contract_counter'),
+                              ('evidence_selection', 'input_tokens', 1),
+                              ('evidence_selection', 'generation_reserve', 1),
+                              ('receiver_spec', 'peer_reserve', 0),
+                              ('receiver_spec', 'context_limit', 8192)]:
+            poisoned = copy.deepcopy(prepared)
+            poisoned[area][key] = bad
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                planner.plan_prepared(features, poisoned)
+        self.assertEqual(len(seen), 1)
+
+
+    def test_task_episode_calls_actual_driver_adapter_with_same_features_and_tokenizer(self):
+        from planning.method_episode import run_task_episode, diagnostic_policy
+        from planning.v2vgot import V2VGoTPlanner, prompt_tokens
+        from tools.task_spec import FrozenPredictor
+        from test_task_spec import provenance, spec_dict
+        predictor = FrozenPredictor(fixture_prediction, provenance()['prediction'], dict(adapter='fixture'))
+        ego = window('ego')
+        service = VehicleTools(window, predictor, 'scene', 10, 'peer', task_provenance=provenance())
+        planner = V2VGoTPlanner.__new__(V2VGoTPlanner)
+        planner.tokenizer, planner.context_limit = self.tokenizer, 4096
+        planner.provenance = dict(model_class='original_adapter_synthetic_generate')
+        seen = []
+        def generate(features, prompt, budget):
+            seen.append((id(features), prompt))
+            y = .1 if 'Additional queried neighbor evidence:' in prompt else 0.
+            tau = [[float(i+1), y*(i+1)] for i in range(6)]
+            return 'The suggested trajectory is: ' + repr(tau), dict(seconds=.1,
+                input_tokens=len(prompt_tokens(self.tokenizer, prompt))-1+270, output_tokens=40, feature_tokens=270)
+        planner._generate = generate  # Only expensive external generation is substituted.
+        limits = dict(version='toolv2x_interaction_v1', max_calls=2, policy_id='p_current_f_change',
+            driver_version=dict(name='adapter_contract', revision='v1'), execution_spec=spec_dict(),
+            receiver_spec=dict(version='toolv2x_receiver_v1', context_limit=4096, generation_reserve=256,
+                               peer_reserve=1536, numeric_decimal_places=2))
+        result = run_task_episode(ego, predictor(ego), dict(speed_mps=2., yaw_rate_rps=0.),
+            dict(active_agent_mask=np.array([[[True], [False]]])), service, predictor, planner,
+            diagnostic_policy, limits, local_provenance=provenance())
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual(len(result['plans']), 3)
+        self.assertEqual({item[0] for item in seen}, {seen[0][0]})
+        self.assertEqual(result['requests'][1]['mode'], 'change')
+        self.assertEqual(result['requests'][1]['tau_new'], result['plans'][1]['output']['waypoints'])
+        self.assertTrue(all(p['prepared']['evidence_selection']['token_counting'] == 'original_got_prompt_tokens'
+                            for p in result['plans']))
+
 
 if __name__ == '__main__':
     unittest.main()

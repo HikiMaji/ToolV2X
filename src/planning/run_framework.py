@@ -297,6 +297,200 @@ def generate(prepared_root, out, checkpoint, role='validation', per_recording=0)
             print(json.dumps(dict(completed=number+1, total=len(records), policy=record['policy'], status=plan['status'])), flush=True)
     save_json(out / 'completion.json', dict(status='completed', attempts=len(records)))
 
+def _save_method_json(path, value):
+    """Atomic snapshots: an interruption cannot turn the prior prefix into half JSON."""
+    import os
+    import tempfile
+    path = Path(path)
+    with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=str(path.parent), delete=False) as handle:
+        temporary = Path(handle.name)
+        try:
+            json.dump(value, handle, ensure_ascii=False, allow_nan=False, indent=2)
+            handle.write('\n')
+            handle.flush()
+            os.fsync(handle.fileno())
+        except BaseException:
+            temporary.unlink()
+            raise
+    temporary.replace(path)
+
+
+def completed_method_prefix(root, rows, config):
+    """Reuse terminal samples, including failures. Never continue a half tool episode."""
+    if json.loads((root/'config.json').read_text()) != config:
+        raise ValueError('interaction resume configuration changed')
+    if read_jsonl(root/'selected_index.jsonl') != rows:
+        raise ValueError('interaction resume causal index changed')
+    count = json.loads((root/'progress.json').read_text())['terminal_tasks']
+    lines = (root/'tasks.jsonl').read_text().splitlines()
+    if type(count) is not int or not 0 <= count <= len(rows) or len(lines) < count:
+        raise ValueError('invalid interaction terminal prefix')
+    tasks = []
+    for line, row in zip(lines[:count], rows[:count]):
+        record = json.loads(line)
+        task = json.loads((root/record['path']).read_text())
+        ep = task.get('episode')
+        if record['sample_id'] != row['sample_id'] or task['row'] != row or task['status'] not in ('completed', 'failed'):
+            raise ValueError('interaction prefix identity or terminal status changed')
+        if ep is not None:
+            if (ep['version'] != 'toolv2x_episode_v2' or
+                    any(ep[k] != row[k] for k in ('sample_id', 'scene', 'g')) or
+                    ep['status'] == 'running' or not ep['events'] or ep['events'][-1]['kind'] not in ('STOP', 'failed')):
+                raise ValueError('interaction prefix contains incomplete episode')
+            if ep['status'] == 'completed':
+                final = next((p for p in ep['plans'] if p['plan_id'] == ep['final_plan_id']), None)
+                if task['status'] != 'completed' or final is None or final['status'] != 'valid':
+                    raise ValueError('successful prefix lacks actual final plan')
+            elif task['status'] != 'failed' or ep['final_plan_id'] is not None:
+                raise ValueError('failed prefix masquerades as successful plan')
+        elif task['status'] != 'failed' or 'error' not in task:
+            raise ValueError('prefix lacks a terminal preparation failure')
+        tasks.append(task)
+    return tasks
+
+
+def _load_interaction_runtime(out, config):
+    """Load original models once; closures only read the selected time-t local inputs."""
+    from types import SimpleNamespace
+    import torch
+    from common import v2v4real_meta as M
+    from prediction import cmp_adapter as C
+    from planning.inputs import load_ego_features, load_ego_motion
+    from planning.run_connection import load_window
+    from planning.v2vgot import V2VGoTPlanner
+    from tools.task_spec import FrozenPredictor
+    from tools.vehicle import VehicleTools
+
+    torch.set_num_threads(1)
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+    model, mtr_provenance = C.load_model(checkpoint=Path(config['mtr_checkpoint']), device='cuda')
+    binding = FrozenPredictor(lambda w: C.predict(model, w, batch_size=32),
+        config['spec']['local_provenance']['prediction'],
+        dict(adapter='cmp_causal_window_v1', batch_size=32, device='cuda', allow_tf32=False))
+    planner = V2VGoTPlanner(checkpoint=Path(config['checkpoint']), adapter_directory=out/'loaded_adapter',
+        evidence_format='compact', context_limit=config['spec']['limits']['receiver_spec']['context_limit'])
+
+    @lru_cache(maxsize=2)
+    def archive(path):
+        with path.open('rb') as handle:
+            return pickle.load(handle)
+
+    def load(row, directory):
+        reads = []
+        def window(source):
+            w = load_window(row['scene'], row['local_frame'], source, reads, archive)
+            if int(w['g']) != row['g']:
+                raise ValueError('indexed frame mismatch')
+            return w
+        ego = window('no_fusion')
+        features = load_ego_features(M.V2VGOT_ROOT, 'train', row['g'])
+        motion, motion_paths = load_ego_motion(M.V2VGOT_ROOT, 'train', row['g'])
+        if (features['read_paths'] != row['feature_read_paths'] or motion != row['ego_motion'] or
+                motion_paths != row['motion_read_paths']):
+            raise ValueError('causal input changed since index preparation')
+        begin = perf_counter()
+        local_prediction = binding(ego)
+        local_seconds = perf_counter() - begin
+        np.savez(str(directory/'ego_features.npz'), **{k: v for k, v in features.items() if isinstance(v, np.ndarray)})
+        np.savez(str(directory/'local_forecast.npz'), **local_prediction)
+        service = VehicleTools(lambda: window('no_fusion_cav1'), binding, row['scene'], row['g'],
+                               task_provenance=config['spec']['local_provenance'])
+        return dict(local_window=ego, local_prediction=local_prediction, motion=motion, features=features,
+            service=service, metadata=dict(feature_path='ego_features.npz', local_forecast_path='local_forecast.npz',
+                local_prediction_seconds=local_seconds, local_model_targets=int(local_prediction['model_used'].sum()),
+                feature_read_paths=features['read_paths'], motion_read_paths=motion_paths, window_reads=reads))
+
+    return SimpleNamespace(driver=planner, predictor=binding, load_inputs=load,
+        provenance=dict(mtr=mtr_provenance, driver=planner.provenance, predictor_binding=binding.descriptor))
+
+
+def interact(data, out, checkpoint, spec_path, role='validation', per_recording=1, resume_from=None):
+    """Explicit new execution route; prepare/generate and their v1 five policies remain intact."""
+    import copy
+    import shutil
+    from planning.method_episode import run_task_episode, diagnostic_policy, validate_limits
+    from tools.task_spec import validate_provenance
+
+    if role not in ('train', 'validation'):
+        raise ValueError('interaction requires a predefined research role')
+    spec = json.loads(spec_path.read_text())
+    if set(spec) != {'limits', 'local_provenance'}:
+        raise ValueError('interaction spec requires limits and local_provenance')
+    validate_limits(spec['limits'])
+    validate_provenance(spec['local_provenance'])
+    if spec['limits']['policy_id'] not in ('stop', 'p_current', 'p_current_f_change'):
+        raise ValueError('T4 CLI supports only explicitly labeled diagnostic policies')
+    rows = [r for r in select_rows(data, per_recording) if r['role'] == role]
+    if not rows or len({r['sample_id'] for r in rows}) != len(rows):
+        raise ValueError('empty or duplicated interaction samples')
+    source_config = json.loads((data/'config.json').read_text())
+    config = dict(version='toolv2x_interact_run_v1', source_data=str(data), checkpoint=str(checkpoint),
+        mtr_checkpoint=source_config['mtr_checkpoint'], spec=spec, role=role, per_recording=per_recording,
+        scope='T4 diagnostic delegation; no learned request policy or method benefit claim',
+        actual_rgb_input=False, gt_labels_read=False)
+    previous = completed_method_prefix(resume_from, rows, config) if resume_from else []
+    if resume_from:
+        # Compare literal source files; no partial state restoration or weight fingerprint claims.
+        saved = resume_from/'code_snapshot'
+        if not (saved/'src/planning/method_episode.py').is_file():
+            raise ValueError('missing interaction source snapshot')
+        for path in saved.rglob('*.py'):
+            current = ROOT/path.relative_to(saved)
+            if not current.is_file() or current.read_bytes() != path.read_bytes():
+                raise ValueError('interaction source changed: '+str(path.relative_to(saved)))
+    out.mkdir(parents=True, exist_ok=False)
+    for source in ('src', 'vendor/cmp_mtr', 'vendor/v2vgot_llava/llava'):
+        shutil.copytree(ROOT/source, out/'code_snapshot'/source, ignore=shutil.ignore_patterns('__pycache__'))
+    _save_method_json(out/'config.json', config)
+    (out/'selected_index.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
+    _save_method_json(out/'resumption.json', dict(source=str(resume_from) if resume_from else None,
+        reused_terminal_samples=len(previous), partial_episode_reused=False,
+        incomplete_tail='left in original run; any retry is a fresh episode'))
+    progress = dict(status='initializing', expected_tasks=len(rows), terminal_tasks=0, failed_tasks=0)
+    _save_method_json(out/'progress.json', progress)
+    runtime = None
+    with (out/'tasks.jsonl').open('w') as manifest:
+        for index, row in enumerate(rows):
+            target = out/('sample_%06d'%index)
+            target.mkdir()
+            path = target/'task.json'
+            record = dict(sample_id=row['sample_id'], path=str(path.relative_to(out)))
+            task = dict(row=copy.deepcopy(row), status='started', episode=None)
+            if index < len(previous):
+                # Keep the prior artifact references, costs and failed attempts verbatim.
+                task = dict(copy.deepcopy(previous[index]), reused_from=dict(root=str(resume_from), index=index))
+            _save_method_json(path, task)
+            manifest.write(json.dumps(record)+'\n'); manifest.flush()
+            if index >= len(previous):
+                if runtime is None:
+                    runtime = _load_interaction_runtime(out, config)
+                    _save_method_json(out/'models.json', runtime.provenance)
+                try:
+                    inputs = runtime.load_inputs(row, target)
+                    metadata = inputs.pop('metadata')
+                    task['inputs'] = dict(metadata, artifact_root=str(target))
+                    _save_method_json(path, task)
+                except Exception as exc:
+                    task.update(status='failed', error=dict(stage='local_preparation', type=type(exc).__name__, message=str(exc)))
+                    _save_method_json(path, task)
+                    inputs = None
+                if inputs is not None:
+                    def persist(ep):
+                        task.update(episode=ep, status='running')
+                        _save_method_json(path, task)
+                    # Persist failures in the executor; callback/I/O failures propagate and leave a partial tail.
+                    episode = run_task_episode(**inputs, predictor=runtime.predictor, driver=runtime.driver,
+                        policy=diagnostic_policy, limits=spec['limits'], local_provenance=spec['local_provenance'],
+                        sample_id=row['sample_id'], branch_id=spec['limits']['policy_id'], on_progress=persist)
+                    task.update(episode=episode, status='completed' if episode['status'] == 'completed' else 'failed')
+                    _save_method_json(path, task)
+            progress.update(status='running', terminal_tasks=index+1,
+                            failed_tasks=progress['failed_tasks'] + int(task['status'] == 'failed'))
+            _save_method_json(out/'progress.json', progress)
+    _save_method_json(out/'progress.json', dict(progress, status='completed'))
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -313,11 +507,22 @@ if __name__ == '__main__':
     gen_parser.add_argument('--checkpoint', type=Path, required=True)
     gen_parser.add_argument('--role', choices=('train', 'validation'), default='validation')
     gen_parser.add_argument('--per-recording', type=int, default=0)
+    interact_parser = commands.add_parser('interact', help='T4 diagnostic alternating P/F and GoT; executes real models when invoked')
+    interact_parser.add_argument('out', type=Path)
+    interact_parser.add_argument('--data', type=Path, default=ROOT / 'outputs/paired_driving_data_v1')
+    interact_parser.add_argument('--checkpoint', type=Path, required=True)
+    interact_parser.add_argument('--spec', type=Path, required=True, help='JSON with complete limits and local_provenance')
+    interact_parser.add_argument('--role', choices=('train', 'validation'), default='validation')
+    interact_parser.add_argument('--per-recording', type=int, default=1)
+    interact_parser.add_argument('--resume-from', type=Path, help='reuse terminal samples only, preserving failures and the partial tail')
     args = parser.parse_args()
     try:
         if args.command == 'prepare':
             prepare(args.data.resolve(), args.out.resolve(), args.per_recording, args.p_processing == 'local_mtr',
                     resume_from=args.resume_from.resolve() if args.resume_from else None)
+        elif args.command == 'interact':
+            interact(args.data.resolve(), args.out.resolve(), args.checkpoint.resolve(), args.spec.resolve(),
+                     args.role, args.per_recording, args.resume_from.resolve() if args.resume_from else None)
         else:
             generate(args.prepared_root.resolve(), args.out.resolve(), args.checkpoint.resolve(), args.role, args.per_recording)
     except Exception as exc:

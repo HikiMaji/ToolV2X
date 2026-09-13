@@ -153,5 +153,37 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result['policies']['Ego']['mean_response_bytes'], 0.)
 
 
+    def test_actual_interact_archive_flows_into_offline_method_evaluation(self):
+        from unittest.mock import patch
+        import test_method_episode as fixtures
+        from planning import run_framework as runner
+        from planning.context import build_task_plan_input
+        from evaluation.framework import evaluate_method
+        helper = fixtures.InteractionRunnerTests()
+        helper.setUp()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, rows, spec = helper.make_data(root)
+            runtime = helper.runtime(rows)
+            def build(*a, **kw):
+                kw['token_counter'] = lambda p: len(p)//4
+                return build_task_plan_input(*a, **kw)
+            with patch.object(runner, '_load_interaction_runtime', return_value=runtime), \
+                 patch('planning.method_episode.build_task_plan_input', side_effect=build):
+                runner.interact(data, root/'run', Path('/fixture/driver'), spec, per_recording=0)
+            labels = [dict(r, valid=[True]*6, times_seconds=[.5,1.,1.5,2.,2.5,3.],
+                           waypoints=[[float(i+1),0.] for i in range(6)]) for r in rows]
+            (data/'offline_labels/validation.jsonl').write_text(''.join(json.dumps(l)+'\n' for l in labels))
+            report = evaluate_method(root/'run', root/'eval', data/'offline_labels')
+            self.assertEqual(report['attempts'], 2)
+            self.assertEqual(report['task_successes'], 2)
+            evaluated = runner.read_jsonl(root/'eval/rows.jsonl')
+            self.assertEqual([r['driver_calls'] for r in evaluated], [3,3])
+            self.assertEqual(len(runner.read_jsonl(root/'eval/plan_rows.jsonl')), 6)
+            # The external-runtime stand-in omitted local MTR timing; evaluator must expose that gap.
+            self.assertTrue(all(r['local_model_seconds'] is None and not r['cost_complete'] for r in evaluated))
+            self.assertAlmostEqual(report['groups'][0]['metrics']['ADE3']['mean_known'], .35)
+
+
 if __name__ == '__main__':
     unittest.main()

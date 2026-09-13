@@ -256,7 +256,7 @@ class V2VGoTPlanner:
             feature_tokens=int(tensors['active_agent_mask'].sum()) * 270)
 
     def plan_prepared(self, features, prepared):
-        if (prepared.get('input_layout') != 'source_blocks_v1' or prepared.get('decoding') != 'direct' or
+        if (prepared.get('input_layout') not in ('source_blocks_v1', 'source_blocks_v2') or prepared.get('decoding') != 'direct' or
                 prepared.get('q8_executed') is not False or prepared.get('q8_raw')):
             raise ValueError('expected a source-separated direct input')
         expected = make_prompt('Trajectory', prepared['ego_motion'], prepared['evidence_used'],
@@ -266,6 +266,21 @@ class V2VGoTPlanner:
         if (expected != prepared['q9_prompt'] or selection['context_limit'] != self.context_limit or
                 selection['feature_tokens'] != feature_count):
             raise ValueError('prepared input differs from the model input contract')
+        if prepared['input_layout'] == 'source_blocks_v2':
+            receiver = prepared['receiver_spec']
+            exact_tokens = len(prompt_tokens(self.tokenizer, expected)) - 1 + feature_count
+            remote = prepared.get('remote_evidence_used')
+            if (prepared.get('status') != 'prepared' or prepared.get('q9_executed') is not False or
+                    prepared.get('language_model_executed') is not False or not isinstance(prepared.get('admission_report'), dict) or
+                    receiver['version'] != 'toolv2x_receiver_v1' or receiver['numeric_decimal_places'] != 2 or
+                    receiver['context_limit'] != self.context_limit or
+                    receiver['generation_reserve'] != Q9_MAX_NEW_TOKENS or
+                    selection['generation_reserve'] != Q9_MAX_NEW_TOKENS or
+                    selection['peer_reserved_tokens'] != receiver['peer_reserve'] or
+                    selection['token_counting'] != 'original_got_prompt_tokens' or
+                    selection['input_tokens'] != exact_tokens or exact_tokens + Q9_MAX_NEW_TOKENS > self.context_limit or
+                    (remote is not None and remote.get('evidence_version') != 'toolv2x_driver_evidence_v2')):
+                raise ValueError('v2 prepared input differs from original GoT execution contract')
         result = dict(prepared, q9_executed=False, language_model_executed=False)
         try:
             raw, cost = self._generate(features, expected, Q9_MAX_NEW_TOKENS)
