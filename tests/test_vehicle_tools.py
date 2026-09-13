@@ -125,5 +125,337 @@ class VehicleToolTests(unittest.TestCase):
         self.assertFalse(perception['cost']['within_decision_forecast_cache_hit'])
 
 
+class TaskVehicleTests(unittest.TestCase):
+    """Real service/codec, with a context-sensitive fake only at the MTR boundary."""
+    def setUp(self):
+        self.assertTrue(hasattr(VehicleTools, 'query_task'), 'T2 task service is missing')
+        from tools.vehicle import decode_task_response
+        from test_task_spec import task_request, provenance
+        self.decode = decode_task_response
+        self.request = lambda **kw: task_request(max_request_bytes=16384,
+            max_response_bytes=20000, max_episode_bytes=75000,
+            max_plan_acceleration_mps2=100., **kw)
+        self.provenance = provenance()
+
+    def service(self, w=None, predictor=fixture_prediction):
+        w = window() if w is None else w
+        return VehicleTools(lambda: w, predictor, 'scene', 10, provider=w['source'],
+                            task_provenance=self.provenance)
+
+    def packet(self, service, request):
+        result = service.query_task(request)
+        return self.decode(result['wire'], request), result
+
+    def manifest(self, packet):
+        return [dict(receipt_id=packet['receipt_id'], ref=copy.deepcopy(r['ref']))
+                for r in packet['records']]
+
+    def test_p_task_changes_real_selection_and_never_runs_mtr(self):
+        def forbidden(w):
+            self.fail('P ran a predictor')
+        selected = []
+        for x in (2., 20.):
+            req = self.request(x=x, max_targets=1)
+            packet, result = self.packet(self.service(predictor=forbidden), req)
+            selected.append(packet['ranking'][0]['track_handle'])
+            self.assertEqual({r['ref']['field_kind'] for r in packet['records']}, {'anchor', 'history'})
+            self.assertEqual(result['cost']['model_targets_computed'], 0)
+            self.assertEqual(packet['request']['execution_spec'], req['execution_spec'])
+        self.assertEqual(selected, [7, 9])
+
+    def test_change_is_executed_not_just_a_request_label(self):
+        selected = []
+        for mode in ('current', 'change'):
+            req = self.request(x=20., mode=mode, max_targets=1)
+            if mode == 'change':
+                req['tau_old'] = [[2., 0.]] * 6
+            packet, _ = self.packet(self.service(), req)
+            selected.append(packet['ranking'][0]['track_handle'])
+        self.assertEqual(selected, [9, 7])
+
+    def test_second_p_only_returns_unacknowledged_fields(self):
+        service = self.service()
+        first, _ = self.packet(service, self.request(max_targets=1))
+        req = self.request(request_id='q1', mode='change', x=20., max_targets=1)
+        req['acquired_field_manifest'] = self.manifest(first)
+        second, result = self.packet(service, req)
+        self.assertEqual({r['ref']['track_handle'] for r in first['records']}, {7})
+        self.assertEqual({r['ref']['track_handle'] for r in second['records']}, {9})
+        self.assertGreater(result['cost']['request_bytes'], 0)
+
+    def test_f_then_p_references_anchor_and_adds_original_history(self):
+        service = self.service()
+        first, _ = self.packet(service, self.request(tool='F'))
+        req = self.request(request_id='q1')
+        req['acquired_field_manifest'] = self.manifest(first)
+        second, _ = self.packet(service, req)
+        self.assertEqual({r['ref']['field_kind'] for r in second['records']}, {'history'})
+        self.assertEqual({r['ref']['field_kind'] for r in second['references']}, {'anchor'})
+
+    def test_full_p_does_not_claim_receiver_derived_f_is_already_owned(self):
+        contexts = []
+        def predictor(w):
+            contexts.append(len(w['track_ids']))
+            return fixture_prediction(w)
+        service = self.service(predictor=predictor)
+        first, _ = self.packet(service, self.request())
+        req = self.request(tool='F', request_id='q1')
+        req['acquired_field_manifest'] = self.manifest(first)
+        second, result = self.packet(service, req)
+        self.assertEqual(contexts, [2])
+        self.assertEqual({r['ref']['field_kind'] for r in second['records']}, {'forecast'})
+        self.assertEqual(result['cost']['model_targets_computed'], 2)
+
+    def test_f_keeps_complete_context_before_selection_and_accounts_cache(self):
+        contexts = []
+        def predictor(w):
+            contexts.append(w['track_ids'].tolist())
+            return fixture_prediction(w)
+        service = self.service(predictor=predictor)
+        req = self.request(tool='F', max_targets=1)
+        first, result = self.packet(service, req)
+        prediction = next(r['value'] for r in first['records'] if r['ref']['field_kind'] == 'forecast')
+        self.assertEqual(prediction['forecast'][0][0][1], 2.)
+        self.assertEqual(result['cost']['model_targets_computed'], 2)
+        req = self.request(tool='F', request_id='q1', x=20., max_targets=1)
+        req['acquired_field_manifest'] = self.manifest(first)
+        _, cached = self.packet(service, req)
+        self.assertEqual(contexts, [[7, 9]])
+        self.assertTrue(cached['cost']['within_decision_forecast_cache_hit'])
+        self.assertEqual(cached['cost']['model_targets_computed'], 0)
+        self.assertGreater(cached['cost']['response_bytes'], 0)
+
+    def test_forged_unknown_cross_context_and_derived_receipts_are_rejected(self):
+        from test_task_spec import field_ref
+        reads = []
+        service = VehicleTools(lambda: reads.append(True) or window(), fixture_prediction,
+            'scene', 10, provider='peer', task_provenance=self.provenance)
+        req = self.request()
+        req['acquired_field_manifest'] = [dict(receipt_id='invented', ref=field_ref())]
+        with self.assertRaises(ValueError):
+            service.query_task(req)
+        self.assertEqual(reads, [])
+        first, _ = self.packet(service, self.request())
+        for key, value in [('provider', 'other'), ('scene', 'other'), ('g', 11),
+                           ('track_handle', 999), ('field_kind', 'forecast'),
+                           ('context_version', dict(name='causal_tracking_window', revision='other'))]:
+            req = self.request(request_id='q1')
+            req['acquired_field_manifest'] = self.manifest(first)
+            req['acquired_field_manifest'][0]['ref'][key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                service.query_task(req)
+        self.assertEqual(len(reads), 1)
+        self.assertEqual(len(service.task_records), 1)
+
+    def test_registry_is_not_mutable_through_response_or_run_record(self):
+        service = self.service()
+        first, _ = self.packet(service, self.request())
+        first['records'][0]['ref']['track_handle'] = 999
+        record = service.task_records[0]
+        record['response']['records'][0]['ref']['track_handle'] = 999
+        req = self.request(request_id='q1')
+        req['acquired_field_manifest'] = self.manifest(first)
+        with self.assertRaises(ValueError):
+            service.query_task(req)
+
+    def test_no_new_fields_is_paid_and_not_free_space(self):
+        service = self.service()
+        first, _ = self.packet(service, self.request())
+        req = self.request(request_id='q1')
+        req['acquired_field_manifest'] = self.manifest(first)
+        second, result = self.packet(service, req)
+        self.assertEqual(second['status'], 'no_new_fields')
+        self.assertEqual(second['coverage'], 'not_established')
+        self.assertEqual(second['records'], [])
+        self.assertGreater(result['cost']['response_bytes'], 0)
+
+    def test_final_utf8_wire_cap_includes_header_and_whole_bundles(self):
+        w = window('邻车')
+        req = self.request(max_targets=1)
+        req['provider'] = '邻车'
+        req['execution_spec']['max_response_bytes'] = 9999
+        first, result = self.packet(self.service(w), req)
+        size = len(result['wire'])
+        self.assertGreater(size, len(result['wire'].decode('utf-8')))
+        # Same-sized decimal cap values avoid changing header length in the exact-boundary check.
+        req['execution_spec']['max_response_bytes'] = size
+        for cap, expected_count in [(size, 2), (size - 1, 0)]:
+            bounded = copy.deepcopy(req)
+            bounded['execution_spec']['max_response_bytes'] = cap
+            packet, result = self.packet(self.service(w), bounded)
+            self.assertLessEqual(len(result['wire']), cap)
+            self.assertEqual(len(packet['records']), expected_count)
+            self.assertEqual(result['cost']['response_bytes'], len(result['wire']))
+            if not expected_count:
+                self.assertEqual(packet['status'], 'budget_empty')
+                self.assertTrue(packet['truncated'])
+
+    def test_preflight_caps_and_episode_budget_reject_before_private_read(self):
+        for limits in (dict(max_request_bytes=10), dict(max_response_bytes=10),
+                       dict(max_episode_bytes=100)):
+            reads = []
+            service = VehicleTools(lambda: reads.append(True) or window(), fixture_prediction,
+                'scene', 10, provider='peer', task_provenance=self.provenance)
+            req = self.request()
+            req['execution_spec'].update(limits)
+            with self.subTest(limits=limits), self.assertRaises(ValueError):
+                service.query_task(req)
+            self.assertEqual(reads, [])
+
+    def test_two_call_bound_profile_freeze_and_replayed_ids(self):
+        service = self.service()
+        self.packet(service, self.request())
+        with self.assertRaises(ValueError):
+            service.query_task(self.request())
+        changed = self.request(request_id='q1')
+        changed['execution_spec']['sigma_m'] = 2.
+        with self.assertRaises(ValueError):
+            service.query_task(changed)
+        self.packet(service, self.request(request_id='q1'))
+        with self.assertRaises(ValueError):
+            service.query_task(self.request(request_id='q2'))
+        self.assertEqual(len(service.task_records), 2)
+
+    def test_invalid_provider_window_is_not_forecast_and_failure_is_recorded(self):
+        w = window()
+        w['time_seconds'][-1] = .1
+        def forbidden(w):
+            self.fail('invalid/future window reached predictor')
+        service = self.service(w, forbidden)
+        with self.assertRaises(ValueError):
+            service.query_task(self.request(tool='F'))
+        record = service.task_records[0]
+        self.assertEqual(record['status'], 'error')
+        self.assertGreater(record['cost']['request_bytes'], 0)
+        self.assertFalse(record['cost']['complete'])
+        self.assertEqual(record['request']['execution_spec'], self.request()['execution_spec'])
+
+    def test_decoder_rejects_tampered_schema_identity_reference_and_values(self):
+        service = self.service()
+        req = self.request()
+        packet, _ = self.packet(service, req)
+        corruptions = []
+        bad = copy.deepcopy(packet)
+        bad['records'][0]['ref']['scene'] = 'other'
+        corruptions.append(bad)
+        bad = copy.deepcopy(packet)
+        bad['records'][0]['value']['gt_future'] = []
+        corruptions.append(bad)
+        bad = copy.deepcopy(packet)
+        bad['records'][1]['value']['history_valid'][0] = 1
+        corruptions.append(bad)
+        bad = copy.deepcopy(packet)
+        bad['references'] = [dict(receipt_id='invented', ref=bad['records'][0]['ref'])]
+        corruptions.append(bad)
+        bad = copy.deepcopy(packet)
+        bad['request']['execution_spec']['sigma_m'] = 1.
+        corruptions.append(bad)
+        # Python considers True == 1; echo equality alone is not schema validation.
+        narrow_req = self.request(max_targets=1)
+        narrow_packet, _ = self.packet(self.service(), narrow_req)
+        narrow_packet['request']['execution_spec']['max_targets'] = True
+        with self.assertRaises(ValueError):
+            self.decode(json.dumps(narrow_packet).encode('utf-8'), narrow_req)
+        for bad in corruptions:
+            with self.assertRaises(ValueError):
+                self.decode(json.dumps(bad, ensure_ascii=False).encode('utf-8'), req)
+
+    def test_predictor_cannot_revise_issued_context_or_pollute_it_on_failure(self):
+        def mutating(w):
+            w['states'][:, 0, 0] += 100.  # Current anchors remain equal; history does not.
+            return fixture_prediction(w)
+        service = self.service(predictor=mutating)
+        first, _ = self.packet(service, self.request())
+        req = self.request(tool='F', request_id='q1')
+        req['acquired_field_manifest'] = self.manifest(first)
+        with self.assertRaises(ValueError):
+            service.query_task(req)
+
+        def failing(w):
+            w['states'][:, :, 0] += 100.
+            raise RuntimeError('partial computation failed')
+        service = self.service(predictor=failing)
+        with self.assertRaises(RuntimeError):
+            service.query_task(self.request(tool='F'))
+        record = service.task_records[0]
+        self.assertIsNone(record['cost']['model_targets_computed'])
+        self.assertIsNone(record['cost']['fallback_targets_computed'])
+        second, _ = self.packet(service, self.request(request_id='q1'))
+        anchor = next(r['value']['box'] for r in second['records'] if r['ref']['field_kind'] == 'anchor')
+        self.assertEqual(anchor[0], 2.)
+
+    def test_decoder_checks_proxy_labels_and_fallback_values(self):
+        req = self.request(tool='F')
+        packet, _ = self.packet(self.service(), req)
+        for corruption in ('model_used', 'ranking'):
+            bad = copy.deepcopy(packet)
+            if corruption == 'model_used':
+                bad['records'][1]['value']['model_used'] = False
+            else:
+                bad['ranking'][0]['proxy_status'] = 'stationary_short_history'
+            with self.subTest(corruption=corruption), self.assertRaises(ValueError):
+                self.decode(json.dumps(bad).encode('utf-8'), req)
+        req = self.request()
+        packet, _ = self.packet(self.service(), req)
+        packet['ranking'][0]['proxy_status'] = 'single_state_static_proxy'
+        with self.assertRaises(ValueError):
+            self.decode(json.dumps(packet).encode('utf-8'), req)
+
+    def test_receipts_exclude_computed_but_unsent_fields_and_other_sessions(self):
+        service = self.service()
+        first, _ = self.packet(service, self.request(tool='F', max_targets=1))
+        req = self.request(tool='F', request_id='q1', max_targets=1)
+        req['acquired_field_manifest'] = self.manifest(first)
+        with self.assertRaises(ValueError):
+            self.service().query_task(req)
+        req['acquired_field_manifest'][1]['ref']['track_handle'] = 9
+        with self.assertRaises(ValueError):
+            service.query_task(req)
+
+    def test_v1_does_not_prewarm_v2_and_unacknowledged_retransmission_keeps_identity(self):
+        calls = []
+        def predictor(w):
+            calls.append(True)
+            return fixture_prediction(w)
+        service = self.service(predictor=predictor)
+        service.query('F')
+        first, result = self.packet(service, self.request(tool='F'))
+        self.assertEqual(len(calls), 2)
+        self.assertFalse(result['cost']['within_decision_forecast_cache_hit'])
+        second, _ = self.packet(service, self.request(tool='F', request_id='q1'))
+        self.assertEqual(first['records'], second['records'])
+        self.assertNotEqual(first['receipt_id'], second['receipt_id'])
+
+    def test_empty_source_and_valid_short_history_fallback_remain_explicit(self):
+        w = window()
+        for name in ('states', 'valid', 'scores', 'track_ids'):
+            w[name] = w[name][:0]
+        packet, _ = self.packet(self.service(w), self.request())
+        self.assertEqual(packet['status'], 'no_observed_targets')
+        self.assertEqual(packet['coverage'], 'not_established')
+        w = window()
+        w['valid'][0, :-1] = False
+        def predictor(value):
+            pred = fixture_prediction(value)
+            pred['model_used'][0] = False
+            pred['means'][0] = value['states'][0, -1, :2]
+            return pred
+        packet, result = self.packet(self.service(w, predictor), self.request(tool='F'))
+        self.assertEqual(result['cost']['fallback_targets_computed'], 1)
+        self.assertEqual(packet['ranking'][0]['proxy_status'], 'stationary_short_history')
+
+    def test_remaining_episode_budget_cannot_be_reset_by_next_request(self):
+        service = self.service()
+        first = self.request()
+        first['execution_spec']['max_episode_bytes'] = 25000
+        packet, _ = self.packet(service, first)
+        second = copy.deepcopy(first)
+        second['request_id'] = 'q1'
+        second['acquired_field_manifest'] = self.manifest(packet)
+        with self.assertRaisesRegex(ValueError, 'remaining episode budget'):
+            service.query_task(second)
+        self.assertEqual(len(service.task_records), 1)
+
+
 if __name__ == '__main__':
     unittest.main()

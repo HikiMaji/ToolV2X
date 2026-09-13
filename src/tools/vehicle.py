@@ -3,8 +3,10 @@
 history_valid marks available tracker output, including prediction-maintained
 states on missed detections; it is not a per-frame detection-match mask.
 """
+import copy
 import json
 from time import perf_counter
+from uuid import uuid4
 import numpy as np
 from probe.kinematic_tools import encode, history_packet
 from planning.inputs import validate_evidence
@@ -48,12 +50,158 @@ def prediction_objects(window, prediction):
 
 
 class VehicleTools:
-    def __init__(self, window_loader, predictor, scene, g, provider='no_fusion_cav1'):
+    def __init__(self, window_loader, predictor, scene, g, provider='no_fusion_cav1', *, task_provenance=None):
         self._load = window_loader
         self._predict = predictor
         self.scene, self.g, self.provider = scene, int(g), provider
         self._window = None
         self._forecast = None
+        # v2 has its own episode state; v1 calls do not prewarm or issue v2 receipts.
+        self._task_provenance = copy.deepcopy(task_provenance)
+        self._task_window = None
+        self._task_forecast = None
+        self._task_receipts = {}
+        self._task_records = []
+        self._task_spec = None
+        self._task_bytes = 0
+
+    @property
+    def task_records(self):
+        """Detached run records, including full ExecutionSpec and failed attempts."""
+        return copy.deepcopy(self._task_records)
+
+    def query_task(self, request):
+        """Execute one task at fixed t; only issued remote-field receipts deduplicate.
+
+        One instance owns one v2 episode (at most two attempts). The manifest
+        acknowledges receipt fields; omitted acknowledgements permit retransmission.
+        No receiver-derived equivalence, driver execution or future labels here.
+        """
+        from tools.task_spec import (ExecutionSpec, validate_task_request, validate_provenance,
+                                     field_key, rank_targets, _check_window)
+        begin = perf_counter()
+        request = copy.deepcopy(request)
+        validate_task_request(request, self._task_receipts)
+        validate_provenance(self._task_provenance)
+        spec = ExecutionSpec.from_dict(request['execution_spec'])
+        if (request['provider'], request['scene'], request['g']) != (self.provider, self.scene, self.g):
+            raise ValueError('request and provider source/scene/time differ')
+        if self._task_spec is not None and self._task_spec != request['execution_spec']:
+            raise ValueError('ExecutionSpec is frozen within a v2 episode')
+        if len(self._task_records) >= 2:
+            raise ValueError('v2 remote-call budget exhausted')
+        if any(r['request']['request_id'] == request['request_id'] for r in self._task_records):
+            raise ValueError('duplicate request ID in v2 episode')
+        request_bytes = len(encode(request))
+        if self._task_bytes + request_bytes + spec.max_response_bytes > spec.max_episode_bytes:
+            raise ValueError('remaining episode budget cannot reserve response cap')
+        packet = dict(version='toolv2x_task_response_v2', request=request, receipt_id=uuid4().hex,
+            provenance=copy.deepcopy(self._task_provenance), records=[], references=[], ranking=[],
+            status='no_observed_targets', coverage='not_established', truncated=False)
+        # This is the longest empty-status header, requiring no private window.
+        if len(encode(packet)) > spec.max_response_bytes:
+            raise ValueError('response cap cannot hold the complete header')
+        cost = dict(request_bytes=request_bytes, response_bytes=0, service_seconds=0.,
+            model_seconds=0., model_targets_computed=0, fallback_targets_computed=0,
+            returned_targets=0, within_decision_forecast_cache_hit=False, complete=False)
+        record = dict(request=request, status='started', cost=cost)
+        self._task_records.append(record)
+        self._task_spec = copy.deepcopy(request['execution_spec'])
+        self._task_bytes += request_bytes
+        stage = 'window_loading'
+        try:
+            if self._task_window is None:
+                w = copy.deepcopy(self._load())
+                _check_window(w)
+                if (w['source'], w['scene'], w['g']) != (self.provider, self.scene, self.g):
+                    raise ValueError('provider window source/scene/time mismatch')
+                for key in ('states', 'valid', 'scores', 'track_ids', 'time_seconds'):
+                    w[key] = np.asarray(w[key])
+                self._task_window = w
+            w = self._task_window
+            tool = request['tool']
+            stage = 'prediction' if tool == 'F' else 'retrieval'
+            forecast = None
+            if tool == 'F':
+                cost['within_decision_forecast_cache_hit'] = self._task_forecast is not None
+                forecast = self._task_forecast
+                if forecast is None:
+                    prediction_window = copy.deepcopy(w)
+                    cost.update(model_targets_computed=None, fallback_targets_computed=None)
+                    model_begin = perf_counter()
+                    try:
+                        # Full context is retained even when only one target will fit.
+                        forecast = self._predict(prediction_window)
+                    finally:
+                        cost['model_seconds'] = perf_counter() - model_begin
+                    if (set(prediction_window) != set(w) or
+                            any(not np.array_equal(prediction_window[key], w[key]) for key in w)):
+                        raise ValueError('predictor modified the fixed causal context')
+            ranked = rank_targets(w, request, forecast)
+            if tool == 'F' and self._task_forecast is None:
+                self._task_forecast = copy.deepcopy(forecast)
+                cost['model_targets_computed'] = int(np.asarray(forecast['model_used']).sum())
+                cost['fallback_targets_computed'] = len(ranked) - cost['model_targets_computed']
+            stage = 'response_packing'
+            acknowledged = {field_key(entry['ref']): entry for entry in request['acquired_field_manifest']}
+            positions = {int(handle): i for i, handle in enumerate(w['track_ids'])}
+            forecasts = {o['track_id']: o for o in prediction_objects(w, forecast)} if tool == 'F' else {}
+            candidates = []
+            for rank in ranked:
+                handle = rank['track_handle']
+                i = positions[handle]
+                values = dict(anchor=dict(box=w['states'][i, -1].tolist(), score=float(w['scores'][i, -1])))
+                if tool == 'P':
+                    values['history'] = dict(history=w['states'][i].tolist(), history_valid=w['valid'][i].tolist(),
+                        history_scores=w['scores'][i].tolist(), history_times=w['time_seconds'].tolist(),
+                        proxy_status=rank['proxy_status'])
+                else:
+                    predicted = forecasts[handle]
+                    values['forecast'] = dict(forecast=predicted['forecast'], forecast_scores=predicted['forecast_scores'],
+                        forecast_times=TIMES, model_used=predicted['model_used'], context_scope='provider_full_at_t')
+                records, references = [], []
+                for kind, value in values.items():
+                    ref = dict(provider=self.provider, scene=self.scene, g=self.g, track_handle=handle,
+                        field_kind=kind, producer_version=copy.deepcopy(self._task_provenance[
+                            'prediction' if kind == 'forecast' else 'tracking']),
+                        context_version=copy.deepcopy(self._task_provenance['context']))
+                    known = acknowledged.get(field_key(ref))
+                    if known is not None:
+                        references.append(copy.deepcopy(known))
+                    else:
+                        records.append(dict(ref=ref, value=value))
+                if not records:
+                    continue
+                candidates.append((records, references, rank))
+            # Compute the truncation flag for each actual tentative selection. JSON
+            # false/true differ in size; cap checks must use the final flag's bytes.
+            packet['truncated'] = bool(candidates)
+            for records, references, rank in candidates:
+                if len(packet['ranking']) >= spec.max_targets:
+                    continue
+                trial = dict(packet, records=packet['records'] + records,
+                    references=packet['references'] + references, ranking=packet['ranking'] + [rank], status='ok',
+                    truncated=len(packet['ranking']) + 1 < len(candidates))
+                # Atomic target: shared anchor plus the complete history/forecast bundle.
+                if len(encode(trial)) <= spec.max_response_bytes:
+                    packet = trial
+            if not packet['records']:
+                packet['status'] = ('no_observed_targets' if not ranked else
+                                    'no_new_fields' if not candidates else 'budget_empty')
+            wire = encode(packet)
+            decode_task_response(wire, request)
+            # Only fields in the final returned packet acquire a receipt. Not candidates,
+            # clipped records, receiver predictions or references to older receipts.
+            self._task_receipts[packet['receipt_id']] = copy.deepcopy([r['ref'] for r in packet['records']])
+            self._task_bytes += len(wire)
+            cost.update(response_bytes=len(wire), returned_targets=len(packet['ranking']), complete=True)
+            record.update(status='completed', response=copy.deepcopy(packet))
+        except Exception as exc:
+            record.update(status='error', error=dict(stage=stage, error_type=type(exc).__name__, message=str(exc)))
+            raise
+        finally:
+            cost['service_seconds'] = perf_counter() - begin
+        return dict(request=copy.deepcopy(request), wire=wire, cost=copy.deepcopy(cost))
 
     def query(self, tool, roi=None):
         if tool not in ('P', 'F'):
@@ -204,3 +352,145 @@ def make_evidence(local_window, local_prediction, packets, predictor, predict_p=
                   relations=relations, queries=queries)
     validate_evidence(result)
     return result
+
+
+def decode_task_response(wire, request):
+    """Strict v2 wire decoder; v1 decode_response remains unchanged.
+
+    Checks references against the acknowledged request. Authenticating those
+    acknowledgements is the provider's job before query_task reads private data.
+    """
+    from tools.task_spec import (_request_spec, _keys, _array, _text, _integer,
+                                 field_key, validate_provenance)
+    spec = _request_spec(request)
+    if not isinstance(wire, bytes) or len(wire) > spec.max_response_bytes:
+        raise ValueError('response must be UTF-8 bytes within configured cap')
+
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('duplicate JSON field')
+            result[key] = value
+        return result
+
+    packet = json.loads(wire.decode('utf-8'), object_pairs_hook=unique_object)
+    _keys(packet, ('version', 'request', 'receipt_id', 'provenance', 'records', 'references',
+                   'ranking', 'status', 'coverage', 'truncated'), 'task response')
+    _request_spec(packet['request'])
+    if (packet['version'] != 'toolv2x_task_response_v2' or packet['request'] != request or
+            packet['coverage'] != 'not_established' or type(packet['truncated']) is not bool):
+        raise ValueError('response request/coverage contract mismatch')
+    _text(packet['receipt_id'])
+    validate_provenance(packet['provenance'])
+    for name in ('records', 'references', 'ranking'):
+        if not isinstance(packet[name], list):
+            raise ValueError('response lists required')
+    acknowledged = {}
+    for entry in request['acquired_field_manifest']:
+        _keys(entry, ('receipt_id', 'ref'), 'manifest entry')
+        _text(entry['receipt_id'])
+        key = field_key(entry['ref'])
+        if key in acknowledged or key[:3] != (request['provider'], request['scene'], request['g']):
+            raise ValueError('invalid acknowledged field identity')
+        acknowledged[key] = entry
+    all_fields, new_targets = {}, set()
+    target_fields = {}
+    for name in ('records', 'references'):
+        for item in packet[name]:
+            _keys(item, ('ref', 'value') if name == 'records' else ('ref', 'receipt_id'), 'response field')
+            ref = item['ref']
+            key = field_key(ref)
+            kind, handle = ref['field_kind'], ref['track_handle']
+            expected_producer = packet['provenance']['prediction' if kind == 'forecast' else 'tracking']
+            if (key in all_fields or key[:3] != (request['provider'], request['scene'], request['g']) or
+                    ref['producer_version'] != expected_producer or
+                    ref['context_version'] != packet['provenance']['context'] or
+                    kind not in ('anchor', 'history' if request['tool'] == 'P' else 'forecast')):
+                raise ValueError('invalid returned field identity/context')
+            if name == 'references':
+                if acknowledged.get(key) != item:
+                    raise ValueError('response references an unacknowledged receipt')
+            else:
+                if key in acknowledged:
+                    raise ValueError('response retransmitted an acknowledged field')
+                _validate_task_value(kind, item['value'])
+                new_targets.add(handle)
+            all_fields[key] = item
+            target_fields.setdefault(handle, {})[kind] = item
+    expected_kinds = {'anchor', 'history' if request['tool'] == 'P' else 'forecast'}
+    if any(set(value) != expected_kinds for value in target_fields.values()):
+        raise ValueError('incomplete target fields/references')
+    if set(target_fields) != new_targets or len(new_targets) > spec.max_targets:
+        raise ValueError('target cap or reference-only target mismatch')
+    order = []
+    for rank in packet['ranking']:
+        _keys(rank, ('track_handle', 'score', 'proxy_status'), 'ranking')
+        handle = _integer(rank['track_handle'])
+        score = rank['score']
+        tags = ('causal_tracking_state_motion_proxy', 'single_state_static_proxy') if request['tool'] == 'P' else (
+            'mtr', 'stationary_short_history')
+        if type(score) not in (int, float) or not np.isfinite(score) or not 0 <= score <= 1 or rank['proxy_status'] not in tags:
+            raise ValueError('invalid task ranking metadata')
+        payload = target_fields.get(handle, {}).get('history' if request['tool'] == 'P' else 'forecast', {})
+        if 'value' in payload:
+            value = payload['value']
+            expected_tag = (value['proxy_status'] if request['tool'] == 'P' else
+                            'mtr' if value['model_used'] else 'stationary_short_history')
+            if rank['proxy_status'] != expected_tag:
+                raise ValueError('ranking and returned proxy/fallback metadata disagree')
+        order.append((-score, handle))
+    if (order != sorted(order) or len(order) != len(new_targets) or
+            {handle for _, handle in order} != new_targets):
+        raise ValueError('invalid deterministic returned ranking')
+    if packet['records']:
+        if packet['status'] != 'ok':
+            raise ValueError('nonempty response must be ok')
+    elif (packet['status'] not in ('no_observed_targets', 'no_new_fields', 'budget_empty') or
+          packet['truncated'] != (packet['status'] == 'budget_empty')):
+        raise ValueError('invalid empty response boundary')
+    for values in target_fields.values():
+        if 'value' in values['anchor'] and 'history' in values and 'value' in values['history']:
+            anchor, history = values['anchor']['value'], values['history']['value']
+            if history['history'][-1] != anchor['box'] or history['history_scores'][-1] != anchor['score']:
+                raise ValueError('history and current anchor disagree')
+        if 'value' in values['anchor'] and 'forecast' in values and 'value' in values['forecast']:
+            forecast = values['forecast']['value']
+            if not forecast['model_used'] and not np.all(
+                    np.asarray(forecast['forecast']) == np.asarray(values['anchor']['value']['box'][:2])):
+                raise ValueError('static fallback does not equal current anchor')
+    encode(packet)  # Reject non-finite JSON anywhere, including unused metadata.
+    return packet
+
+
+def _validate_task_value(kind, value):
+    from tools.task_spec import _keys, _array
+    if kind == 'anchor':
+        _keys(value, ('box', 'score'), 'anchor bundle')
+        box = _array(value['box'], (7,))
+        if ((box[3:6] <= 0).any() or type(value['score']) not in (int, float) or
+                not np.isfinite(value['score']) or not 0 <= value['score'] <= 1):
+            raise ValueError('invalid current anchor')
+    elif kind == 'history':
+        _keys(value, ('history', 'history_valid', 'history_scores', 'history_times', 'proxy_status'), 'history bundle')
+        history = _array(value['history'], (11, 7))
+        scores = _array(value['history_scores'], (11,))
+        times = _array(value['history_times'], (11,))
+        valid = np.asarray(value['history_valid'])
+        if (valid.shape != (11,) or valid.dtype != np.dtype(bool) or not valid[-1] or
+                (history[-1, 3:6] <= 0).any() or (scores < 0).any() or (scores > 1).any() or
+                times[-1] != 0 or (times > 0).any() or not np.allclose(times, np.arange(-10, 1) / 10.)):
+            raise ValueError('invalid causal tracking-state history')
+        expected = 'causal_tracking_state_motion_proxy' if valid.sum() >= 2 else 'single_state_static_proxy'
+        if value['proxy_status'] != expected:
+            raise ValueError('history proxy boundary mismatch')
+    else:
+        _keys(value, ('forecast', 'forecast_scores', 'forecast_times', 'model_used', 'context_scope'), 'forecast bundle')
+        paths = _array(value['forecast'], (6, 6, 2))
+        scores = _array(value['forecast_scores'], (6,))
+        if (not np.array_equal(_array(value['forecast_times'], (6,)), TIMES) or
+                (scores < 0).any() or scores.sum() > 1.0001 or type(value['model_used']) is not bool or
+                value['context_scope'] != 'provider_full_at_t'):
+            raise ValueError('invalid full-context forecast metadata')
+        if not value['model_used'] and not np.all(paths == paths[0, 0]):
+            raise ValueError('fallback must be static across all times and modes')

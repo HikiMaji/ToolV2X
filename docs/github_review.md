@@ -1,5 +1,9 @@
 # GitHub 审查入口
 
+**09-13 新增审查范围：T1/T2。** 先读 [9-12-1](9-12-1.md)、[9-12-2](9-12-2.md) 与 [实际实施报告](t1_t2_implementation_2026_09_13.md)，再检查 `src/tools/task_spec.py`、`src/tools/vehicle.py` 和对应测试。方法/因果规格以材料一为主，材料二约束 Tool 语义；用户补充硬约束及实际 API 以实施报告为准。重点检查 ExecutionSpec 与协议分离、provider 自有回执真实性、P 不调用 MTR、F 完整上下文先于排序、current/change 实际选包、最终 UTF-8 cap、失败成本和旧 v1 兼容。
+
+T3 及以后未实施：不要将 E/derived/Z ledger、真实 GoT 修订反馈、强单轮对照或方法效果视为已完成。运行 `python scripts/check_review.py` 应通过 126 项轻量检查；新 fake predictor 测试只证明契约，不是模型效果证据。下面保留旧框架的审查入口。
+
 **最新发布范围：** 先读 [09-12 更新说明](github_update_2026_09_12.md)、[第一轮评价](epoch01_quick_evaluation_2026_09_12.md) 和 [主线候选](mainline_innovation_search_2026_09_12.md)。当前训练已按用户要求停止；160 条实际轨迹与离线标签已随精选证据上传，可运行更新说明中的标准库复算。候选机制尚未实现，不把研究报告当现有算法。下文保留历史审查入口和核验记录。
 
 当前审查重点为 [完整框架实现与真实联调](framework_baseline_results.md)，发布范围见 [本轮更新](github_update_framework_2026_09_11.md)。新增 `planning/context.py`、`episode.py`、`run_framework.py`、`train_driver.py`、`evaluation/framework.py` 与两项 `scripts/prepare_framework_training.py` / `run_framework_baseline.py` 入口，连通真实查询、更新/停止、统一驾驶、训练恢复与评价。GitHub 的进度是带时间的发布快照；之后本机核对发现原全量准备中断，当前在新目录续接，见 [9-11-2 核实与恢复记录](review_9_11_2_response.md)。本轮本地修改尚未再次发布。
