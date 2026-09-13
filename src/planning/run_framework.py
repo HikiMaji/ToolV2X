@@ -349,6 +349,25 @@ def completed_method_prefix(root, rows, config):
     return tasks
 
 
+def _check_method_source_snapshot(root):
+    """Require every copied source/config file to match, including additions and deletions."""
+    snapshot = root/'code_snapshot'
+    sources = (Path('src'), Path('vendor/cmp_mtr'), Path('vendor/v2vgot_llava/llava'))
+    if any(not (snapshot/source).is_dir() for source in sources):
+        raise ValueError('missing interaction source snapshot')
+    def files(base):
+        return {source/path.relative_to(base/source):path
+            for source in sources for path in (base/source).rglob('*')
+            if path.is_file() and '__pycache__' not in path.parts}
+    saved,current=files(snapshot),files(ROOT)
+    if set(saved)!=set(current):
+        changed=sorted(str(path) for path in set(saved)^set(current))
+        raise ValueError('interaction source changed: '+changed[0])
+    for relative,path in saved.items():
+        if path.read_bytes()!=current[relative].read_bytes():
+            raise ValueError('interaction source changed: '+str(relative))
+
+
 def _load_interaction_runtime(out, config):
     """Load original models once; closures only read the selected time-t local inputs."""
     from types import SimpleNamespace
@@ -365,9 +384,15 @@ def _load_interaction_runtime(out, config):
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
     model, mtr_provenance = C.load_model(checkpoint=Path(config['mtr_checkpoint']), device='cuda')
+    from planning.method_run_spec import predictor_load_identity
+    load_identity=predictor_load_identity(mtr_provenance)
+    declared=(config['spec'].get('runtime_binding') or {}).get('predictor',{}).get('settings',{}).get('predictor_load_identity')
+    if declared is not None and declared!=load_identity:
+        raise ValueError('actual predictor checkpoint metadata differs from the frozen run specification')
     binding = FrozenPredictor(lambda w: C.predict(model, w, batch_size=32),
         config['spec']['local_provenance']['prediction'],
-        dict(adapter='cmp_causal_window_v1', batch_size=32, device='cuda', allow_tf32=False))
+        dict(adapter='cmp_causal_window_v1', batch_size=32, device='cuda', allow_tf32=False,
+            predictor_load_identity=load_identity))
     planner = V2VGoTPlanner(checkpoint=Path(config['checkpoint']), adapter_directory=out/'loaded_adapter',
         evidence_format='compact', context_limit=config['spec']['limits']['receiver_spec']['context_limit'])
 
@@ -405,7 +430,8 @@ def _load_interaction_runtime(out, config):
         provenance=dict(mtr=mtr_provenance, driver=planner.provenance, predictor_binding=binding.descriptor))
 
 
-def interact(data, out, checkpoint, spec_path, role='validation', per_recording=1, resume_from=None):
+def interact(data, out, checkpoint, spec_path, role='validation', per_recording=1, resume_from=None,
+             value_checkpoint=None, bundle_value_checkpoint=None):
     """Explicit new execution route; prepare/generate and their v1 five policies remain intact."""
     import copy
     import shutil
@@ -415,21 +441,51 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
     if role not in ('train', 'validation'):
         raise ValueError('interaction requires a predefined research role')
     spec = json.loads(spec_path.read_text())
-    if set(spec) not in ({'limits', 'local_provenance'},{'limits','local_provenance','control'}):
-        raise ValueError('interaction spec requires limits and local_provenance')
+    learned = value_checkpoint is not None or bundle_value_checkpoint is not None
     from planning.method_controls import normalize_control, make_control_policy, diagnostic_bundle_continuation
-    control=normalize_control(spec.get('control'))
-    if control is not None:
-        spec['control']=control
-        if control['name']=='ego_max_context':
-            spec['limits']['receiver_spec']['peer_reserve']=0
-    validate_limits(spec['limits'])
-    validate_provenance(spec['local_provenance'])
-    if spec['limits']['policy_id'] not in ('stop', 'p_current', 'p_current_f_change'):
-        raise ValueError('T4 CLI supports only explicitly labeled diagnostic policies')
+    if learned:
+        control = None
+    else:
+        if set(spec) not in ({'limits', 'local_provenance'},{'limits','local_provenance','control'}):
+            raise ValueError('interaction spec requires limits and local_provenance')
+        control=normalize_control(spec.get('control'))
+        if control is not None:
+            spec['control']=control
+            if control['name']=='ego_max_context':
+                spec['limits']['receiver_spec']['peer_reserve']=0
+        validate_limits(spec['limits'])
+        validate_provenance(spec['local_provenance'])
+        if spec['limits']['policy_id'] not in ('stop', 'p_current', 'p_current_f_change'):
+            raise ValueError('T4 CLI supports only explicitly labeled diagnostic policies')
     rows = [r for r in select_rows(data, per_recording) if r['role'] == role]
     if not rows or len({r['sample_id'] for r in rows}) != len(rows):
         raise ValueError('empty or duplicated interaction samples')
+    value_policies={};run_spec=None;checkpoint_staging=None
+    if learned:
+        from tempfile import TemporaryDirectory
+        from planning.method_run_spec import (freeze_method_run_spec, prepare_value_checkpoints,
+            validate_runtime_binding)
+        run_spec=freeze_method_run_spec(spec,rows)
+        control=run_spec['control'];spec=run_spec
+        expected_binding=validate_runtime_binding(run_spec['runtime_binding'],run_spec)
+        selections={k:v for k,v in (('request',value_checkpoint),('bundle',bundle_value_checkpoint)) if v is not None}
+        if value_checkpoint is None and run_spec['limits']['policy_id'] not in ('stop','p_current','p_current_f_change'):
+            raise ValueError('bundle-only execution requires an explicit diagnostic outer policy_id')
+        if bundle_value_checkpoint is not None and (control is None or control['name']!='one_shot'):
+            raise ValueError('bundle value checkpoint requires one_shot control')
+        previous_manifest=None
+        if resume_from is not None:
+            previous_run=json.loads((resume_from/'run_spec.json').read_text())
+            previous_manifest=previous_run['value_checkpoints']
+        checkpoint_staging=TemporaryDirectory(prefix='toolv2x_value_')
+        staged=Path(checkpoint_staging.name)
+        try:
+            manifest,value_policies=prepare_value_checkpoints(selections,staged,expected_binding,
+                run_spec['utility_spec'],resume_from=resume_from,previous_manifest=previous_manifest)
+        except BaseException:
+            checkpoint_staging.cleanup()
+            raise
+        run_spec['value_checkpoints']=manifest
     source_config = json.loads((data/'config.json').read_text())
     config = dict(version='toolv2x_interact_run_v1', source_data=str(data), checkpoint=str(checkpoint),
         mtr_checkpoint=source_config['mtr_checkpoint'], spec=spec, role=role, per_recording=per_recording,
@@ -440,17 +496,17 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
         if control['name']=='one_shot':
             config['branch_id']+=':'+control['bundle']['response_budget']['mode']
         config['scope']='T6 explicit control; diagnostic injected policy until fitted T8 policy is provided'
+    if learned:
+        config['scope']='T9 frozen value-policy execution entry; no method benefit claim'
     previous = completed_method_prefix(resume_from, rows, config) if resume_from else []
     if resume_from:
-        # Compare literal source files; no partial state restoration or weight fingerprint claims.
-        saved = resume_from/'code_snapshot'
-        if not (saved/'src/planning/method_episode.py').is_file():
-            raise ValueError('missing interaction source snapshot')
-        for path in saved.rglob('*.py'):
-            current = ROOT/path.relative_to(saved)
-            if not current.is_file() or current.read_bytes() != path.read_bytes():
-                raise ValueError('interaction source changed: '+str(path.relative_to(saved)))
+        # Compare literal copied files; no partial state restoration or fingerprint claims.
+        _check_method_source_snapshot(resume_from)
     out.mkdir(parents=True, exist_ok=False)
+    if learned:
+        shutil.move(str(Path(checkpoint_staging.name)/'value_checkpoints'),str(out/'value_checkpoints'))
+        checkpoint_staging.cleanup()
+        _save_method_json(out/'run_spec.json',run_spec)
     for source in ('src', 'vendor/cmp_mtr', 'vendor/v2vgot_llava/llava'):
         shutil.copytree(ROOT/source, out/'code_snapshot'/source, ignore=shutil.ignore_patterns('__pycache__'))
     _save_method_json(out/'config.json', config)
@@ -476,6 +532,9 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
             if index >= len(previous):
                 if runtime is None:
                     runtime = _load_interaction_runtime(out, config)
+                    if learned:
+                        validate_runtime_binding(dict(driver=runtime.driver.provenance,
+                            predictor=runtime.predictor.descriptor),run_spec)
                     _save_method_json(out/'models.json', runtime.provenance)
                 try:
                     inputs = runtime.load_inputs(row, target)
@@ -491,10 +550,14 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
                         task.update(episode=ep, status='running')
                         _save_method_json(path, task)
                     # Persist failures in the executor; callback/I/O failures propagate and leave a partial tail.
-                    policy=make_control_policy(control,diagnostic_policy) if control is not None else diagnostic_policy
+                    selected_policy=value_policies.get('request',diagnostic_policy)
+                    policy=make_control_policy(control,selected_policy) if control is not None else selected_policy
                     if control is not None and control['name']=='one_shot':
                         policy_id=control['bundle']['continuation_policy_id']
-                        registry=getattr(runtime,'bundle_policies',{'diagnostic_conditional_v1':diagnostic_bundle_continuation})
+                        registry=dict(getattr(runtime,'bundle_policies',{}))
+                        registry.setdefault('diagnostic_conditional_v1',diagnostic_bundle_continuation)
+                        if 'bundle' in value_policies:
+                            registry[policy_id]=value_policies['bundle']
                         if policy_id not in registry:
                             raise ValueError('unregistered frozen bundle policy')
                         inputs['service'].register_bundle_policy(policy_id,registry[policy_id])
@@ -530,6 +593,28 @@ def collect_method(data,out,checkpoint,spec_path,role='train',per_recording=1):
     return collect_branches(rows,out,initialize,spec)
 
 
+def collect_bundle_method(data,out,checkpoint,spec_path,role='train',per_recording=1):
+    """Explicit independent one-shot branch collection through the original runtime."""
+    import shutil
+    from planning.bundle_data import collect_bundle_branches
+    if role not in ('train','validation'):
+        raise ValueError('bundle collection requires a predefined research role')
+    spec=json.loads(spec_path.read_text())
+    rows=[r for r in select_rows(data,per_recording) if r['role']==role]
+    if not rows:
+        raise ValueError('empty bundle collection sample set')
+    source=json.loads((data/'config.json').read_text())
+    config=dict(version='toolv2x_collect_bundle_run_v1',source_data=str(data),checkpoint=str(checkpoint),
+        mtr_checkpoint=source['mtr_checkpoint'],spec=spec,role=role,per_recording=per_recording,
+        scope='T9 independent one-shot branches; no fitted policy or method benefit claim',gt_labels_read=False)
+    def initialize():
+        _save_method_json(out/'launch.json',config)
+        for name in ('src','vendor/cmp_mtr','vendor/v2vgot_llava/llava'):
+            shutil.copytree(ROOT/name,out/'code_snapshot'/name,ignore=shutil.ignore_patterns('__pycache__'))
+        return _load_interaction_runtime(out,config)
+    return collect_bundle_branches(rows,out,initialize,spec)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest='command', required=True)
@@ -553,6 +638,10 @@ if __name__ == '__main__':
     interact_parser.add_argument('--role', choices=('train', 'validation'), default='validation')
     interact_parser.add_argument('--per-recording', type=int, default=1)
     interact_parser.add_argument('--resume-from', type=Path, help='reuse terminal samples only, preserving failures and the partial tail')
+    interact_parser.add_argument('--value-checkpoint', type=Path,
+        help='frozen shared request-value checkpoint; omitted keeps the diagnostic policy')
+    interact_parser.add_argument('--bundle-value-checkpoint', type=Path,
+        help='frozen bundle_terminal continuation checkpoint for a registered one_shot control')
     collect_parser=commands.add_parser('collect-method',help='T7 finite branch collection; executes real models only when explicitly invoked')
     collect_parser.add_argument('out',type=Path)
     collect_parser.add_argument('--data',type=Path,default=ROOT/'outputs/paired_driving_data_v1')
@@ -560,6 +649,14 @@ if __name__ == '__main__':
     collect_parser.add_argument('--spec',type=Path,required=True,help='complete versioned collection spec including recording_folds')
     collect_parser.add_argument('--role',choices=('train','validation'),default='train')
     collect_parser.add_argument('--per-recording',type=int,default=1)
+    bundle_parser=commands.add_parser('collect-bundle-method',
+        help='T9 independent one-shot branch collection; executes real models only when explicitly invoked')
+    bundle_parser.add_argument('out',type=Path)
+    bundle_parser.add_argument('--data',type=Path,default=ROOT/'outputs/paired_driving_data_v1')
+    bundle_parser.add_argument('--checkpoint',type=Path,required=True)
+    bundle_parser.add_argument('--spec',type=Path,required=True,help='complete versioned one_shot collection spec')
+    bundle_parser.add_argument('--role',choices=('train','validation'),default='train')
+    bundle_parser.add_argument('--per-recording',type=int,default=1)
     args = parser.parse_args()
     try:
         if args.command == 'prepare':
@@ -568,9 +665,14 @@ if __name__ == '__main__':
         elif args.command == 'collect-method':
             collect_method(args.data.resolve(),args.out.resolve(),args.checkpoint.resolve(),args.spec.resolve(),
                            args.role,args.per_recording)
+        elif args.command == 'collect-bundle-method':
+            collect_bundle_method(args.data.resolve(),args.out.resolve(),args.checkpoint.resolve(),args.spec.resolve(),
+                                  args.role,args.per_recording)
         elif args.command == 'interact':
             interact(args.data.resolve(), args.out.resolve(), args.checkpoint.resolve(), args.spec.resolve(),
-                     args.role, args.per_recording, args.resume_from.resolve() if args.resume_from else None)
+                     args.role, args.per_recording, args.resume_from.resolve() if args.resume_from else None,
+                     args.value_checkpoint.resolve() if args.value_checkpoint else None,
+                     args.bundle_value_checkpoint.resolve() if args.bundle_value_checkpoint else None)
         else:
             generate(args.prepared_root.resolve(), args.out.resolve(), args.checkpoint.resolve(), args.role, args.per_recording)
     except Exception as exc:

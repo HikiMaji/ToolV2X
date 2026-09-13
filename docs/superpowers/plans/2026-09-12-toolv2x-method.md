@@ -581,6 +581,8 @@ assert choose_query({'P_current': 0.3, 'F_change': 99.0},
 
 ### T9：冻结全链验证、结果归因与文档交接【实验验证，非新增方法】
 
+**09-13 准备批次：** 已完成显式价值策略入口、冻结 run spec、独立 bundle 末步分支采集/原始终态核验，且发布 T6 修复/T7/T8 审查快照。完整轻量 290/290、专门 CPU 10/10 和独立复审通过。只运行合成契约和小型 CPU 测试，下面真实全链验证清单仍未勾选；详见 [T9 准备记录](../../t9_preparation_2026_09_13.md)。
+
 **修改文件：** 扩展 `tests/test_method_episode.py`、`tests/test_method_evaluation.py`、`tests/test_query_data.py` 和 `scripts/check_review.py`；按真实执行状态更新 `README.md`、`docs/STATUS.md`、`docs/github_review.md`。新结果写独立输出目录，旧记录不覆盖。
 
 **API / 数据：** 沿用 T4–T8，不加新在线网络。每次运行的 manifest 固定 query/receiver/driver/MTR/value/utility 版本、录制组、样本集合、预算、解码与对照族；归档 expected/completed/failed keys 及可便携复算的终态表。

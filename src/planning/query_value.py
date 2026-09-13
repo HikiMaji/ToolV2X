@@ -588,6 +588,13 @@ def _bundle_examples(targets,c):
     """
     from common.audit_protocol import recording
     table=copy.deepcopy(targets) if isinstance(targets,dict) else json.loads(Path(targets).read_text())
+    if table.get('version')=='toolv2x_bundle_targets_v2':
+        if isinstance(targets,dict):raise ValueError('measured bundle training requires its raw archive path')
+        from planning.bundle_data import load_measured_bundle_targets
+        table=load_measured_bundle_targets(targets)
+        table.pop('archive');table['version']='toolv2x_bundle_targets_v1'
+    elif table.get('supervision',{}).get('origin')=='measured_bundle_branches':
+        raise ValueError('measured bundle labels require independently verified raw terminals')
     _keys(table,('version','kind','binding','utility_spec','recording_folds','rows','supervision'),'bundle target table')
     if (table['version']!='toolv2x_bundle_targets_v1' or table['kind']!='bundle_terminal' or
             table['binding']!=c['binding'] or table['utility_spec']!=c['utility_spec'] or

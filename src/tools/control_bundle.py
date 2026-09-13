@@ -205,7 +205,61 @@ def decode_bundle_response(wire, envelope):
     return dict(packet=packet, primitive_responses=responses, continuation=decision)
 
 
-def execute_bundle(service, envelope):
+class _FirstReturnReady(Exception):
+    """Offline collection boundary, never a provider failure or policy action."""
+
+
+class _BundlePrefix:
+    """Live, process-local handle to one issued response, not a wire/manifest API."""
+    def __init__(self, service, envelope):
+        self._source = service
+        self._envelope = copy.deepcopy(envelope)
+        self._record = service.bundle_records[-1]
+        if self._record['status'] != 'prefix_ready' or len(service.task_records) != 1:
+            raise ValueError('a real first-return boundary is required')
+        self._state = {name: copy.deepcopy(getattr(service, name)) for name in
+            ('_task_window', '_task_forecast', '_task_receipts', '_task_records', '_task_spec', '_task_bytes')}
+
+    @property
+    def record(self):
+        return copy.deepcopy(self._record)
+
+    @property
+    def visible_state(self):
+        return dict(envelope=copy.deepcopy(self._envelope),
+            first_response=json.loads(bytes.fromhex(self._record['primitive_responses'][0]['wire_hex'])),
+            available_actions=bundle_actions(self._envelope))
+
+    def fork(self, policy):
+        """Collector-only suffix executor; online policies receive detached visible data."""
+        from tools.vehicle import VehicleTools
+        prefix = self
+        class SuffixService(VehicleTools):
+            def query_bundle(self, envelope):
+                return execute_bundle(self, envelope, _prefix=prefix)
+        source = self._source
+        result = SuffixService(source._load, source._predict, source.scene, source.g, source.provider,
+                               task_provenance=source._task_provenance)
+        # Clone branch state outside the timed query, like VehicleTools.fork_task.
+        result._offline_bundle_state = copy.deepcopy(self._state)
+        result.register_bundle_policy(self._envelope['continuation_policy_id'], policy)
+        return result
+
+
+def capture_bundle_prefix(service, envelope):
+    """Offline only: execute and retain the first actual primitive before any decision.
+
+    The returned live handle cannot be supplied by a remote requester. No field is
+    fabricated, and suffixes keep the issued receipts and the first deployed cost.
+    """
+    try:
+        execute_bundle(service, envelope, _capture=True)
+    except _FirstReturnReady:
+        return _BundlePrefix(service, envelope)
+    raise ValueError('bundle did not reach its first-return boundary')
+
+
+def execute_bundle(service, envelope, *, _capture=False, _prefix=None):
     """VehicleTools implementation; private state never crosses into policy input."""
     from tools.vehicle import decode_task_response
     begin = perf_counter()
@@ -213,6 +267,10 @@ def execute_bundle(service, envelope):
     spec = validate_bundle_envelope(envelope)
     if service._task_records or service._bundle_records:
         raise ValueError('one fresh provider episode is required for one external bundle')
+    if _prefix is not None and (not isinstance(_prefix, _BundlePrefix) or
+            envelope != _prefix._envelope or service._predict is not _prefix._source._predict or
+            service._task_provenance != _prefix._source._task_provenance):
+        raise ValueError('offline suffix must retain its exact live provider and sent envelope')
     if envelope['continuation_policy_id'] not in service._bundle_policies:
         raise ValueError('unregistered continuation policy')
     first = envelope['first_request']
@@ -241,6 +299,7 @@ def execute_bundle(service, envelope):
     packet = dict(version='toolv2x_bundle_response_v2' if envelope['version']=='toolv2x_bundle_v2' else 'toolv2x_bundle_response_v1', request_id=envelope['request_id'],
                   bundle_id=envelope['bundle_id'], continuation=decision, responses=[])
     phase = 'first_primitive'
+    suffix_begin = None
     def run(request, i):
         # Failed invocation still spends a capability attempt; its executor record
         # carries partial model timing/counts when prediction was actually started.
@@ -255,7 +314,24 @@ def execute_bundle(service, envelope):
         packet['responses'].append(dict(packet=decoded, cost=copy.deepcopy(response['cost'])))
         return decoded
     try:
-        first_packet = run(first, 0)
+        if _prefix is None:
+            first_packet = run(first, 0)
+        else:
+            for name, value in service._offline_bundle_state.items():
+                setattr(service, name, value)
+            saved = copy.deepcopy(_prefix._record['primitive_responses'][0])
+            record['primitive_responses'].append(saved)
+            first_packet = decode_task_response(bytes.fromhex(saved['wire_hex']), first)
+            packet['responses'].append(dict(packet=first_packet, cost=copy.deepcopy(saved['cost'])))
+            cost['capability_calls'] = 1
+            record['collection_reuse'] = dict(kind='actual_bundle_first_return',
+                prefix_service_seconds=_prefix._record['cost']['service_seconds'])
+            # The copied first response is now installed. Repeated offline setup
+            # above is physical collection overhead, not a second deployed setup.
+            suffix_begin = perf_counter()
+        if _capture:
+            record['status'] = 'prefix_ready'
+            raise _FirstReturnReady()
         if envelope['limits']['max_calls'] > 1:
             phase = 'continuation'
             visible = dict(envelope=copy.deepcopy(envelope), first_response=copy.deepcopy(first_packet),
@@ -287,6 +363,8 @@ def execute_bundle(service, envelope):
         record.update(status='completed', wire_hex=wire.hex(), response=copy.deepcopy(packet))
         service._task_bytes += len(wire)
         cost.update(response_bytes=len(wire), complete=True)
+    except _FirstReturnReady:
+        raise
     except Exception as exc:
         record.update(status='error', error=dict(stage=phase, error_type=type(exc).__name__, message=str(exc)))
         raise
@@ -296,7 +374,10 @@ def execute_bundle(service, envelope):
         for name in ('model_seconds', 'model_targets_computed', 'fallback_targets_computed', 'returned_targets'):
             values = [r.get(name) for r in charged]
             cost[name] = sum(values) if all(v is not None for v in values) else None
-        cost['service_seconds'] = perf_counter() - begin
+        cost['service_seconds'] = perf_counter() - (suffix_begin if suffix_begin is not None else begin)
+        if suffix_begin is not None:
+            record['collection_reuse']['suffix_service_seconds'] = cost['service_seconds']
     return dict(request=copy.deepcopy(envelope), request_wire=request_wire, wire=wire,
                 cost=copy.deepcopy(cost), primitive_responses=decoded['primitive_responses'],
-                provider_record=copy.deepcopy(record))
+                provider_record=copy.deepcopy(record),
+                **({'collection_reuse':copy.deepcopy(record['collection_reuse'])} if _prefix is not None else {}))

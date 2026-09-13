@@ -128,7 +128,9 @@ METHOD_COST_FIELDS = ('driver_calls', 'calls', 'rpc_rounds', 'control_seconds', 
 METHOD_TIMING_SCOPE = ('sum of measured local MTR, input construction, driver attempts, service attempts and receiver updates; '
     'plus explicitly recorded T6 control decisions/candidate construction; generation and peer/receiver MTR '
     'are nested diagnostics, not added again; excludes model loading, unrecorded executor bookkeeping, '
-    'persistence I/O and network transport; old runs have no measured policy stage; shared local MTR charged once per task')
+    'persistence I/O and network transport; old runs have no measured policy stage; shared local MTR charged once per task; '
+    'offline bundle forks charge one retained first-return duration plus the measured post-restore suffix, '
+    'while repeated setup in the outer physical attempt is collection overhead')
 
 
 def _number(value):
@@ -186,7 +188,21 @@ def _method_cost(task):
         entries = groups[kind]
         if len({e.get('plan_id') if kind=='driver' else e.get('stage') for e in entries}) != len(entries):
             issues.append('duplicate '+kind+' cost stage')
-        put(field, [e.get(value_key) for e in entries], expected[kind])
+        values=[e.get(value_key) for e in entries]
+        if kind=='service':
+            for i,e in enumerate(entries):
+                reuse=e.get('collection_reuse')
+                if reuse is not None:
+                    duration=reuse.get('prefix_service_seconds')
+                    suffix=reuse.get('suffix_service_seconds')
+                    if (reuse.get('kind')!='actual_bundle_first_return' or not _number(duration) or
+                            not _number(suffix) or suffix!=(e.get('service_cost') or {}).get('service_seconds')):
+                        values[i]=None
+                    else:
+                        # A fork repeats setup only for offline collection. Charge
+                        # one original setup/first return plus the actual suffix.
+                        values[i]=duration+suffix
+        put(field, values, expected[kind])
     for key in ('seconds','input_tokens','output_tokens','feature_tokens'):
         put('generation_seconds' if key=='seconds' else key,
             [(e.get('generation_cost') or {}).get(key) for e in groups['driver']], expected['driver'])

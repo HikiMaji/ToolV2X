@@ -65,7 +65,14 @@ def _semantic_binding(runtime_binding,spec):
     driver=runtime_binding['driver']
     settings={k:copy.deepcopy(driver[k]) for k in ('model_class','decoding','my_model_config','context_limit',
         'evidence_format','released_tokenizer_limit','attention_implementation','actual_rgb_input',
-        'point_cloud_feature_input') if k in driver}
+        'point_cloud_feature_input','adapted_to_tool_evidence','training_provenance_verified',
+        'trainable_lora_loaded') if k in driver}
+    if 'local_training_state' in driver:
+        # Readable metadata from the actually loaded driver. Load/data paths and
+        # validation history are audit material, not semantic weight identity.
+        state=driver['local_training_state']
+        settings['local_training_state']=dict(version='toolv2x_driver_training_identity_v1',
+            **{k:copy.deepcopy(state[k]) for k in ('epoch','next_row','steps','examples_seen','batch_size','seed') if k in state})
     predictor=runtime_binding['predictor']
     return dict(state_version='toolv2x_query_state_v1',driver=dict(version=spec['limits']['driver_version'],settings=settings),
         predictor={k:copy.deepcopy(predictor[k]) for k in ('model_version','settings')},

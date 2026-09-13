@@ -380,6 +380,8 @@ def run_task_episode(local_window, local_prediction, motion, features,
             costs['complete'] = False
             episode['cost_events'].append(dict(kind='service', stage=stage, request_id=request['request_id'],
                 attempt_seconds=seconds, service_cost=charges, provider_record=record, complete=False))
+            if record and record.get('collection_reuse'):
+                episode['cost_events'][-1]['collection_reuse']=copy.deepcopy(record['collection_reuse'])
             return fail('service_error', exc, 'service_query', plan_id, request['request_id'])
         seconds = perf_counter() - begin
         costs['service_seconds'] += seconds
@@ -388,6 +390,8 @@ def run_task_episode(local_window, local_prediction, motion, features,
         wire, charges = reply.get('wire'), reply.get('cost')
         saved_response = dict(request=copy.deepcopy(reply.get('request')), wire_type=type(wire).__name__,
             wire_hex=wire.hex() if isinstance(wire, bytes) else None, cost=copy.deepcopy(charges))
+        if reply.get('collection_reuse'):
+            saved_response['collection_reuse']=copy.deepcopy(reply['collection_reuse'])
         episode['responses'].append(saved_response)
         costs['request_bytes'] += size
         if isinstance(wire, bytes):
@@ -398,6 +402,8 @@ def run_task_episode(local_window, local_prediction, motion, features,
         costs['complete'] = costs['complete'] and complete
         episode['cost_events'].append(dict(kind='service', stage=stage, request_id=request['request_id'],
             attempt_seconds=seconds, service_cost=copy.deepcopy(charges), complete=complete))
+        if reply.get('collection_reuse'):
+            episode['cost_events'][-1]['collection_reuse']=copy.deepcopy(reply['collection_reuse'])
         emit('response_received', plan_id, request['request_id'])
         begin = perf_counter()
         try:
