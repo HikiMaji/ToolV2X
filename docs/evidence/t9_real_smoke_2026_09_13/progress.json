@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "started_utc": "2026-09-13T14:40:10.693773+00:00",
+  "expected_tasks": 6,
+  "completed_tasks": 6,
+  "failed_tasks": 0,
+  "driver_attempts": 12,
+  "gt_labels_read": false,
+  "training": false,
+  "current_task": "g7007_one_shot",
+  "finished_utc": "2026-09-13T14:40:56.496181+00:00",
+  "wall_seconds": 45.80106805218384
+}

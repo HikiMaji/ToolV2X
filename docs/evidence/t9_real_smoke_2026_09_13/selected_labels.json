@@ -1,0 +1,120 @@
+[
+  {
+    "waypoints": [
+      [
+        7.814552521868791,
+        0.2427823168234795
+      ],
+      [
+        14.749081148017922,
+        0.44300475823291663
+      ],
+      [
+        22.123024595337938,
+        0.6748853950538773
+      ],
+      [
+        29.50848593904334,
+        0.8901058539131554
+      ],
+      [
+        37.37786336495378,
+        1.0997917143882319
+      ],
+      [
+        44.370888739484144,
+        1.3188246471085563
+      ]
+    ],
+    "valid": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "times_seconds": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0
+    ],
+    "target_q8": "The suggested speed setting is: moderate. The suggested steering setting is: straight.",
+    "target_q9": "The suggested future trajectory is [(7.8,0.2),(14.7,0.4),(22.1,0.7),(29.5,0.9),(37.4,1.1),(44.4,1.3)].",
+    "label_read_paths": [
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5526_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5531_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5536_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5541_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5546_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5551_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5556_lidar_pose.npy"
+    ],
+    "scope": "offline observed ego-trajectory imitation labels, not optimal planning labels",
+    "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+    "role": "validation",
+    "g": 5526
+  },
+  {
+    "waypoints": [
+      [
+        7.028589527105851,
+        0.20607076566102478
+      ],
+      [
+        14.197344182225606,
+        0.44353745548778534
+      ],
+      [
+        21.495774033911857,
+        0.6923973832508636
+      ],
+      [
+        28.94388906912718,
+        0.9724959192599272
+      ],
+      [
+        36.531622890669496,
+        1.2839433683311654
+      ],
+      [
+        44.289311118268415,
+        1.6169919665749148
+      ]
+    ],
+    "valid": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "times_seconds": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0
+    ],
+    "target_q8": "The suggested speed setting is: moderate. The suggested steering setting is: straight.",
+    "target_q9": "The suggested future trajectory is [(7.0,0.2),(14.2,0.4),(21.5,0.7),(28.9,1.0),(36.5,1.3),(44.3,1.6)].",
+    "label_read_paths": [
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7007_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7012_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7017_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7022_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7027_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7032_lidar_pose.npy",
+      "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7037_lidar_pose.npy"
+    ],
+    "scope": "offline observed ego-trajectory imitation labels, not optimal planning labels",
+    "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+    "role": "validation",
+    "g": 7007
+  }
+]

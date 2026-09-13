@@ -1,0 +1,16 @@
+{
+  "branch": "feat/t9-real-smoke",
+  "code_root": "/root/autodl-tmp/ToolV2X/.worktrees/t9-real-smoke",
+  "base_subject": "Prepare T9 frozen value execution and audited one-shot supervision",
+  "base_commit_time": "2026-09-13T22:39:21+08:00",
+  "source_comparison": "literal source/config snapshot; no hashes",
+  "preflight": {
+    "tests": 345,
+    "passed": 345,
+    "seconds": 289.657
+  },
+  "resource_aliases": {
+    "causal_windows": "/root/autodl-tmp/ToolV2X/outputs/causal_windows_v1",
+    "models": "/root/autodl-tmp/ToolV2X/models"
+  }
+}
