@@ -1,0 +1,32 @@
+test_certificate_omitted_at_cap_then_no_new_fields_can_change_context (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_equal_numbers_from_different_contexts_are_not_equivalent (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_f_needs_its_own_matching_predictor_binding (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_f_only_anchors_do_not_expand_local_p_prediction_context (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_f_then_p_resolves_receipt_anchor_and_keeps_derived_separate (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_failed_derivation_retains_paid_e_and_no_partial_derived_records (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_full_p_certificate_is_paid_and_restores_actual_input_order (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_injected_or_changed_receipt_content_is_rejected (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_invalid_paid_response_preserves_raw_attempt_but_no_legal_e (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_partial_p_never_certifies_unknown_tracks (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_retransmission_is_paid_but_not_new_evidence_or_prediction (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_same_version_different_predictor_binding_does_not_prove_equivalence (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_two_p_accumulate_remote_fields_and_recompute_only_effective_context (test_evidence_ledger.EvidenceLedgerTests) ... ok
+test_derived_z_requires_exact_nonempty_context_parent_chain (test_evidence_ledger.TaskReceiverTests) ... ok
+test_fabricated_acquired_field_cannot_enter_z (test_evidence_ledger.TaskReceiverTests) ... ok
+test_full_p_and_equivalent_f_have_identical_z_and_prompt (test_evidence_ledger.TaskReceiverTests) ... ok
+test_round_robin_receiver_skips_oversize_unit_and_preserves_ego (test_evidence_ledger.TaskReceiverTests) ... ok
+test_round_robin_receiver_spreads_units_then_keeps_distinct_contexts (test_evidence_ledger.TaskReceiverTests) ... ok
+test_same_final_information_ignores_request_labels_and_old_derivations (test_evidence_ledger.TaskReceiverTests) ... ok
+test_serialized_ledger_rebuilds_the_same_prompt (test_evidence_ledger.TaskReceiverTests) ... ok
+test_small_capacity_retains_e_and_reports_exact_dropped_refs (test_evidence_ledger.TaskReceiverTests) ... ok
+test_v2_codec_preserves_fields_and_rejects_future_payload (test_evidence_ledger.TaskReceiverTests) ... ok
+test_zero_peer_reserve_is_recorded_for_ego_max_context (test_evidence_ledger.TaskReceiverTests) ... ok
+test_admission_skips_an_oversize_unit_and_keeps_exact_attempt_totals (test_t9_admission.T9AdmissionAuditTests) ... ok
+test_request_stage_and_first_visible_stage_follow_outer_events (test_t9_admission.T9AdmissionAuditTests) ... ok
+test_round_robin_keeps_distinct_context_units_and_cycles_targets (test_t9_admission.T9AdmissionAuditTests) ... ok
+test_two_one_shot_receipts_share_the_saved_plan_stage (test_t9_admission.T9AdmissionAuditTests) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.517s
+
+OK

@@ -1,0 +1,156 @@
+{
+  "status": "PASS",
+  "stages": [
+    {
+      "task": "g5526_Ego",
+      "stage": 0,
+      "old_input_tokens": 2292,
+      "new_input_tokens": 2292,
+      "old_targets": [],
+      "new_targets": [],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g5526_alternating",
+      "stage": 0,
+      "old_input_tokens": 2292,
+      "new_input_tokens": 2292,
+      "old_targets": [],
+      "new_targets": [],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g5526_alternating",
+      "stage": 1,
+      "old_input_tokens": 3701,
+      "new_input_tokens": 3477,
+      "old_targets": [
+        20
+      ],
+      "new_targets": [
+        6,
+        20
+      ],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g5526_alternating",
+      "stage": 2,
+      "old_input_tokens": 3573,
+      "new_input_tokens": 3472,
+      "old_targets": [
+        20
+      ],
+      "new_targets": [
+        6,
+        20
+      ],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g5526_one_shot",
+      "stage": 0,
+      "old_input_tokens": 2292,
+      "new_input_tokens": 2292,
+      "old_targets": [],
+      "new_targets": [],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g5526_one_shot",
+      "stage": 1,
+      "old_input_tokens": 3573,
+      "new_input_tokens": 3472,
+      "old_targets": [
+        20
+      ],
+      "new_targets": [
+        6,
+        20
+      ],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g7007_Ego",
+      "stage": 0,
+      "old_input_tokens": 2300,
+      "new_input_tokens": 2300,
+      "old_targets": [],
+      "new_targets": [],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g7007_alternating",
+      "stage": 0,
+      "old_input_tokens": 2300,
+      "new_input_tokens": 2300,
+      "old_targets": [],
+      "new_targets": [],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g7007_alternating",
+      "stage": 1,
+      "old_input_tokens": 3702,
+      "new_input_tokens": 3496,
+      "old_targets": [
+        0
+      ],
+      "new_targets": [
+        0,
+        5
+      ],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g7007_alternating",
+      "stage": 2,
+      "old_input_tokens": 3572,
+      "new_input_tokens": 3480,
+      "old_targets": [
+        0
+      ],
+      "new_targets": [
+        0,
+        5
+      ],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g7007_one_shot",
+      "stage": 0,
+      "old_input_tokens": 2300,
+      "new_input_tokens": 2300,
+      "old_targets": [],
+      "new_targets": [],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    },
+    {
+      "task": "g7007_one_shot",
+      "stage": 1,
+      "old_input_tokens": 3572,
+      "new_input_tokens": 3480,
+      "old_targets": [
+        0
+      ],
+      "new_targets": [
+        0,
+        5
+      ],
+      "v1_exact_saved_match": true,
+      "v2_exact_simulation_match": true
+    }
+  ],
+  "model_generation": false
+}

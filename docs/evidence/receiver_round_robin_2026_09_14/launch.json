@@ -1,0 +1,211 @@
+{
+  "version": "toolv2x_receiver_round_robin_smoke_v1",
+  "created_utc": "2026-09-13T17:00:22+00:00",
+  "source_root": "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin",
+  "prior_archive": "/root/autodl-tmp/ToolV2X/outputs/t9_real_smoke_2026_09_13_v1",
+  "source_data": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1",
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/checkpoint-epoch01",
+  "mtr_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_stability_v1/full_seed20/best_model.pth",
+  "spec": {
+    "limits": {
+      "version": "toolv2x_interaction_v1",
+      "max_calls": 2,
+      "policy_id": "stop",
+      "driver_version": {
+        "name": "V2VGoT_ToolV2X_direct",
+        "revision": "checkpoint_epoch01"
+      },
+      "execution_spec": {
+        "version": "toolv2x_execution_v1",
+        "profile": "real_smoke_v1",
+        "sigma_m": 5.0,
+        "max_targets": 4,
+        "max_request_bytes": 16384,
+        "max_response_bytes": 65536,
+        "max_episode_bytes": 196608,
+        "ego_geometry": "circumscribed_circle",
+        "ego_length_m": 4.8,
+        "ego_width_m": 2.0,
+        "max_plan_speed_mps": 80.0,
+        "max_plan_acceleration_mps2": 30.0
+      },
+      "receiver_spec": {
+        "version": "toolv2x_receiver_v1",
+        "context_limit": 4096,
+        "generation_reserve": 256,
+        "peer_reserve": 1536,
+        "numeric_decimal_places": 2
+      }
+    },
+    "local_provenance": {
+      "version": "toolv2x_provenance_v1",
+      "tracking": {
+        "name": "toolv2x_causal_tracker",
+        "revision": "causal_windows_v1"
+      },
+      "prediction": {
+        "name": "CMP_MTR_full_seed20",
+        "revision": "epoch09"
+      },
+      "context": {
+        "name": "fixed_ego_at_t",
+        "revision": "11x100ms_v1"
+      }
+    }
+  },
+  "receivers": [
+    {
+      "version": "toolv2x_receiver_v1",
+      "context_limit": 4096,
+      "generation_reserve": 256,
+      "peer_reserve": 1536,
+      "numeric_decimal_places": 2
+    },
+    {
+      "version": "toolv2x_receiver_v2",
+      "context_limit": 4096,
+      "generation_reserve": 256,
+      "peer_reserve": 1536,
+      "numeric_decimal_places": 2
+    }
+  ],
+  "arms": [
+    {
+      "name": "Ego",
+      "policy_id": "stop",
+      "control": {
+        "version": "toolv2x_controls_v1",
+        "name": "feedback",
+        "driver_calls": 3,
+        "repeat_after_calls": 0,
+        "refinement_slot_tokens": 256,
+        "baseline": "Ego",
+        "bundle": null
+      }
+    },
+    {
+      "name": "alternating",
+      "policy_id": "p_current_f_change",
+      "control": {
+        "version": "toolv2x_controls_v1",
+        "name": "feedback",
+        "driver_calls": 3,
+        "repeat_after_calls": 0,
+        "refinement_slot_tokens": 256,
+        "baseline": "Ego",
+        "bundle": null
+      }
+    },
+    {
+      "name": "one_shot",
+      "policy_id": "p_current",
+      "control": {
+        "version": "toolv2x_controls_v1",
+        "name": "one_shot",
+        "driver_calls": 2,
+        "repeat_after_calls": 0,
+        "refinement_slot_tokens": 256,
+        "baseline": "Ego",
+        "bundle": {
+          "continuation_policy_id": "diagnostic_conditional_v1",
+          "candidate_sources": [
+            "initial",
+            "slower",
+            "constant_motion"
+          ],
+          "slowdown_scale": 0.5,
+          "max_candidates": 3,
+          "wrapper_reserve_bytes": 2048,
+          "extra_generation": null,
+          "summary_spec": {
+            "version": "toolv2x_bundle_summary_v1",
+            "selection": "distance_then_field",
+            "field_kinds": [
+              "anchor",
+              "forecast"
+            ],
+            "max_fields": 8,
+            "max_bytes": 1536
+          },
+          "response_budget": {
+            "version": "toolv2x_bundle_budget_v1",
+            "mode": "per_rpc",
+            "outer_response_cap": null,
+            "primitive_response_caps": null
+          }
+        }
+      }
+    }
+  ],
+  "sample_selection": "same two predetermined earliest global frames from the prior smoke; freshly loaded per task",
+  "samples": [
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+      "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+      "g": 5526,
+      "role": "validation",
+      "physical_split": "train",
+      "local_frame": 10,
+      "ego_motion": {
+        "speed_mps": 14.83771562576294,
+        "yaw_rate_rps": 0.0034606456756591797
+      },
+      "feature_read_paths": [
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_regression_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_classification_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5526_detection_box_score.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_regression_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_classification_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/5525_detection_box_score.npy"
+      ],
+      "motion_read_paths": [
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5526_lidar_pose.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/5525_lidar_pose.npy"
+      ]
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+      "g": 7007,
+      "role": "validation",
+      "physical_split": "train",
+      "local_frame": 10,
+      "ego_motion": {
+        "speed_mps": 13.904609680175781,
+        "yaw_rate_rps": -3.1758099794387817e-06
+      },
+      "feature_read_paths": [
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/7007_regression_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/7007_classification_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/7007_detection_box_score.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/7006_regression_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/7006_classification_map.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/co_llm/ego/7006_detection_box_score.npy"
+      ],
+      "motion_read_paths": [
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7007_lidar_pose.npy",
+        "/root/autodl-tmp/V2V-GoT/train_no_fusion_keep_all/npy/ego/7006_lidar_pose.npy"
+      ]
+    }
+  ],
+  "scope": "two-frame receiver wiring contrast only; diagnostic policies; no trained value network, fair policy effect, or benefit claim",
+  "training": false,
+  "gt_labels_read_online": false,
+  "test_access": false,
+  "budget_rationale": "freeze original smoke budgets, including the disclosed one-shot per_rpc versus alternating primitive-cap mismatch",
+  "utility_spec": {
+    "version": "toolv2x_query_utility_v1",
+    "label_coverage": "all_six",
+    "quality_weights": {
+      "ADE3": 1.0,
+      "FDE3": 0.0
+    },
+    "cost_weights": {
+      "request_bytes": 0.0,
+      "response_bytes": 0.0,
+      "total_compute_seconds": 0.0
+    },
+    "failure_loss": 100.0
+  },
+  "utility_usage": "declared schema only; unused for diagnostic action choices and no value fitting"
+}

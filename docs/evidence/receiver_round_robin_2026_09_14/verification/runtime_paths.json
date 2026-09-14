@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "V2VGOT_ROOT": "/root/autodl-tmp/V2V-GoT",
+  "frames": [
+    5526,
+    7007
+  ],
+  "checks": "actual load_ego_features/load_ego_motion match frozen index paths and values; no models"
+}

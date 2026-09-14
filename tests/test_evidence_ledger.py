@@ -323,6 +323,69 @@ class TaskReceiverTests(LedgerFixture):
         self.assertEqual(result['input_layout'], 'source_blocks_v2')
         self.assertFalse(result['language_model_executed'])
 
+    def test_round_robin_receiver_spreads_units_then_keeps_distinct_contexts(self):
+        from planning.context import build_task_plan_input
+        from planning.inputs import unpack_evidence
+        peer = window()
+        for name in ('states', 'scores', 'valid'):
+            peer[name] = np.concatenate([peer[name], peer[name][:1].copy()])
+        peer['track_ids'] = np.array([7, 9, 11])
+        peer['states'][2, :, 0] = 100.
+        service = self.service(peer)
+        ledger = self.apply(service.query_task(self.request(max_targets=2)))
+        ledger = self.apply(service.query_task(self.request('F', 'q1', max_targets=2)), ledger)
+        original = copy.deepcopy(ledger)
+        def count(prompt):
+            line = next((s for s in prompt.splitlines() if s.startswith('Additional queried neighbor evidence: ')), None)
+            objects = unpack_evidence(json.loads(line.split(': ', 1)[1]))['objects'] if line else []
+            return 20 + 100 * sum(len(o['field_metadata']) for o in objects)
+        def build(version, capacity=280):
+            try:
+                return build_task_plan_input(None, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 0,
+                    limits=dict(version=version, context_limit=capacity, generation_reserve=50, peer_reserve=200),
+                    token_counter=count)
+            except ValueError as exc:
+                self.fail('declared receiver must accept the valid paid ledger: ' + str(exc))
+        old, new = build('toolv2x_receiver_v1'), build('toolv2x_receiver_v2')
+        refs = lambda result: [g['anchor_ref']['track_handle'] for g in result['admission_report']['field_groups']]
+        self.assertEqual(refs(old), [7, 7])
+        self.assertEqual(refs(new), [7, 9])
+        self.assertEqual(new['evidence_used'], old['evidence_used'])
+        self.assertEqual(new['evidence_selection']['input_tokens'], old['evidence_selection']['input_tokens'])
+        self.assertEqual(new['admission_report']['acquired_field_refs'], old['admission_report']['acquired_field_refs'])
+        full = build('toolv2x_receiver_v2', 1000)
+        self.assertEqual(refs(full), [7, 9, 7, 9, 7, 9])
+        scopes = [o['field_metadata']['forecast']['context_scope'] for o in full['remote_evidence_used']['objects']
+                  if o['track_id'] == 7 and 'forecast' in o]
+        self.assertCountEqual(scopes, ['provider_full_at_t', 'receiver_acquired_subset'])
+        self.assertEqual(ledger, original)
+
+    def test_round_robin_receiver_skips_oversize_unit_and_preserves_ego(self):
+        from planning.context import build_task_plan_input
+        from planning.inputs import unpack_evidence
+        ledger = self.apply(self.service().query_task(self.request()))
+        def count(prompt):
+            line = next((s for s in prompt.splitlines() if s.startswith('Additional queried neighbor evidence: ')), None)
+            objects = unpack_evidence(json.loads(line.split(': ', 1)[1]))['objects'] if line else []
+            return 20 + sum(500 if o['track_id'] == 7 and kind == 'forecast' else 100
+                            for o in objects for kind in o['field_metadata'])
+        limits = dict(version='toolv2x_receiver_v2', context_limit=280, generation_reserve=50, peer_reserve=200)
+        try:
+            result = build_task_plan_input(None, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 0,
+                limits=limits, token_counter=count)
+        except ValueError as exc:
+            self.fail('declared receiver must skip non-fitting units: ' + str(exc))
+        groups = result['admission_report']['field_groups']
+        self.assertEqual([(g['anchor_ref']['track_handle'], g['kind']) for g in groups], [(9, 'forecast'), (7, 'history')])
+        self.assertEqual(result['evidence_selection']['input_tokens'], 220)
+        ego = build_task_plan_input(None, dict(speed_mps=4., yaw_rate_rps=0.), self.ledger, 0,
+            limits=limits, token_counter=count)
+        self.assertIsNone(ego['remote_evidence_used'])
+        self.assertEqual(ego['evidence_used'], result['evidence_used'])
+        with self.assertRaises(ValueError):
+            build_task_plan_input(None, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 0,
+                limits=dict(limits, version='unimplemented'), token_counter=count)
+
 
 if __name__ == '__main__':
     unittest.main()

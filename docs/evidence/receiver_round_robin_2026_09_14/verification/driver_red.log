@@ -1,0 +1,21 @@
+test_round_robin_receiver_version_reaches_the_original_driver_adapter (test_framework_episode.SharedContextTests) ... FAIL
+
+======================================================================
+FAIL: test_round_robin_receiver_version_reaches_the_original_driver_adapter (test_framework_episode.SharedContextTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_framework_episode.py", line 259, in test_round_robin_receiver_version_reaches_the_original_driver_adapter
+    output = planner.plan_prepared(features, prepared)
+ValueError: v2 prepared input differs from original GoT execution contract
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_framework_episode.py", line 261, in test_round_robin_receiver_version_reaches_the_original_driver_adapter
+    self.fail('original driver must accept the declared receiver version: ' + str(exc))
+AssertionError: original driver must accept the declared receiver version: v2 prepared input differs from original GoT execution contract
+
+----------------------------------------------------------------------
+Ran 1 test in 3.948s
+
+FAILED (failures=1)

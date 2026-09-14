@@ -15,23 +15,15 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+from planning.context import target_round_robin
+
 
 EXPECTED_TASKS = {
     'g5526_Ego', 'g5526_alternating', 'g5526_one_shot',
     'g7007_Ego', 'g7007_alternating', 'g7007_one_shot',
 }
 GROUPS = ('history', 'receiver_subset_forecast', 'provider_full_forecast')
-
-
-def target_round_robin(units, target_key):
-    """Stable target cycling; retain every context-distinct unit exactly once."""
-    grouped = {}
-    for unit in units:
-        grouped.setdefault(target_key(unit), []).append(unit)
-    result = []
-    for depth in range(max((len(values) for values in grouped.values()), default=0)):
-        result.extend(values[depth] for values in grouped.values() if depth < len(values))
-    return result
 
 
 def admit_in_order(units, input_tokens_for, max_input_tokens):

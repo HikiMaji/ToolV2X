@@ -1,0 +1,104 @@
+[
+  {
+    "g": 5526,
+    "arm": "Ego",
+    "initial_prompt_exact": true,
+    "initial_trajectory_exact": true,
+    "stage_trajectory_exact": [
+      true
+    ],
+    "v1_plan_count": 1,
+    "v2_plan_count": 1,
+    "delta_ADE3": 0.0,
+    "delta_FDE3": 0.0,
+    "delta_request_bytes": 0,
+    "delta_response_bytes": 0,
+    "delta_total_compute_seconds": -0.11864568828605115
+  },
+  {
+    "g": 5526,
+    "arm": "alternating",
+    "initial_prompt_exact": true,
+    "initial_trajectory_exact": true,
+    "stage_trajectory_exact": [
+      true,
+      false,
+      false
+    ],
+    "v1_plan_count": 3,
+    "v2_plan_count": 3,
+    "delta_ADE3": 0.23609365193869536,
+    "delta_FDE3": 0.4861045085902811,
+    "delta_request_bytes": 0,
+    "delta_response_bytes": -165,
+    "delta_total_compute_seconds": 0.05879913829267025
+  },
+  {
+    "g": 5526,
+    "arm": "one_shot",
+    "initial_prompt_exact": true,
+    "initial_trajectory_exact": true,
+    "stage_trajectory_exact": [
+      true,
+      false
+    ],
+    "v1_plan_count": 2,
+    "v2_plan_count": 2,
+    "delta_ADE3": 0.1482123970976661,
+    "delta_FDE3": 0.3512979727130765,
+    "delta_request_bytes": 0,
+    "delta_response_bytes": 1,
+    "delta_total_compute_seconds": -0.05141897825524211
+  },
+  {
+    "g": 7007,
+    "arm": "Ego",
+    "initial_prompt_exact": true,
+    "initial_trajectory_exact": true,
+    "stage_trajectory_exact": [
+      true
+    ],
+    "v1_plan_count": 1,
+    "v2_plan_count": 1,
+    "delta_ADE3": 0.0,
+    "delta_FDE3": 0.0,
+    "delta_request_bytes": 0,
+    "delta_response_bytes": 0,
+    "delta_total_compute_seconds": -0.004273521713912487
+  },
+  {
+    "g": 7007,
+    "arm": "alternating",
+    "initial_prompt_exact": true,
+    "initial_trajectory_exact": true,
+    "stage_trajectory_exact": [
+      true,
+      false,
+      false
+    ],
+    "v1_plan_count": 3,
+    "v2_plan_count": 3,
+    "delta_ADE3": -0.2251653865005172,
+    "delta_FDE3": -2.290532530785844,
+    "delta_request_bytes": 0,
+    "delta_response_bytes": 248,
+    "delta_total_compute_seconds": -0.10519074043259025
+  },
+  {
+    "g": 7007,
+    "arm": "one_shot",
+    "initial_prompt_exact": true,
+    "initial_trajectory_exact": true,
+    "stage_trajectory_exact": [
+      true,
+      false
+    ],
+    "v1_plan_count": 2,
+    "v2_plan_count": 2,
+    "delta_ADE3": -0.2251653865005172,
+    "delta_FDE3": -2.290532530785844,
+    "delta_request_bytes": 0,
+    "delta_response_bytes": -1,
+    "delta_total_compute_seconds": -0.029019952984526753
+  }
+]

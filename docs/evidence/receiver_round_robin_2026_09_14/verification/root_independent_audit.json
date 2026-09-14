@@ -1,0 +1,429 @@
+{
+  "status": "PASS",
+  "method": "independent raw answer parsing and numpy Euclidean errors; direct saved event/receipt/field comparisons, no evaluator calls",
+  "tasks": [
+    {
+      "task": "g5526_toolv2x_receiver_v1_Ego",
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "driver_calls": 1,
+      "rpc_rounds": 0,
+      "primitive_calls": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_alternating",
+      "ADE3": 0.7007877788304865,
+      "FDE3": 1.2920158352302045,
+      "driver_calls": 3,
+      "rpc_rounds": 2,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_one_shot",
+      "ADE3": 0.7007877788304865,
+      "FDE3": 1.2920158352302045,
+      "driver_calls": 2,
+      "rpc_rounds": 1,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_Ego",
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "driver_calls": 1,
+      "rpc_rounds": 0,
+      "primitive_calls": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_alternating",
+      "ADE3": 0.9368814307691818,
+      "FDE3": 1.7781203438204856,
+      "driver_calls": 3,
+      "rpc_rounds": 2,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_one_shot",
+      "ADE3": 0.8490001759281526,
+      "FDE3": 1.643313807943281,
+      "driver_calls": 2,
+      "rpc_rounds": 1,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_Ego",
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "driver_calls": 1,
+      "rpc_rounds": 0,
+      "primitive_calls": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_alternating",
+      "ADE3": 1.6233446796144335,
+      "FDE3": 4.309532708947579,
+      "driver_calls": 3,
+      "rpc_rounds": 2,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_one_shot",
+      "ADE3": 1.6233446796144335,
+      "FDE3": 4.309532708947579,
+      "driver_calls": 2,
+      "rpc_rounds": 1,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_Ego",
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "driver_calls": 1,
+      "rpc_rounds": 0,
+      "primitive_calls": 0,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_alternating",
+      "ADE3": 1.3981792931139163,
+      "FDE3": 2.019000178161735,
+      "driver_calls": 3,
+      "rpc_rounds": 2,
+      "primitive_calls": 2,
+      "status": "PASS"
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_one_shot",
+      "ADE3": 1.3981792931139163,
+      "FDE3": 2.019000178161735,
+      "driver_calls": 2,
+      "rpc_rounds": 1,
+      "primitive_calls": 2,
+      "status": "PASS"
+    }
+  ],
+  "stages": [
+    {
+      "task": "g5526_toolv2x_receiver_v1_Ego",
+      "stage": 0,
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "input_tokens": 2292,
+      "targets": []
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_alternating",
+      "stage": 0,
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "input_tokens": 2292,
+      "targets": []
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_alternating",
+      "stage": 1,
+      "ADE3": 0.8525567943595219,
+      "FDE3": 1.643313807943281,
+      "input_tokens": 3701,
+      "targets": [
+        20,
+        20
+      ]
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_alternating",
+      "stage": 2,
+      "ADE3": 0.7007877788304865,
+      "FDE3": 1.2920158352302045,
+      "input_tokens": 3573,
+      "targets": [
+        20,
+        20
+      ]
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_one_shot",
+      "stage": 0,
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "input_tokens": 2292,
+      "targets": []
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v1_one_shot",
+      "stage": 1,
+      "ADE3": 0.7007877788304865,
+      "FDE3": 1.2920158352302045,
+      "input_tokens": 3573,
+      "targets": [
+        20,
+        20
+      ]
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_Ego",
+      "stage": 0,
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "input_tokens": 2292,
+      "targets": []
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_alternating",
+      "stage": 0,
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "input_tokens": 2292,
+      "targets": []
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_alternating",
+      "stage": 1,
+      "ADE3": 0.9003516499874347,
+      "FDE3": 1.8460625741525043,
+      "input_tokens": 3477,
+      "targets": [
+        20,
+        6
+      ]
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_alternating",
+      "stage": 2,
+      "ADE3": 0.9368814307691818,
+      "FDE3": 1.7781203438204856,
+      "input_tokens": 3555,
+      "targets": [
+        20,
+        6
+      ]
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_one_shot",
+      "stage": 0,
+      "ADE3": 0.9489685967313876,
+      "FDE3": 1.8540588472892214,
+      "input_tokens": 2292,
+      "targets": []
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_one_shot",
+      "stage": 1,
+      "ADE3": 0.8490001759281526,
+      "FDE3": 1.643313807943281,
+      "input_tokens": 3472,
+      "targets": [
+        20,
+        6
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_Ego",
+      "stage": 0,
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "input_tokens": 2300,
+      "targets": []
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_alternating",
+      "stage": 0,
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "input_tokens": 2300,
+      "targets": []
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_alternating",
+      "stage": 1,
+      "ADE3": 1.6233446796144335,
+      "FDE3": 4.309532708947579,
+      "input_tokens": 3702,
+      "targets": [
+        0,
+        0
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_alternating",
+      "stage": 2,
+      "ADE3": 1.6233446796144335,
+      "FDE3": 4.309532708947579,
+      "input_tokens": 3572,
+      "targets": [
+        0,
+        0
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_one_shot",
+      "stage": 0,
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "input_tokens": 2300,
+      "targets": []
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_one_shot",
+      "stage": 1,
+      "ADE3": 1.6233446796144335,
+      "FDE3": 4.309532708947579,
+      "input_tokens": 3572,
+      "targets": [
+        0,
+        0
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_Ego",
+      "stage": 0,
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "input_tokens": 2300,
+      "targets": []
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_alternating",
+      "stage": 0,
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "input_tokens": 2300,
+      "targets": []
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_alternating",
+      "stage": 1,
+      "ADE3": 1.4477292676620657,
+      "FDE3": 2.2182509488580777,
+      "input_tokens": 3496,
+      "targets": [
+        0,
+        5
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_alternating",
+      "stage": 2,
+      "ADE3": 1.3981792931139163,
+      "FDE3": 2.019000178161735,
+      "input_tokens": 3480,
+      "targets": [
+        0,
+        5
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_one_shot",
+      "stage": 0,
+      "ADE3": 0.4105095002958932,
+      "FDE3": 1.1894324961783027,
+      "input_tokens": 2300,
+      "targets": []
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_one_shot",
+      "stage": 1,
+      "ADE3": 1.3981792931139163,
+      "FDE3": 2.019000178161735,
+      "input_tokens": 3480,
+      "targets": [
+        0,
+        5
+      ]
+    }
+  ],
+  "alternating_binding": [
+    {
+      "task": "g5526_toolv2x_receiver_v1_alternating",
+      "actual_second_request_bound": true,
+      "F_ranking": [
+        6,
+        20,
+        3,
+        8
+      ],
+      "final_contexts": [
+        [
+          20,
+          "provider_full_at_t"
+        ],
+        [
+          20,
+          "receiver_acquired_subset"
+        ]
+      ]
+    },
+    {
+      "task": "g5526_toolv2x_receiver_v2_alternating",
+      "actual_second_request_bound": true,
+      "F_ranking": [
+        0,
+        3,
+        20,
+        4
+      ],
+      "final_contexts": [
+        [
+          20,
+          "provider_full_at_t"
+        ],
+        [
+          6,
+          "receiver_acquired_subset"
+        ]
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v1_alternating",
+      "actual_second_request_bound": true,
+      "F_ranking": [
+        0,
+        21,
+        5,
+        11
+      ],
+      "final_contexts": [
+        [
+          0,
+          "provider_full_at_t"
+        ],
+        [
+          0,
+          "receiver_acquired_subset"
+        ]
+      ]
+    },
+    {
+      "task": "g7007_toolv2x_receiver_v2_alternating",
+      "actual_second_request_bound": true,
+      "F_ranking": [
+        5,
+        29,
+        2,
+        0
+      ],
+      "final_contexts": [
+        [
+          0,
+          "provider_full_at_t"
+        ],
+        [
+          5,
+          "provider_full_at_t"
+        ]
+      ]
+    }
+  ],
+  "old_v1_all_stage_prompts_and_raw_answers_equal_original": true,
+  "online_labels_read": false,
+  "new_model_calls": 0
+}

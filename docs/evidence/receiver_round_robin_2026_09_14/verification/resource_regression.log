@@ -1,0 +1,8 @@
+test_shared_builder_exactly_reproduces_saved_paired_inputs (test_framework_episode.SharedContextTests) ... Token indices sequence length is longer than the specified maximum sequence length for this model (2456 > 2048). Running this sequence through the model will result in indexing errors
+ok
+test_driver_and_supervision_use_same_prepared_prompt (test_framework_episode.SharedContextTests) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 3.958s
+
+OK

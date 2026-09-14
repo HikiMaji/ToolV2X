@@ -1,0 +1,182 @@
+[
+  {
+    "g": 5526,
+    "receiver": "toolv2x_receiver_v1",
+    "arm": "Ego",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 5526,
+    "receiver": "toolv2x_receiver_v1",
+    "arm": "alternating",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      true,
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 5526,
+    "receiver": "toolv2x_receiver_v1",
+    "arm": "one_shot",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 5526,
+    "receiver": "toolv2x_receiver_v2",
+    "arm": "Ego",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 5526,
+    "receiver": "toolv2x_receiver_v2",
+    "arm": "alternating",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      false,
+      false
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 5526,
+    "receiver": "toolv2x_receiver_v2",
+    "arm": "one_shot",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      false
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 7007,
+    "receiver": "toolv2x_receiver_v1",
+    "arm": "Ego",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 7007,
+    "receiver": "toolv2x_receiver_v1",
+    "arm": "alternating",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      true,
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 7007,
+    "receiver": "toolv2x_receiver_v1",
+    "arm": "one_shot",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 7007,
+    "receiver": "toolv2x_receiver_v2",
+    "arm": "Ego",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 7007,
+    "receiver": "toolv2x_receiver_v2",
+    "arm": "alternating",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      false,
+      false
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  },
+  {
+    "g": 7007,
+    "receiver": "toolv2x_receiver_v2",
+    "arm": "one_shot",
+    "ego_features_exact": true,
+    "local_forecast_exact": true,
+    "initial_prompt_exact": true,
+    "initial_raw_answer_exact": true,
+    "initial_trajectory_exact": true,
+    "common_stage_trajectory_exact": [
+      true,
+      false
+    ],
+    "comparison_scope": "diagnostic archive reproducibility; mismatches are recorded, not converted into success"
+  }
+]

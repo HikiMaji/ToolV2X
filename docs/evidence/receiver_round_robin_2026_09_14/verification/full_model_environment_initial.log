@@ -1,0 +1,44 @@
+................................/root/autodl-tmp/conda-envs/llava/lib/python3.8/site-packages/torch/nn/modules/transformer.py:282: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.self_attn.batch_first was not True(use batch_first for better inference performance)
+  warnings.warn(f"enable_nested_tensor is True, but self.use_nested_tensor is False because {why_not_sparsity_fast_path}")
+......................../root/autodl-tmp/conda-envs/llava/lib/python3.8/site-packages/peft/utils/save_and_load.py:154: UserWarning: Could not find a config file in  - will assume that the vocabulary was not modified.
+  warnings.warn(
+.........................................E.E.........................................................................................Token indices sequence length is longer than the specified maximum sequence length for this model (2087 > 2048). Running this sequence through the model will result in indexing errors
+.........................................................................Token indices sequence length is longer than the specified maximum sequence length for this model (3205 > 2048). Running this sequence through the model will result in indexing errors
+................................................................................................
+======================================================================
+ERROR: test_driver_and_supervision_use_same_prepared_prompt (test_framework_episode.SharedContextTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_framework_episode.py", line 155, in test_driver_and_supervision_use_same_prepared_prompt
+    _, _, sample, combined = self.real_inputs()
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_framework_episode.py", line 135, in real_inputs
+    local = json.loads((root / 'ego_input.json').read_text())
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1236, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1222, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1078, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/outputs/paired_driving_data_v1/frames/train_g0719/ego_input.json'
+
+======================================================================
+ERROR: test_shared_builder_exactly_reproduces_saved_paired_inputs (test_framework_episode.SharedContextTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_framework_episode.py", line 144, in test_shared_builder_exactly_reproduces_saved_paired_inputs
+    local, peer, sample, combined = self.real_inputs()
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_framework_episode.py", line 135, in real_inputs
+    local = json.loads((root / 'ego_input.json').read_text())
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1236, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1222, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1078, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/outputs/paired_driving_data_v1/frames/train_g0719/ego_input.json'
+
+----------------------------------------------------------------------
+Ran 358 tests in 329.809s
+
+FAILED (errors=2)
+mm_scene_projector_input_size:  3072

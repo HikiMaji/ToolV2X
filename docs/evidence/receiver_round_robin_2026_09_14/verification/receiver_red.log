@@ -1,0 +1,41 @@
+test_round_robin_receiver_spreads_units_then_keeps_distinct_contexts (test_evidence_ledger.TaskReceiverTests) ... FAIL
+test_round_robin_receiver_skips_oversize_unit_and_preserves_ego (test_evidence_ledger.TaskReceiverTests) ... FAIL
+
+======================================================================
+FAIL: test_round_robin_receiver_spreads_units_then_keeps_distinct_contexts (test_evidence_ledger.TaskReceiverTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_evidence_ledger.py", line 344, in build
+    return build_task_plan_input(None, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 0,
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/src/planning/context.py", line 113, in build_task_plan_input
+    raise ValueError('invalid versioned receiver configuration')
+ValueError: invalid versioned receiver configuration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_evidence_ledger.py", line 349, in test_round_robin_receiver_spreads_units_then_keeps_distinct_contexts
+    old, new = build('toolv2x_receiver_v1'), build('toolv2x_receiver_v2')
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_evidence_ledger.py", line 348, in build
+    self.fail('declared receiver must accept the valid paid ledger: ' + str(exc))
+AssertionError: declared receiver must accept the valid paid ledger: invalid versioned receiver configuration
+
+======================================================================
+FAIL: test_round_robin_receiver_skips_oversize_unit_and_preserves_ego (test_evidence_ledger.TaskReceiverTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_evidence_ledger.py", line 374, in test_round_robin_receiver_skips_oversize_unit_and_preserves_ego
+    result = build_task_plan_input(None, dict(speed_mps=4., yaw_rate_rps=0.), ledger, 0,
+ValueError: invalid versioned receiver configuration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/tests/test_evidence_ledger.py", line 377, in test_round_robin_receiver_skips_oversize_unit_and_preserves_ego
+    self.fail('declared receiver must skip non-fitting units: ' + str(exc))
+AssertionError: declared receiver must skip non-fitting units: invalid versioned receiver configuration
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.065s
+
+FAILED (failures=2)

@@ -1,0 +1,23 @@
+{
+  "version": "toolv2x_receiver_round_robin_code_snapshot_v1",
+  "created_utc": "2026-09-13T17:10:44.595111+00:00",
+  "source_root": "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin",
+  "source_comparison": "literal file paths and bytes; no hashes",
+  "included_roots": [
+    "src",
+    "vendor/cmp_mtr",
+    "vendor/v2vgot_llava/llava"
+  ],
+  "included_run_wrapper_files": [
+    "launch.json",
+    "selected_index.jsonl",
+    "prepare_snapshot.py",
+    "run_smoke.py",
+    "evaluate_smoke.py"
+  ],
+  "launch": "launch.json",
+  "runner": "run_smoke.py",
+  "evaluator": "evaluate_smoke.py",
+  "training": false,
+  "model_calls": 0
+}

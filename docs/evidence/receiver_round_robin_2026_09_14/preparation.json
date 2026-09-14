@@ -1,0 +1,26 @@
+{
+  "version": "toolv2x_receiver_round_robin_preparation_evidence_v1",
+  "status": "completed_after_preserved_environment_failure",
+  "output": "/root/autodl-tmp/ToolV2X/outputs/receiver_round_robin_smoke_2026_09_14_v1",
+  "task_matrix": {
+    "receivers": 2,
+    "frames": 2,
+    "arms": 3,
+    "tasks": 12,
+    "maximum_got_attempts": 24
+  },
+  "frozen_against": "/root/autodl-tmp/ToolV2X/outputs/t9_real_smoke_2026_09_13_v1",
+  "checks": {
+    "configuration_match_except_receiver_version": true,
+    "selected_inputs_match": true,
+    "online_gt_disabled": true,
+    "fresh_task_factory_required": true,
+    "failure_retention_required": true,
+    "offline_evaluator_dry_run": true
+  },
+  "model_calls_in_preparation": 0,
+  "valid_run_tasks": 12,
+  "valid_run_got_calls": 24,
+  "valid_run_failures": 0,
+  "training": false
+}

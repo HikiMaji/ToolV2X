@@ -88,6 +88,17 @@ def build_plan_input(tokenizer, motion, evidence, feature_tokens, context_limit=
         q9_executed=False, language_model_executed=False, status='prepared')
 
 
+def target_round_robin(units, target_key):
+    """Stable target cycling; retain every context-distinct unit exactly once."""
+    grouped = {}
+    for unit in units:
+        grouped.setdefault(target_key(unit), []).append(unit)
+    result = []
+    for depth in range(max((len(values) for values in grouped.values()), default=0)):
+        result.extend(values[depth] for values in grouped.values() if depth < len(values))
+    return result
+
+
 def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None, *, token_counter=None, extra_prompt_reserve=0):
     """Shared deterministic v2 receiver; never runs a driver or a predictor.
 
@@ -105,7 +116,7 @@ def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None
         if set(limits) - set(config):
             raise ValueError('unknown receiver limits')
         config.update(limits)
-    if (config['version'] != 'toolv2x_receiver_v1' or
+    if (config['version'] not in ('toolv2x_receiver_v1', 'toolv2x_receiver_v2') or
             any(type(config[k]) is not int or config[k] < 0 for k in config if k != 'version') or
             config['generation_reserve'] <= 0 or config['numeric_decimal_places'] != 2 or
             config['peer_reserve'] >= config['context_limit'] - config['generation_reserve'] or
@@ -141,6 +152,8 @@ def build_task_plan_input(tokenizer, motion, ledger, feature_tokens, limits=None
         return n + feature_tokens
 
     units = remote_units(ledger)  # Validates paid-field provenance before projecting.
+    if config['version'] == 'toolv2x_receiver_v2':
+        units = target_round_robin(units, lambda u: (u['object']['source'], u['object']['track_id']))
     local = dict(as_of_g=ledger['g'], coordinate_frame='ego_at_t', objects=[], queries=[], relations=[])
     grouped = {}
     for record in ledger['local_fields']:

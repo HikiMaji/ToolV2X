@@ -1,0 +1,115 @@
+{
+  "mtr": {
+    "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/mtr_stability_v1/full_seed20/best_model.pth",
+    "config": "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/vendor/cmp_mtr/configs/v2v4real_multiego_no_coop.yaml",
+    "model_class": "CMP MotionTransformer",
+    "state_items_loaded": 880,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "parameter_count": 68514524,
+    "checkpoint_metadata": {
+      "epoch": 9,
+      "it": 8964,
+      "version": "ToolV2X causal MTR adaptation v1"
+    },
+    "source": "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/vendor/cmp_mtr/mtr/models_v2v4real/model.py",
+    "upstream_source": "/root/autodl-tmp/CMP/MTR/mtr/models_v2v4real/model.py",
+    "device": "cuda",
+    "operators": "CMP layers with portable torch KNN/indexed attention reference",
+    "native_CUDA_parity_measured": false,
+    "training_provenance_verified": false,
+    "input_distribution": "causal fixed-frame history; differs from original GT-aligned moving-frame dataset"
+  },
+  "driver": {
+    "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/checkpoint-epoch01",
+    "adapted_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/receiver_round_robin_smoke_2026_09_14_v2/runtime/loaded_adapter",
+    "base": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+    "clip": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336",
+    "model_class": "LlavaLlamaForCausalLM",
+    "source": "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/vendor/v2vgot_llava/llava/model/language_model/llava_llama.py",
+    "my_model_config": {
+      "mm_scene_projector_input_size": 3072,
+      "scene_level_only": false,
+      "object_level_only": false,
+      "scene_feature_mode": "shallow",
+      "object_feature_mode": "shallow",
+      "num_input_frames": 2,
+      "ego_only": true,
+      "feature_source": "no_fusion_keep_all",
+      "dataset_source": "v2v4real",
+      "num_latency_frames": 0,
+      "positional_error_std": 0.0
+    },
+    "loading_seconds": 9.7825371499639,
+    "released_tokenizer_limit": 4096,
+    "context_limit": 4096,
+    "evidence_format": "compact",
+    "adapted_to_tool_evidence": true,
+    "training_provenance_verified": false,
+    "trainable_lora_loaded": false,
+    "attention_implementation": "sdpa",
+    "actual_rgb_input": false,
+    "point_cloud_feature_input": true,
+    "local_training_state": {
+      "epoch": 1,
+      "next_row": 0,
+      "steps": 1867,
+      "examples_seen": 14935,
+      "best_loss": 0.26049935203045604,
+      "best_checkpoint": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_restart_v1/training/checkpoint-epoch01",
+      "bad_epochs": 0,
+      "data": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/training_data",
+      "batch_size": 8,
+      "seed": 20,
+      "history": [
+        {
+          "epoch": 1,
+          "validation": {
+            "macro_loss": 0.26049935203045604,
+            "groups": {
+              "testoutput_CAV_data_2022-03-17-16-06-11|Ego": 0.29421953186392785,
+              "testoutput_CAV_data_2022-03-17-16-06-11|P": 0.2882991505165895,
+              "testoutput_CAV_data_2022-03-17-16-06-11|F": 0.2909022353589535,
+              "testoutput_CAV_data_2022-03-17-16-06-11|PF": 0.2870444734891256,
+              "testoutput_CAV_data_2022-03-17-16-06-11|rule": 0.2894668735563755,
+              "testoutput_CAV_data_2022-03-21-09-50-20|Ego": 0.22650567504266897,
+              "testoutput_CAV_data_2022-03-21-09-50-20|P": 0.22886593779549003,
+              "testoutput_CAV_data_2022-03-21-09-50-20|F": 0.23407943857212862,
+              "testoutput_CAV_data_2022-03-21-09-50-20|PF": 0.23499686301996311,
+              "testoutput_CAV_data_2022-03-21-09-50-20|rule": 0.23061334108933806
+            },
+            "examples": 540
+          },
+          "improved": true
+        }
+      ]
+    }
+  },
+  "predictor_binding": {
+    "binding_id": "d533f8eb5f5b41e28fcdc0824cda5afe",
+    "model_version": {
+      "name": "CMP_MTR_full_seed20",
+      "revision": "epoch09"
+    },
+    "settings": {
+      "adapter": "cmp_causal_window_v1",
+      "batch_size": 32,
+      "device": "cuda",
+      "allow_tf32": false,
+      "predictor_load_identity": {
+        "version": "toolv2x_predictor_load_identity_v1",
+        "checkpoint_metadata": {
+          "epoch": 9,
+          "it": 8964,
+          "version": "ToolV2X causal MTR adaptation v1"
+        },
+        "model_class": "CMP MotionTransformer",
+        "state_items_loaded": 880,
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "parameter_count": 68514524
+      }
+    }
+  },
+  "loading_wall_seconds": 13.401456931140274
+}

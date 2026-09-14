@@ -1,0 +1,14 @@
+{
+  "version": "toolv2x_receiver_round_robin_environment_failure_v1",
+  "archive": "/root/autodl-tmp/ToolV2X/outputs/receiver_round_robin_smoke_2026_09_14_v1",
+  "terminal_tasks": 12,
+  "failed_tasks": 12,
+  "driver_attempts": 0,
+  "provider_records": 0,
+  "failure_stage": "fresh input construction before episode creation",
+  "cause": "TOOLV2X_V2VGOT_ROOT was not explicit and resolved relative to the worktree parent",
+  "model_quality_interpretation_allowed": false,
+  "receiver_comparison_interpretation_allowed": false,
+  "old_response_reused": false,
+  "archive_overwritten": false
+}

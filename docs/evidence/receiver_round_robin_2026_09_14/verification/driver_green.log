@@ -1,0 +1,9 @@
+test_round_robin_receiver_version_reaches_the_original_driver_adapter (test_framework_episode.SharedContextTests) ... ok
+test_v2_driver_adapter_validates_original_budget_before_generation (test_framework_episode.SharedContextTests) ... ok
+test_task_episode_calls_actual_driver_adapter_with_same_features_and_tokenizer (test_framework_episode.SharedContextTests) ... ok
+test_task_receiver_uses_original_tokenizer_without_model_generation (test_framework_episode.SharedContextTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.569s
+
+OK

@@ -1,0 +1,9 @@
+{
+  "started_utc": "2026-09-13T17:12:35.735153+00:00",
+  "inference_finished_utc": "2026-09-13T17:12:15.563978+00:00",
+  "labels_path": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1/offline_labels/validation.jsonl",
+  "scope": "offline observed ego-trajectory imitation labels; not optimal planning or safety labels",
+  "online_inference_modified": false,
+  "model_calls": 0,
+  "training": false
+}

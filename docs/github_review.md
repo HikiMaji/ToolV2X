@@ -1,5 +1,7 @@
 # GitHub 审查入口
 
+**当前审查批次（09-14，共同 receiver 轮询与两帧实际对照）：** 先读 [实现说明](receiver_round_robin_implementation_2026_09_14.md)、[真实结果](receiver_round_robin_smoke_2026_09_14.md) 和 [批准的执行范围](superpowers/plans/2026-09-14-receiver-round-robin.md)。变更仅为共享 receiver 可选版本、稳定目标轮询、原 GoT 版本校验及对应测试/审计 helper 复用；旧 v1 默认保留。轻量 302 项、完整模型环境 358 项通过，冻结两帧旧/新 receiver 共 12 任务与 24 次真实 GoT 完成。请核对新 τ1→实际第二请求→provider 返回→最终 Z 与轨迹、所有生成成本、固定预算/共同规则和失败保留；不要把两帧诊断策略当成训练后的 ToolV2X 或公平 strong one-shot 效果试验。首次输入根目录失败与有效运行分目录保存，未训练或扩帧。本批尚未推送；下方审查文字是历史状态。
+
 **当前审查批次（09-14，9-13-3，本地）：** 先读 [本批要求](9-13-3.md)、[修复与审计回复](review_9_13_3_response.md) 和 [admission 明细](t9_admission_audit_2026_09_13.md)。A1/A2 修复原始 role 与真实方案/标签监督绑定；B 只读重放已有六任务的 tokenizer/admission，receiver 算法不变。完整轻量 300 项与 CPU 合成契约 10 项通过，没有实际策略拟合、GoT/MTR 新执行或扩帧；本批尚未推送。下方 T9 准备和真实联调现已发布到 main，T8 的 271 项/尚缺接口等均为历史快照。
 
 ```text

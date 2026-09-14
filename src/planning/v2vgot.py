@@ -278,7 +278,7 @@ class V2VGoTPlanner:
             remote = prepared.get('remote_evidence_used')
             if (prepared.get('status') != 'prepared' or prepared.get('q9_executed') is not False or
                     prepared.get('language_model_executed') is not False or not isinstance(prepared.get('admission_report'), dict) or
-                    receiver['version'] != 'toolv2x_receiver_v1' or receiver['numeric_decimal_places'] != 2 or
+                    receiver['version'] not in ('toolv2x_receiver_v1', 'toolv2x_receiver_v2') or receiver['numeric_decimal_places'] != 2 or
                     receiver['context_limit'] != self.context_limit or
                     receiver['generation_reserve'] != Q9_MAX_NEW_TOKENS or
                     selection['generation_reserve'] != Q9_MAX_NEW_TOKENS or

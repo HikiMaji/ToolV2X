@@ -234,6 +234,38 @@ class SharedContextTests(unittest.TestCase):
                 planner.plan_prepared(features, poisoned)
         self.assertEqual(len(seen), 1)
 
+    def test_round_robin_receiver_version_reaches_the_original_driver_adapter(self):
+        from planning.context import build_task_plan_input
+        from planning.evidence import new_ledger
+        from planning.v2vgot import V2VGoTPlanner
+        from tools.task_spec import FrozenPredictor
+        from test_task_spec import provenance
+        predictor = FrozenPredictor(fixture_prediction, provenance()['prediction'], dict(adapter='fixture'))
+        ego = window('ego')
+        ledger = new_ledger(ego, predictor(ego), predictor=predictor, local_provenance=provenance())
+        features = dict(active_agent_mask=np.array([[[True], [False]]]))
+        # Ego has identical rendering in both receiver versions. Isolate the
+        # original adapter's version gate from the separate admission tests.
+        prepared = build_task_plan_input(self.tokenizer, dict(speed_mps=2., yaw_rate_rps=0.), ledger, 270)
+        prepared['receiver_spec']['version'] = 'toolv2x_receiver_v2'
+        planner = V2VGoTPlanner.__new__(V2VGoTPlanner)
+        planner.tokenizer, planner.context_limit = self.tokenizer, 4096
+        seen = []
+        def generate(features, prompt, budget):
+            seen.append((prompt, budget))
+            return 'The suggested trajectory is: [(1,0),(2,0),(3,0),(4,0),(5,0),(6,0)]', dict(output_tokens=40)
+        planner._generate = generate
+        try:
+            output = planner.plan_prepared(features, prepared)
+        except ValueError as exc:
+            self.fail('original driver must accept the declared receiver version: ' + str(exc))
+        self.assertEqual(output['status'], 'parsed')
+        self.assertEqual(seen, [(prepared['q9_prompt'], 256)])
+        prepared['receiver_spec']['version'] = 'unimplemented'
+        with self.assertRaises(ValueError):
+            planner.plan_prepared(features, prepared)
+        self.assertEqual(len(seen), 1)
+
 
     def test_task_episode_calls_actual_driver_adapter_with_same_features_and_tokenizer(self):
         from planning.method_episode import run_task_episode, diagnostic_policy

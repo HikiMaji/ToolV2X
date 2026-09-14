@@ -1,0 +1,44 @@
+{
+  "scope": "synthetic contract, real service and common receiver, no actual model",
+  "records": [
+    {
+      "baseline": "Ego",
+      "status": "PASS",
+      "tools": [],
+      "driver_calls": 1
+    },
+    {
+      "baseline": "P",
+      "status": "PASS",
+      "tools": [
+        "P"
+      ],
+      "driver_calls": 2
+    },
+    {
+      "baseline": "F",
+      "status": "PASS",
+      "tools": [
+        "F"
+      ],
+      "driver_calls": 2
+    },
+    {
+      "baseline": "PF",
+      "status": "PASS",
+      "tools": [
+        "P",
+        "F"
+      ],
+      "driver_calls": 3
+    },
+    {
+      "baseline": "rule",
+      "status": "PASS",
+      "tools": [
+        "P"
+      ],
+      "driver_calls": 2
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "version": "toolv2x_receiver_round_robin_runtime_environment_v1",
+  "python": "/root/autodl-tmp/conda-envs/llava/bin/python",
+  "environment": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TOOLV2X_V2VGOT_ROOT": "/root/autodl-tmp/V2V-GoT",
+    "TOOLV2X_CMP_ROOT": "/root/autodl-tmp/CMP",
+    "TOOLV2X_LLAVA_BASE": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+    "TOOLV2X_CLIP_ROOT": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336"
+  },
+  "pythonpath": [
+    "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/src",
+    "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/vendor/v2vgot_llava",
+    "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/vendor/cmp_mtr"
+  ],
+  "required_resource_links": {
+    "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/models": "/root/autodl-tmp/ToolV2X/models",
+    "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/outputs/causal_windows_v1": "/root/autodl-tmp/ToolV2X/outputs/causal_windows_v1",
+    "/root/autodl-tmp/ToolV2X/.worktrees/receiver-round-robin/outputs/paired_driving_data_v1": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1"
+  },
+  "training": false,
+  "online_gt_access": false
+}
