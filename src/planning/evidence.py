@@ -31,23 +31,34 @@ def _forecast_value(obj, scope):
                 forecast_times=TIMES, model_used=obj['model_used'], context_scope=scope)
 
 
-def new_ledger(local_window, local_prediction, *, predictor, local_provenance, p_processing='local_mtr'):
+def new_ledger(local_window, local_prediction, *, predictor, local_provenance,
+               p_processing='local_mtr', include_local_history=False):
     _check_window(local_window)
     validate_prediction(local_window, local_prediction)
     validate_provenance(local_provenance)
     if (not isinstance(predictor, FrozenPredictor) or
             predictor.descriptor['model_version'] != local_provenance['prediction'] or
-            p_processing not in ('local_mtr', 'observations_only')):
+            p_processing not in ('local_mtr', 'observations_only') or
+            type(include_local_history) is not bool):
         raise ValueError('explicit frozen predictor/provenance and P processing required')
     w = dict(local_window, states=np.asarray(local_window['states']), scores=np.asarray(local_window['scores']))
     local = []
     for obj in prediction_objects(w, local_prediction):
-        for kind, value in [('anchor', dict(box=obj['box'], score=obj['score'])),
-                            ('forecast', _forecast_value(obj, 'ego_full_at_t'))]:
+        row = int(np.flatnonzero(w['track_ids'] == obj['track_id'])[0])
+        fields = [('anchor', dict(box=obj['box'], score=obj['score']))]
+        if include_local_history:
+            valid = w['valid'][row]
+            fields.append(('history', dict(history=w['states'][row].tolist(),
+                history_valid=valid.tolist(), history_scores=w['scores'][row].tolist(),
+                history_times=w['time_seconds'].tolist(), proxy_status=
+                'causal_tracking_state_motion_proxy' if valid.sum() >= 2 else 'single_state_static_proxy')))
+        fields.append(('forecast', _forecast_value(obj, 'ego_full_at_t')))
+        for kind, value in fields:
             ref = _ref(w, obj['track_id'], kind, local_provenance[
-                'tracking' if kind == 'anchor' else 'prediction'], local_provenance['context'])
+                'prediction' if kind == 'forecast' else 'tracking'], local_provenance['context'])
             local.append(dict(ref=ref, value=value, origin='local'))
-    return dict(version='toolv2x_evidence_ledger_v1', scene=w['scene'], g=w['g'],
+    return dict(version='toolv2x_evidence_ledger_v2' if include_local_history else 'toolv2x_evidence_ledger_v1',
+        scene=w['scene'], g=w['g'],
         local_source=w['source'], coordinate_frame='ego_at_t', local_fields=local,
         predictor_binding=predictor.descriptor, p_processing=p_processing,
         acquired_fields=[], derived_fields=[], receipts=[], contexts=[], active_contexts={},
