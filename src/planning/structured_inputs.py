@@ -800,10 +800,11 @@ def validate_structured_prepared(prepared):
     if sorted(tensor_indices) != list(range(count)):
         raise ValueError('entity metadata and mask capacity disagree')
     local_sources = {track['alias'][0] for track in semantic_tracks['local']}
-    if len(local_sources) != 1:
-        raise ValueError('structured entities require one local source')
+    if len(local_sources) > 1:
+        raise ValueError('structured entities cannot mix local sources')
+    local_source = next(iter(local_sources)) if local_sources else None
     expected_entities = _entities(semantic_tracks['local'], semantic_tracks['remote'],
-        dict(local_source=next(iter(local_sources))), prepared['ego_history_used'], spec)
+        dict(local_source=local_source), prepared['ego_history_used'], spec)
     identity = lambda entity: tuple((alias['source'], alias['track_handle'])
                                     for alias in entity['aliases'])
     expected_by_alias = {identity(entity): entity for entity in expected_entities}

@@ -29,6 +29,13 @@ def one_track(source, x, track_id=7, y=0., score=1.):
     return value
 
 
+def empty_window(source='ego'):
+    value = window(source)
+    for name in ('track_ids', 'states', 'valid', 'scores'):
+        value[name] = value[name][:0].copy()
+    return value
+
+
 def predictor_for(callable_=fixture_prediction):
     return FrozenPredictor(callable_, provenance()['prediction'],
                            dict(adapter='cmp_causal_window_v1', batch_size=1))
@@ -167,6 +174,28 @@ class StructuredReceiverTests(unittest.TestCase):
         close_prepared = self.build(close)
         self.assertEqual(close_prepared['entities'][0]['role'], 'unresolved')
         self.assertTrue(close_prepared['tensor_inputs']['entity_mask'][0])
+
+    def test_empty_local_detections_retain_paid_remote_entity(self):
+        ledger, predictor = self.ledger(empty_window())
+        ledger, _ = self.acquire(ledger, predictor, one_track('peer', 30., 8))
+        prepared = self.build(ledger)
+        self.assertEqual(len(prepared['entities']), 1)
+        entity = prepared['entities'][0]
+        self.assertEqual(entity['aliases'], [dict(source='peer', track_handle=8)])
+        self.assertEqual(entity['observations'][0]['source_role'], 'remote')
+        self.assertEqual(entity['tensor_index'], 0)
+        self.assertFalse(any(prepared['tensor_inputs']['observation_mask'][0][0]))
+        self.assertTrue(all(prepared['tensor_inputs']['observation_mask'][0][1]))
+
+    def test_fully_empty_scene_builds_all_masked_structured_input(self):
+        ledger, _ = self.ledger(empty_window())
+        prepared = self.build(ledger)
+        self.assertEqual(prepared['entities'], [])
+        self.assertFalse(any(prepared['tensor_inputs']['entity_mask']))
+        self.assertFalse(any(value for entity in prepared['tensor_inputs']['observation_mask']
+                             for source in entity for value in source))
+        self.assertFalse(any(value for entity in prepared['tensor_inputs']['forecast_mask']
+                             for forecast in entity for mode in forecast for value in mode))
 
     def test_gated_match_uses_common_history_and_representative_local_anchor(self):
         local = one_track('ego', 10., 7, score=.8)
