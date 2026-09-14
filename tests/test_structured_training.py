@@ -241,9 +241,10 @@ class StructuredTrainingTests(unittest.TestCase):
             self.assertEqual(a.provenance['model_version']['training']['status'],'initialized_untrained')
             for key,value in a.model.state_dict().items():self.assertTrue(torch.equal(value,b.model.state_dict()[key]))
             with self.assertRaises(FileExistsError):train.initialize(root/'first.pt',tiny_spec().to_dict(),seed=11)
-        result=subprocess.run([sys.executable,'-c',"import sys; import planning.train_structured_driver; assert 'torch' not in sys.modules"],capture_output=True,text=True)
+        source_dir=Path(__file__).resolve().parents[1]/'src'
+        result=subprocess.run([sys.executable,'-c',"import sys; import planning.train_structured_driver; assert not {'torch','transformers'} & sys.modules.keys()"],cwd=source_dir,capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
-        result=subprocess.run([sys.executable,'-m','planning.train_structured_driver','--help'],capture_output=True,text=True)
+        result=subprocess.run([sys.executable,'-m','planning.train_structured_driver','--help'],cwd=source_dir,capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
 
     def test_resume_exact_state_data_binding_and_real_loader(self):
