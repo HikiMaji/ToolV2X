@@ -289,6 +289,7 @@ def _validate_model_version(value):
             not all(isinstance(value[key], str) and value[key] for key in ('name', 'revision')) or
             not isinstance(value['training'], dict) or
             not isinstance(value['training'].get('status'), str) or
+            not value['training'].get('status') or
             type(value['training'].get('optimizer_steps')) is not int or
             value['training']['optimizer_steps'] < 0):
         raise ValueError('stable model version and training metadata required')

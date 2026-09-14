@@ -2,11 +2,12 @@
 import math
 
 from planning.structured_inputs import validate_structured_prepared
-from tools.task_spec import _keys, validate_plan
+from tools.task_spec import _check_json_native, _keys, validate_plan
 
 
 def validate_numeric_output(output, prepared, execution_spec):
     """Return the six actual numeric waypoints after strict output validation."""
+    _check_json_native(output)
     _keys(output, ('output_version', 'driver_kind', 'status', 'waypoints',
                    'prepared_input', 'driver_cost', 'parent_refs'),
           'numeric driver output')

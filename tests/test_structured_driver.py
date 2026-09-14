@@ -114,6 +114,63 @@ class StructuredDriverTests(unittest.TestCase):
         changed['forecasts'][~future_valid] = -999.
         torch.testing.assert_close(model(changed), expected, rtol=0., atol=0.)
 
+    def test_authentic_pf_build_is_invariant_to_entity_rows_and_distinct_mode_order(self):
+        from planning.evidence import apply_response, known_field_manifest, new_ledger
+        from tools.task_spec import FrozenPredictor
+        from tools.vehicle import VehicleTools
+
+        spec = tiny_spec()
+        permutation = np.array([5, 2, 4, 1, 3, 0])
+
+        def make_prediction(order):
+            def predict(window):
+                value = task1_fixtures.fixture_prediction(window)
+                for mode in range(6):
+                    value['means'][:, mode, :, 0] += mode * .5
+                    value['means'][:, mode, :, 1] += mode * .125
+                value['scores'][:] = np.array([.05, .1, .15, .2, .25, .25])
+                value['means'] = value['means'][:, order].copy()
+                value['scores'] = value['scores'][:, order].copy()
+                return value
+            return predict
+
+        def build(reverse_rows, mode_order):
+            local = task1_fixtures.window('ego')
+            remote = task1_fixtures.window('peer')
+            if reverse_rows:
+                for window in (local, remote):
+                    for name in ('track_ids', 'states', 'valid', 'scores'):
+                        window[name] = window[name][::-1].copy()
+            provenance = task1_fixtures.provenance()
+            predictor = FrozenPredictor(make_prediction(mode_order),
+                provenance['prediction'], dict(adapter='cmp_causal_window_v1', batch_size=1))
+            ledger = new_ledger(local, predictor(local), predictor=predictor,
+                local_provenance=provenance, p_processing='observations_only',
+                include_local_history=True)
+            service = VehicleTools(lambda: remote, predictor, remote['scene'], remote['g'],
+                                   remote['source'], task_provenance=provenance)
+            ledger = apply_response(ledger,
+                service.query_task(task1_fixtures.request('P', 'p0', max_targets=4)), predictor)
+            request = task1_fixtures.request('F', 'f0', max_targets=4)
+            request['acquired_field_manifest'] = known_field_manifest(ledger)
+            ledger = apply_response(ledger, service.query_task(request), predictor)
+            prepared = task1_fixtures.StructuredReceiverTests().build(ledger, spec=spec)
+            return local, remote, prepared
+
+        local_a, remote_a, prepared_a = build(False, np.arange(6))
+        local_b, remote_b, prepared_b = build(True, permutation)
+        self.assertFalse(np.array_equal(local_a['track_ids'], local_b['track_ids']))
+        self.assertFalse(np.array_equal(remote_a['track_ids'], remote_b['track_ids']))
+        self.assertEqual([entity['entity_id'] for entity in prepared_a['entities']],
+                         [entity['entity_id'] for entity in prepared_b['entities']])
+        batch_a = driver.collate_structured_inputs([features()], [prepared_a])
+        batch_b = driver.collate_structured_inputs([features()], [prepared_b])
+        torch.testing.assert_close(batch_a['observations'], batch_b['observations'])
+        self.assertFalse(torch.equal(batch_a['forecasts'], batch_b['forecasts']))
+        torch.manual_seed(31)
+        model = driver.StructuredPlannerNetwork(spec).eval()
+        torch.testing.assert_close(model(batch_a), model(batch_b), rtol=1e-5, atol=1e-5)
+
     def test_each_numeric_branch_has_gradient_and_masked_values_do_not(self):
         torch.manual_seed(29)
         spec = tiny_spec()
@@ -198,6 +255,13 @@ class StructuredDriverTests(unittest.TestCase):
                          output['waypoints'])
         bad = copy.deepcopy(output)
         bad['driver_cost']['model_executed'] = False
+        with self.assertRaises(ValueError):
+            driver.validate_numeric_output(bad, prepared, execution)
+        with self.assertRaises(ValueError):
+            driver.StructuredPlanner(spec, model_version=dict(name='planner',
+                revision='v1', training=dict(status='', optimizer_steps=1)))
+        bad = copy.deepcopy(output)
+        bad['waypoints'] = np.asarray(bad['waypoints'])
         with self.assertRaises(ValueError):
             driver.validate_numeric_output(bad, prepared, execution)
         with self.assertRaises(ValueError):
