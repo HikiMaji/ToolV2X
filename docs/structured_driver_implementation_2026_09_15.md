@@ -1,6 +1,6 @@
 # 结构化协同驾驶路径实现记录
 
-日期：2026-09-15。状态：四项实现及单项审查通过，最终全分支审查和完整回归待完成。承接 09-14 架构设计，保留 P/F 的因果协议与真实反馈主线；不启动真实数据训练或新方法效果实验。
+日期：2026-09-15。状态：四项实现及单项审查通过，最终全分支审查及修复复审通过，完整回归正在运行。承接 09-14 架构设计，保留 P/F 的因果协议与真实反馈主线；不启动真实数据训练或新方法效果实验。
 
 ## 参考源码
 
@@ -22,6 +22,26 @@
 P 的任务参数控制合法私有跟踪状态的排序/装包，当前实现没有重新跑 detector/tracker。F 由原 CMP MTR 在完整合法 peer context 上预测后再按任务排序，ego 方案并未进入 MTR，不能称为反应式条件预测；合法预测缓存复用保留。
 
 准备记录区分字段获取、派生、选择及间接父依赖。`ego_history_used` 保存实际已用历史和审计路径，路径不进入张量或模型身份。先前方案仍携带其字段父依赖，不能在本轮删除直接 token 后宣称模型已完全遗忘该字段。
+
+## 实际代码修改文件
+
+- [scripts/check_review.py](../scripts/check_review.py)
+- [src/evaluation/framework.py](../src/evaluation/framework.py)
+- [src/evaluation/planning.py](../src/evaluation/planning.py)
+- [src/planning/bundle_data.py](../src/planning/bundle_data.py)
+- [src/planning/driver_contract.py](../src/planning/driver_contract.py)
+- [src/planning/evidence.py](../src/planning/evidence.py)
+- [src/planning/method_episode.py](../src/planning/method_episode.py)
+- [src/planning/query_data.py](../src/planning/query_data.py)
+- [src/planning/run_framework.py](../src/planning/run_framework.py)
+- [src/planning/structured_driver.py](../src/planning/structured_driver.py)
+- [src/planning/structured_inputs.py](../src/planning/structured_inputs.py)
+- [src/planning/train_structured_driver.py](../src/planning/train_structured_driver.py)
+- [tests/test_evidence_ledger.py](../tests/test_evidence_ledger.py)
+- [tests/test_structured_driver.py](../tests/test_structured_driver.py)
+- [tests/test_structured_episode.py](../tests/test_structured_episode.py)
+- [tests/test_structured_inputs.py](../tests/test_structured_inputs.py)
+- [tests/test_structured_training.py](../tests/test_structured_training.py)
 
 ## 接口和使用方式
 
@@ -101,8 +121,11 @@ PYTHONPATH=src python -m planning.train_structured_driver train \
 | 全结构张量同信息核对 | 通过 | 完整 P-local 后追加等价 F 的全部张量、运动、prior 相同；合成契约 |
 | 监督/恢复最终定向回归 | 19 通过（12 监督 + 7 网络） | 真实归档格式、独立标签、精确恢复、迁移、失败和单轮覆盖 |
 | 监督物理划分修复 | 14 训练测试通过、复审通过 | 拒绝 physical test/缺失 split 经导出和保存行拟合进入 train/validation |
-| 最终全分支审查 | 待完成 | 待补充 |
-| 最终完整模型环境回归 | 待完成 | 待补充 |
+| 最终全分支审查与修复复审 | 通过，两项重要问题关闭 | 实际历史审计路径可导出/拟合，旧 v1 与 opt-in 列表窗口兼容 |
+| 最终完整资源无关回归 | 322 通过，199.796 秒 | 旧 v1/协议/归档及新输入，未导入 torch/transformers |
+| 完整模型环境首轮 | 416 项，415 通过、1 项测试子进程路径失败 | 失败发生在 import 前；原始失败日志保留 |
+| 测试子进程修复 | 清空 PYTHONPATH 后 15 项训练测试通过 | 子进程自行从测试文件定位 src，生产代码不变 |
+| main 完整模型复验 | 待运行 | 待补充 |
 
 Task 3 初次 160 项定向运行有 1 项 tokenizer 路径配置错误；纠正外部资源路径后，该项已通过并计入最终 43 项。初次运行不记为完整 PASS。
 
