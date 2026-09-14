@@ -27,7 +27,8 @@ class StructuredTrainingTests(unittest.TestCase):
         from planning import train_structured_driver
         return train_structured_driver
 
-    def archive(self, root, *, failed=False, scene=SCENE, role='train', control='feedback'):
+    def archive(self, root, *, failed=False, scene=SCENE, role='train', control='feedback',
+                runtime_history=False):
         fixture = episode_fixtures.StructuredEpisodeTests(); fixture.setUp()
         with patch.object(episode_fixtures, 'SCENE', scene):
             if control == 'one_shot':
@@ -39,6 +40,12 @@ class StructuredTrainingTests(unittest.TestCase):
                 args['policy']=lambda state:dict(tool='P',mode='current',reason='bundle')
             else:
                 args = fixture.inputs(control)
+        history_paths = []
+        if runtime_history:
+            times = np.arange(-10, 1, dtype=np.float32) / 10.
+            args['features'].update(ego_pose_history=np.column_stack((2. * times, times, np.zeros(11))),
+                ego_pose_history_valid=np.ones(11, dtype=bool), ego_pose_history_times=times)
+            history_paths = ['/synthetic/ego/%04d_lidar_pose.npy' % frame for frame in range(11)]
         args['sample_id'] = scene + ':10'
         if failed == 'invalid_plan':
             with torch.no_grad():
@@ -54,7 +61,8 @@ class StructuredTrainingTests(unittest.TestCase):
         task['row'].update(sample_id=args['sample_id'], role=role, physical_split='train')
         task['row']['local_frame'] = 10
         np.savez(root / 'ego_features.npz', **args['features'])
-        task['inputs'].update(feature_path='ego_features.npz', artifact_root=str(root), ego_history_read_paths=[])
+        task['inputs'].update(feature_path='ego_features.npz', artifact_root=str(root),
+                              ego_history_read_paths=history_paths)
         (root / 'task.json').write_text(json.dumps(task))
         (root / 'tasks.jsonl').write_text(json.dumps(dict(sample_id=args['sample_id'], path='task.json'))+'\n')
         label = dict(sample_id=args['sample_id'], role=role, g=10,
@@ -103,6 +111,25 @@ class StructuredTrainingTests(unittest.TestCase):
             self.assertEqual(len(rows),1)
             self.assertIsNotNone(task['episode']['plans'][0]['output'])
             self.assertEqual(task['episode']['status'],'invalid_plan')
+
+    def test_runtime_history_audit_exports_and_fits_from_numeric_arrays(self):
+        train = self.training()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            task, label = self.archive(root, runtime_history=True)
+            prepared = task['episode']['plans'][0]['prepared']['ego_history_used']
+            self.assertTrue(task['inputs']['ego_history_read_paths'])
+            self.assertEqual(prepared['read_paths'], [])
+            with np.load(root / 'ego_features.npz') as saved:
+                np.testing.assert_allclose(saved['ego_pose_history'], prepared['states'])
+                np.testing.assert_array_equal(saved['ego_pose_history_valid'], prepared['valid'])
+                np.testing.assert_allclose(saved['ego_pose_history_times'], prepared['times'])
+            rows = train.prepare_training_rows(root / 'tasks.jsonl', [label])
+            checkpoint = train.fit(rows, root / 'fit', self.config(), stop_after_steps=1)
+            snapshot = json.loads((root / 'fit' / 'inputs' / 'task_000000.json').read_text())
+            self.assertEqual(snapshot['inputs']['ego_history_read_paths'],
+                             task['inputs']['ego_history_read_paths'])
+            self.assertEqual(torch.load(checkpoint, weights_only=False)['progress']['optimizer_steps'], 1)
 
     def test_export_requires_physical_train_for_both_research_roles(self):
         train=self.training()

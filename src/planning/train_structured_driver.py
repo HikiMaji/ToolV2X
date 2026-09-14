@@ -80,9 +80,6 @@ def _task_rows(task, label, source):
         feature = Path(inputs['artifact_root']) / feature
     if not feature.is_file():
         raise ValueError('missing shared numeric feature file')
-    history = ep['plans'][0]['prepared']['ego_history_used']
-    if history is not None and history['read_paths'] != inputs.get('ego_history_read_paths', []):
-        raise ValueError('ego history audit paths differ from actual task')
     return [dict(version=VERSION, sample_id=row['sample_id'], scene=row['scene'], g=row['g'],
         role=row['role'], recording=recording(row['scene']), stage=i, source_task=str(source),
         inputs=dict(feature_path=str(feature), prefix=list(range(i + 1))),

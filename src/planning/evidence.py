@@ -43,14 +43,13 @@ def new_ledger(local_window, local_prediction, *, predictor, local_provenance,
         raise ValueError('explicit frozen predictor/provenance and P processing required')
     w = dict(local_window, states=np.asarray(local_window['states']), scores=np.asarray(local_window['scores']))
     local = []
-    for obj in prediction_objects(w, local_prediction):
-        row = int(np.flatnonzero(w['track_ids'] == obj['track_id'])[0])
+    for row, obj in enumerate(prediction_objects(w, local_prediction)):
         fields = [('anchor', dict(box=obj['box'], score=obj['score']))]
         if include_local_history:
-            valid = w['valid'][row]
+            valid = np.asarray(w['valid'][row])
             fields.append(('history', dict(history=w['states'][row].tolist(),
                 history_valid=valid.tolist(), history_scores=w['scores'][row].tolist(),
-                history_times=w['time_seconds'].tolist(), proxy_status=
+                history_times=np.asarray(w['time_seconds']).tolist(), proxy_status=
                 'causal_tracking_state_motion_proxy' if valid.sum() >= 2 else 'single_state_static_proxy')))
         fields.append(('forecast', _forecast_value(obj, 'ego_full_at_t')))
         for kind, value in fields:

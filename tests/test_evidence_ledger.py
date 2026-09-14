@@ -46,6 +46,31 @@ class LedgerFixture(unittest.TestCase):
 
 
 class EvidenceLedgerTests(LedgerFixture):
+    def test_default_v1_list_window_matches_array_window(self):
+        array_window = window('ego')
+        prediction = self.predictor(array_window)
+        expected = self.e.new_ledger(array_window, prediction, predictor=self.predictor,
+                                     local_provenance=provenance())
+        list_window = {key: value.tolist() if isinstance(value, np.ndarray) else copy.deepcopy(value)
+                       for key, value in array_window.items()}
+        actual = self.e.new_ledger(list_window, prediction, predictor=self.predictor,
+                                   local_provenance=provenance())
+        self.assertEqual(actual, expected)
+
+    def test_opt_in_history_accepts_full_list_window(self):
+        array_window = window('ego')
+        prediction = self.predictor(array_window)
+        list_window = {key: value.tolist() if isinstance(value, np.ndarray) else copy.deepcopy(value)
+                       for key, value in array_window.items()}
+        ledger = self.e.new_ledger(list_window, prediction, predictor=self.predictor,
+            local_provenance=provenance(), include_local_history=True)
+        histories = [record['value'] for record in ledger['local_fields']
+                     if record['ref']['field_kind'] == 'history']
+        self.assertEqual(ledger['version'], 'toolv2x_evidence_ledger_v2')
+        self.assertEqual([value['history'] for value in histories], list_window['states'])
+        self.assertEqual([value['history_valid'] for value in histories], list_window['valid'])
+        self.assertTrue(all(value['history_times'] == list_window['time_seconds'] for value in histories))
+
     def test_full_p_certificate_is_paid_and_restores_actual_input_order(self):
         w = window()
         for k in ('track_ids', 'states', 'scores', 'valid'):
