@@ -366,3 +366,9 @@ class StructuredPlanner:
                 numeric_token_count=_numeric_token_count(batch), output_points=6,
                 model_executed=True),
             parent_refs=copy.deepcopy(prepared['admission_report']['admitted_field_refs']))
+
+
+def load_structured_planner(checkpoint, *, device='cpu'):
+    """Load the explicitly initialized or trained checkpoint used by numeric runtime."""
+    from planning.train_structured_driver import load_structured_planner as load
+    return load(checkpoint, device=device)
