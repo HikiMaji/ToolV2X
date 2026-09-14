@@ -1,6 +1,6 @@
 # Structured driver implementation and review records
 
-Batch: 2026-09-14 to 2026-09-15. Chronological reports preserve initial failures and later resolutions. Final integrated checks are recorded separately. Paths/line numbers refer to the reviewed isolated checkout at the recorded stage.
+Batch: 2026-09-14 to 2026-09-15. All task and final fix reviews are complete. Final validation: 322 lightweight tests and 416 model-environment tests passed; reviewed code integrated locally to main, no push or real dataset training/generation. Chronological reports preserve initial failures and later resolutions. Paths/line numbers refer to the reviewed isolated checkout at each recorded stage; source is now available under the main checkout. Final command, scope and raw logs are in structured_driver_implementation_2026_09_15.md and structured_driver_validation_2026_09_15/.
 
 ---
 
@@ -101,6 +101,13 @@ Full-model log observations while running: upstream torch Transformer nested-ten
 Required full model validation completed: 416 tests / 1 failure in 398.695s; only child-process clean-import/help test lacked source resolution when parent PYTHONPATH absent. Other 415 passed, production code unchanged. Task4 worker reproduced under env -u PYTHONPATH, fixed child cwd from test file path, added transformers absence assertion; target test and 15-test training module passed (17.326s). Subject Make structured training subprocess checks self-contained. This is a new required-validation portability repair, not reopening closed final-review findings. Scoped test-only review pending; plan final model recheck on integrated main.
 
 Test portability scoped review APPROVED: child source cwd resolves independently of parent PYTHONPATH and all import/help assertions retained. Ready for local main integration, then final full model recheck on main; no production change since final code review.
+
+Local main integration: fast-forwarded reviewed feature branch; all five original main documents match their pre-integration bytes. Three already identical design documents are now tracked; user_requirements.md and 9-14-1.md remain untouched and uncommitted. No push. Complete model recheck started from main with PYTHONPATH unset (exec session 73513), independent log final-model-main.log.
+
+Final main model recheck: 416/416 passed in 390.541s, exit 0, PYTHONPATH explicitly unset. Full light 322/322 already passed; no production edits since reviewed code. Public logs preserve the first model-suite test-environment failure separately from final success. All required plan checks complete.
+
+Final delivery: reviewed implementation locally integrated to main, original five document bytes preserved, only user_requirements.md and 9-14-1.md retain their original uncommitted status. No real dataset training, new real model generation, method experiment or GitHub push. Reports/ledger/rulings and final validation are archived publicly before removing only this plan private workspace and its owned temporary worktree.
+
 
 ---
 
@@ -305,6 +312,7 @@ OK
 
 No broad-suite rerun, model execution, training, or data experiment was performed in this fix round.
 
+
 ---
 
 ## Record: task-1-review.md
@@ -345,6 +353,7 @@ No broad-suite rerun, model execution, training, or data experiment was performe
 
 **Reasoning:** The causal construction path and test coverage are strong, but the public validator accepts materially false audit metadata and the ego heading rule can delete an insufficiently corroborated object. Those two defects block approval of Task 1's contract.
 
+
 ---
 
 ## Record: task-1-fix-review.md
@@ -372,6 +381,7 @@ No broad-suite rerun, model execution, training, or data experiment was performe
 
 **Check:** Read the unchanged zero-length window and aligned prediction contracts to resolve the named regression risk. The reported 39 tests were not rerun. The prior Minor file-size concern is deferred to final triage as instructed.
 
+
 ---
 
 ## Record: task-1-fix2-review.md
@@ -397,6 +407,7 @@ No broad-suite rerun, model execution, training, or data experiment was performe
 **Task quality:** Approved
 
 **Reasoning:** The seven-line production change directly removes the invalid empty-local assumption while preserving the round-one semantic reconstruction for scenes that contain local observations. The supplied 41-test run covers the targeted regression; it was not rerun.
+
 
 ---
 
@@ -558,6 +569,7 @@ OK
 
 No full suite, real-data inference, model training, checkpoint creation, or scientific experiment was run in this fix round. Task 1 files and validators were not changed.
 
+
 ---
 
 ## Record: task-2-review.md
@@ -597,6 +609,7 @@ No full suite, real-data inference, model training, checkpoint creation, or scie
 
 **Reasoning:** The model architecture and its main P/F, mask, prior, output, cost, and provenance behavior fit Task 2 and remain appropriately synthetic. The two Important gaps are narrow but contract-bearing: the shared validator accepts a non-native output representation, and the permutation evidence does not exercise the canonical prepared-input path that the preflight explicitly required.
 
+
 ---
 
 ## Record: task-2-fix-review.md
@@ -618,6 +631,7 @@ No full suite, real-data inference, model training, checkpoint creation, or scie
 ### Verdict
 
 **Fix round:** All findings addressed, no new Critical/Important breakage.
+
 
 ---
 
@@ -754,6 +768,7 @@ Additional checks passed: `python -m py_compile` over all modified Python files 
 
 This is contract/integration evidence for an untrained network on synthetic inputs. It establishes no planning quality, P/F scientific utility, calibration, closed-loop safety or paper gain. The actual numeric checkpoint initializer/serializer/loader and real task-training export are Task 4 work, not executed reproduction. No push or external publication was performed.
 
+
 ---
 
 ## Record: task-3-review.md
@@ -812,6 +827,7 @@ This is contract/integration evidence for an untrained network on synthetic inpu
 **Task quality: Approved.**
 
 The numeric route shares the existing execution/control machinery while providing separate authentic output and archive contracts. Approval is the Task 3 scope gate; the explicit Task 4 loading/export dependency and controller's cross-task/integrated checks remain outstanding.
+
 
 ---
 
@@ -1025,6 +1041,7 @@ env -u PYTHONPATH OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
 
 Result: **15 tests passed, 17.326 seconds**, `OK`. `git diff --check` passed. No full suite, real model/data training, or production edit was performed. Only the test file is committed; parent documentation and validation logs remain untouched.
 
+
 ---
 
 ## Record: task-4-review.md
@@ -1078,6 +1095,7 @@ Result: **15 tests passed, 17.326 seconds**, `OK`. `git diff --check` passed. No
 
 The supervision, causal prior handling, shared snapshots, explicit initialization, and CPU exact-resume implementation are coherent and meaningfully tested. The exporter currently drops an existing physical-split invariant, allowing test data into train/validation despite otherwise strict source/label checks; fix and cover that boundary before approval.
 
+
 ---
 
 ## Record: task-4-fix-review.md
@@ -1095,6 +1113,7 @@ The supervision, causal prior handling, shared snapshots, explicit initializatio
 - No new Critical or Important issue found in the supplied fix diff. The production change is a two-line guard in the existing source-task validator; the remaining changes are fixture accuracy and focused regression coverage.
 - Read `task-4-fix-review-package.diff` once and the appended fix evidence in `task-4-report.md`. The report records RED as two tests with eight subtest failures (`ValueError not raised`), followed by 14 passing training tests in 16.512 seconds without warnings/errors. No tests or suites were rerun during this re-review, and no source/index/branch state was changed.
 - Final integrated lightweight/model-environment validation remains the controller's planned check; this scoped approval does not add any real-resource training, CUDA parity, or scientific-benefit claim.
+
 
 ---
 
@@ -1212,6 +1231,7 @@ Output: both validators accept; `base v1 toolv2x_evidence_ledger_v1 4`; `current
 
 The shared numeric architecture, causal receipt path, controls and resumable training design are coherent, but two concrete integration regressions remain: real history audit blocks export, and valid default-v1 list inputs now fail. Fix those two boundaries, obtain scoped re-review, and run the planned final integrated checks before marking the branch complete.
 
+
 ---
 
 ## Record: final-fix-report.md
@@ -1305,6 +1325,7 @@ Result: exit 0, no output.
 
 The parent agent retains responsibility for the single planned fresh repository-wide lightweight and model-environment suite run after scoped review.
 
+
 ---
 
 ## Record: final-fix-review.md
@@ -1340,6 +1361,7 @@ The supplied fix report records the three new regressions failing before the pro
 **Both original Important findings: ADDRESSED. Scoped fix review: Approved.**
 
 No unresolved blocker remains from the whole-branch findings. The parent's planned fresh full lightweight and model-environment suites remain required before declaring final integrated completion. This approval establishes the scoped code corrections, not real-data training, model quality, CUDA parity, closed-loop results, or method effects.
+
 
 ---
 

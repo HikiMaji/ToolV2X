@@ -1,6 +1,6 @@
 # GitHub 审查入口
 
-**当前审查准备（09-15，数值驾驶分支）：** 先读 [实现记录](structured_driver_implementation_2026_09_15.md)、[源码映射](structured_driver_source_mapping_2026_09_14.md)、[计划](superpowers/plans/2026-09-14-structured-driver.md) 和 [审查记录](structured_driver_review_2026_09_15.md)。四项实现及各自独立审查完成，最终全分支审查与完整回归尚未完成。以下旧条目是当时快照，不代表新分支已经训练或执行过真实数据。
+**当前审查准备（09-15，数值驾驶分支）：** 先读 [实现记录](structured_driver_implementation_2026_09_15.md)、[源码映射](structured_driver_source_mapping_2026_09_14.md)、[计划](superpowers/plans/2026-09-14-structured-driver.md) 和 [审查记录](structured_driver_review_2026_09_15.md)。四项实现、独立审查与修复复审完成；轻量 322/322、本地 main 完整模型环境 416/416 通过。代码已同步本地 main，尚未推送 GitHub。以下旧条目是当时快照，不代表新分支已经训练或执行过真实数据。
 
 新分支审查重点：
 

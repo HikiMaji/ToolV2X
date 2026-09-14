@@ -1,0 +1,71 @@
+{
+  "version": "toolv2x_structured_validation_v1",
+  "date": "2026-09-15",
+  "review": "all_task_and_final_fix_reviews_approved",
+  "resource_independent": {
+    "tests": 322,
+    "passed": 322,
+    "exit_code": 0,
+    "seconds": 199.796,
+    "python": "/root/miniconda3/bin/python",
+    "command": "python scripts/check_review.py",
+    "cwd": "/root/autodl-tmp/ToolV2X/.worktrees/structured-driver",
+    "log": "resource_independent.log",
+    "imports_torch": false,
+    "imports_transformers": false
+  },
+  "model_environment_initial": {
+    "tests": 416,
+    "passed": 415,
+    "failures": 1,
+    "exit_code": 1,
+    "seconds": 398.695,
+    "log": "model_environment_initial.log",
+    "failure": "test subprocess could not import planning without PYTHONPATH",
+    "resolution": "test-only child cwd derived from test file; scoped review approved; 15 training tests passed with PYTHONPATH unset"
+  },
+  "model_environment_main": {
+    "tests": 416,
+    "passed": 416,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "seconds": 390.541,
+    "python": "/root/autodl-tmp/conda-envs/llava/bin/python",
+    "command": "python -m unittest discover -s tests -p 'test_*.py'",
+    "cwd": "/root/autodl-tmp/ToolV2X",
+    "unset_environment": [
+      "PYTHONPATH"
+    ],
+    "environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "TOOLV2X_V2VGOT_ROOT": "/root/autodl-tmp/V2V-GoT",
+      "TOOLV2X_CMP_ROOT": "/root/autodl-tmp/CMP",
+      "TOOLV2X_LLAVA_BASE": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+      "TOOLV2X_CLIP_ROOT": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336"
+    },
+    "log": "model_environment_main.log"
+  },
+  "model_versions": {
+    "python": "3.8",
+    "torch": "2.1.2+cu118",
+    "numpy": "1.24.2",
+    "scipy": "1.10.1"
+  },
+  "scope": {
+    "synthetic_cpu_model_tests": true,
+    "tiny_temporary_optimizer_resume_tests": true,
+    "existing_archive_and_tokenizer_tests": true,
+    "real_dataset_training": false,
+    "new_real_model_generation": false,
+    "new_method_experiment": false,
+    "github_push": false
+  },
+  "preserved_notices": [
+    "upstream Transformer nested tensor optimization disabled",
+    "PEFT missing base config assumption",
+    "legacy tokenizer overlength notices, without real GoT generation"
+  ]
+}

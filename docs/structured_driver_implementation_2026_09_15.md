@@ -1,6 +1,6 @@
 # 结构化协同驾驶路径实现记录
 
-日期：2026-09-15。状态：四项实现及单项审查通过，最终全分支审查及修复复审通过，完整回归正在运行。承接 09-14 架构设计，保留 P/F 的因果协议与真实反馈主线；不启动真实数据训练或新方法效果实验。
+日期：2026-09-15。状态：四项实现及单项审查通过，最终全分支审查及修复复审通过，轻量 322/322、本地 main 完整模型环境 416/416 通过，代码已本地整合，尚未推送。承接 09-14 架构设计，保留 P/F 的因果协议与真实反馈主线；不启动真实数据训练或新方法效果实验。
 
 ## 参考源码
 
@@ -21,7 +21,7 @@
 
 P 的任务参数控制合法私有跟踪状态的排序/装包，当前实现没有重新跑 detector/tracker。F 由原 CMP MTR 在完整合法 peer context 上预测后再按任务排序，ego 方案并未进入 MTR，不能称为反应式条件预测；合法预测缓存复用保留。
 
-准备记录区分字段获取、派生、选择及间接父依赖。`ego_history_used` 保存实际已用历史和审计路径，路径不进入张量或模型身份。先前方案仍携带其字段父依赖，不能在本轮删除直接 token 后宣称模型已完全遗忘该字段。
+准备记录区分字段获取、派生、选择及间接父依赖。运行器将历史读取路径保存在 `task.inputs.ego_history_read_paths`；`prepared.ego_history_used` 从实际数值数组重建，包含状态、有效掩码和时间，其 `read_paths` 为空。导出器分别保存读取审计并校验数值输入，路径不进入张量或模型身份。先前方案仍携带其字段父依赖，不能在本轮删除直接 token 后宣称模型已完全遗忘该字段。
 
 ## 实际代码修改文件
 
@@ -125,9 +125,26 @@ PYTHONPATH=src python -m planning.train_structured_driver train \
 | 最终完整资源无关回归 | 322 通过，199.796 秒 | 旧 v1/协议/归档及新输入，未导入 torch/transformers |
 | 完整模型环境首轮 | 416 项，415 通过、1 项测试子进程路径失败 | 失败发生在 import 前；原始失败日志保留 |
 | 测试子进程修复 | 清空 PYTHONPATH 后 15 项训练测试通过 | 子进程自行从测试文件定位 src，生产代码不变 |
-| main 完整模型复验 | 待运行 | 待补充 |
+| main 完整模型复验 | 416/416 通过，390.541 秒，退出码 0 | 清空 PYTHONPATH 后标准完整入口通过；旧模型/协议/归档和数值通路回归 |
+
+最终复验的 [完整日志](structured_driver_validation_2026_09_15/model_environment_main.log) 和 [机器可读结果](structured_driver_validation_2026_09_15/summary.json) 已保存。轻量套件包含于完整模型环境的覆盖范围，两组数字不能相加当作独立用例总数。生产代码自最终审查后未再改变；首轮完整失败仅修改测试子进程定位方式，随后在 main 重跑完整套件。
 
 Task 3 初次 160 项定向运行有 1 项 tokenizer 路径配置错误；纠正外部资源路径后，该项已通过并计入最终 43 项。初次运行不记为完整 PASS。
+
+完整资源无关检查使用普通 review Python 执行 `python scripts/check_review.py`，原始输出见 [轻量日志](structured_driver_validation_2026_09_15/resource_independent.log)。完整模型环境首轮的测试启动失败保存在 [首轮日志](structured_driver_validation_2026_09_15/model_environment_initial.log)，不以修复后的定向通过覆盖这次失败。最终复验从本地 main 使用以下命令，明确清空父进程 `PYTHONPATH`：
+
+```bash
+cd /root/autodl-tmp/ToolV2X
+env -u PYTHONPATH OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  TOOLV2X_V2VGOT_ROOT=/root/autodl-tmp/V2V-GoT \
+  TOOLV2X_CMP_ROOT=/root/autodl-tmp/CMP \
+  TOOLV2X_LLAVA_BASE=/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b \
+  TOOLV2X_CLIP_ROOT=/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336 \
+  /root/autodl-tmp/conda-envs/llava/bin/python \
+  -m unittest discover -s tests -p 'test_*.py'
+```
+
+模型环境为 Python 3.8、PyTorch 2.1.2+cu118、NumPy 1.24.2、SciPy 1.10.1；本轮模型行为验证在 CPU 上进行。原 MTR 测试使用合成窗口/标签与内存中的微型更新，原 GoT projector 测试使用合成场景数组；其余包含 tokenizer、微型适配器及既有归档回归。日志保留上游 Transformer nested-tensor 提示、PEFT 缺少基础配置提示和旧 tokenizer 超长序列提示；相关 tokenizer 检查没有把超长提示交给真实 GoT 生成。
 
 本轮合成 CPU 前向/反向与微型恢复检查只验证代码通路和可训练性。没有在真实样本上生成新 GoT/MTR/结构化轨迹，没有更新实际研究检查点。最终代码完整不等于已有有效驾驶权重，更不等于 ToolV2X 的反馈调用收益成立。
 
@@ -141,3 +158,7 @@ Task 3 初次 160 项定向运行有 1 项 tokenizer 路径配置错误；纠正
 ## 当前结论边界
 
 保持开环六点轨迹模仿任务口径，不声称闭环安全、路线执行或道路约束。当前没有合法道路/导航分支；本车检测头场景图不等于地图。标准关联、编码、注意力和数值轨迹头属于共同驾驶基础，创新归因仍需由真实反馈的请求/STOP 机制和公平对照来验证。
+
+## 本地交付
+
+已将审查通过的分支快进整合到本地 `main`，没有推送 GitHub。原五份未提交文档与整合前副本逐字节一致；其中三份已有设计文档按原内容纳入本批记录，`docs/user_requirements.md` 和 `docs/9-14-1.md` 保持原来的未提交状态。权重、数据集和原实验产物未纳入本批提交。临时实现/审查记录已转存到公开文档，保留最初失败及后续修复，不用最终 PASS 覆盖历史。

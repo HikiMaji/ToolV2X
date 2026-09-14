@@ -158,11 +158,11 @@ Config versions save architecture, seed, optimizer settings, batch size, epoch/s
 - [x] Write red tests: literal masked SmoothL1 value and gradient; train/validation leakage rejected; targets never enter online collator; missing-point loss handled; interrupted resume equals uninterrupted small synthetic updates.
 - [x] Implement exporter, loss, explicit fit and loader with clean CLI help. Tests may perform tiny CPU synthetic optimizer steps in temporary directories; no real dataset training/checkpoints in outputs.
 - [x] Test reload output equals saved model; exact resume RNG/optimizer; source record tampering/old GoT row rejection; train/infer same representation. Runtime import and `--help` work without loading models or reading labels.
-- [ ] Run task tests, then required full lightweight and model-environment regressions once after branch review fixes. Record which full tests are CPU/frozen model validation versus generation; do not run old generate scripts.
+- [x] Run task tests, then required full lightweight and model-environment regressions once after branch review fixes. Record which full tests are CPU/frozen model validation versus generation; do not run old generate scripts.
 - [x] Commit with subject `Add structured driver supervision and resumable training`.
 
 ## Final delivery
 
-- [ ] Independent whole-branch source review, fix concrete correctness issues, preserve v1 golden behavior. No evidence claim beyond contracts and trainability.
-- [ ] Update README/STATUS succinctly with actual APIs/tests/no-training boundary; persist source module map, downloads manifest, task reviews and final validation. Update AGENTS small-download exception and numeric driver branch guidance; do not weaken causal review rules.
-- [ ] Bring reviewed code into the user's main workspace preserving dirty docs; no push. Report files/APIs/results and material deviations (standard components rather than wholesale VAD/UniV2X reproduction).
+- [x] Independent whole-branch source review, fix concrete correctness issues, preserve v1 golden behavior. No evidence claim beyond contracts and trainability.
+- [x] Update README/STATUS succinctly with actual APIs/tests/no-training boundary; persist source module map, downloads manifest, task reviews and final validation. Update AGENTS small-download exception and numeric driver branch guidance; do not weaken causal review rules.
+- [x] Bring reviewed code into the user's main workspace preserving dirty docs; no push. Report files/APIs/results and material deviations (standard components rather than wholesale VAD/UniV2X reproduction).
