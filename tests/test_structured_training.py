@@ -51,7 +51,7 @@ class StructuredTrainingTests(unittest.TestCase):
         ep = run_task_episode(**args)
         with patch.object(episode_fixtures, 'SCENE', scene):
             task = fixture.task(ep)
-        task['row'].update(sample_id=args['sample_id'], role=role)
+        task['row'].update(sample_id=args['sample_id'], role=role, physical_split='train')
         task['row']['local_frame'] = 10
         np.savez(root / 'ego_features.npz', **args['features'])
         task['inputs'].update(feature_path='ego_features.npz', artifact_root=str(root), ego_history_read_paths=[])
@@ -103,6 +103,42 @@ class StructuredTrainingTests(unittest.TestCase):
             self.assertEqual(len(rows),1)
             self.assertIsNotNone(task['episode']['plans'][0]['output'])
             self.assertEqual(task['episode']['status'],'invalid_plan')
+
+    def test_export_requires_physical_train_for_both_research_roles(self):
+        train=self.training()
+        for role in ('train','validation'):
+            with tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);task,label=self.archive(root,role=role)
+                for physical_split in ('test',None):
+                    with self.subTest(role=role,physical_split=physical_split):
+                        changed=copy.deepcopy(task)
+                        if physical_split is None:changed['row'].pop('physical_split')
+                        else:changed['row']['physical_split']=physical_split
+                        (root/'task.json').write_text(json.dumps(changed))
+                        with self.assertRaisesRegex(ValueError,'physical.*train'):
+                            train.prepare_training_rows(root/'tasks.jsonl',[label])
+
+    def test_saved_rows_cannot_bypass_physical_split_guard_during_fit(self):
+        train=self.training()
+        for role in ('train','validation'):
+            with tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);(root/'source').mkdir()
+                task,label=self.archive(root/'source',role=role)
+                rows=train.prepare_training_rows(root/'source'/'tasks.jsonl',[label])
+                if role=='validation':
+                    (root/'anchor').mkdir()
+                    anchor,anchor_label=self.archive(root/'anchor',scene=SCENE.replace('09-50','09-51'))
+                    rows+=train.prepare_training_rows([anchor],[anchor_label])
+                saved=root/'prepared_rows.jsonl'
+                saved.write_text(''.join(json.dumps(row)+'\n' for row in rows))
+                for physical_split in ('test',None):
+                    with self.subTest(role=role,physical_split=physical_split):
+                        changed=copy.deepcopy(task)
+                        if physical_split is None:changed['row'].pop('physical_split')
+                        else:changed['row']['physical_split']=physical_split
+                        (root/'source'/'task.json').write_text(json.dumps(changed))
+                        with self.assertRaisesRegex(ValueError,'physical.*train'):
+                            train.fit(saved,root/('rejected_'+str(physical_split)),self.config(),stop_after_steps=1)
 
     def test_recording_holdout_rejected_across_different_scenes(self):
         train=self.training()

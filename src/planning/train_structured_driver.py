@@ -62,6 +62,8 @@ def _task_rows(task, label, source):
     from common.audit_protocol import recording
     from planning.driver_contract import validate_numeric_episode
     row, ep = task['row'], task.get('episode')
+    if row.get('physical_split') != 'train':
+        raise ValueError('explicit physical_split=train is required')
     if row['role'] not in ('train', 'validation'):
         raise ValueError('only explicit train/validation recordings are eligible')
     supervision = _label(label, row)
