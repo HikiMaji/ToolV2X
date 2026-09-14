@@ -11,6 +11,8 @@ import numpy as np
 from planning.context import build_task_plan_input
 from planning.evidence import new_ledger, apply_response, known_field_manifest, EvidenceUpdateError
 from planning.inputs import parse_q9
+from planning.driver_contract import (validate_driver_binding, validate_numeric_output,
+                                      validate_numeric_cost, validate_numeric_episode)
 from probe.kinematic_tools import encode
 from tools.task_spec import (ExecutionSpec, TASK_VERSION, TIMES, validate_plan,
                              validate_task_request, _check_json_native, _version_pair)
@@ -19,13 +21,17 @@ from tools.task_spec import (ExecutionSpec, TASK_VERSION, TIMES, validate_plan,
 def validate_limits(limits):
     _check_json_native(limits)
     required = {'version', 'execution_spec', 'receiver_spec', 'max_calls', 'policy_id', 'driver_version'}
-    if (set(limits) != required or limits['version'] != 'toolv2x_interaction_v1' or
+    if (set(limits) != required or limits['version'] not in ('toolv2x_interaction_v1', 'toolv2x_interaction_v2') or
             type(limits['max_calls']) is not int or not 0 <= limits['max_calls'] <= 2 or
             not isinstance(limits['policy_id'], str) or not limits['policy_id']):
         raise ValueError('invalid interaction limits')
     ExecutionSpec.from_dict(limits['execution_spec'])
     _version_pair(limits['driver_version'])
     r = limits['receiver_spec']
+    if limits['version'] == 'toolv2x_interaction_v2':
+        from planning.structured_inputs import StructuredDriverSpec
+        StructuredDriverSpec.from_dict(r)
+        return copy.deepcopy(limits)
     if (set(r) != {'version', 'context_limit', 'generation_reserve', 'peer_reserve', 'numeric_decimal_places'} or
             r['generation_reserve'] != 256):
         raise ValueError('explicit receiver specification with original 256-token generation required')
@@ -82,7 +88,7 @@ def decision_state(episode):
     limits=episode['limits'];control=episode.get('control_spec')
     ledger=episode['ledger_snapshots'][-1];plans=episode['plans'];prepared=plans[-1]['prepared']
     def plan(record):
-        return dict(plan_id=record['plan_id'],waypoints=copy.deepcopy(record['output']['waypoints']),raw=record['output']['q9_raw'])
+        return dict(plan_id=record['plan_id'],waypoints=copy.deepcopy(record['output']['waypoints']),raw=record['output'].get('q9_raw'))
     current=plan(plans[-1]);previous=plan(plans[-2]) if len(plans)>1 else None
     remaining=limits['max_calls']-len(episode['requests'])
     if remaining<0:raise ValueError('prefix already exceeds the call allowance')
@@ -127,14 +133,18 @@ def run_task_episode(local_window, local_prediction, motion, features,
     from planning.inputs import build_refinement_input
     control_spec = normalize_control(control_spec)
     limits = validate_limits(limits)
-    if control_spec and control_spec['name'] == 'ego_max_context':
+    numeric = validate_driver_binding(limits, driver.provenance)
+    if numeric and token_counter is not None:
+        raise ValueError('numeric driver does not accept a language token counter')
+    if not numeric and control_spec and control_spec['name'] == 'ego_max_context':
         limits['receiver_spec']['peer_reserve'] = 0
     if hasattr(policy, 'validate_runtime'):
         policy.validate_runtime(driver_provenance=copy.deepcopy(driver.provenance),
             predictor_descriptor=copy.deepcopy(predictor.descriptor), limits=copy.deepcopy(limits),
             local_provenance=copy.deepcopy(local_provenance), control_spec=copy.deepcopy(control_spec))
     ledger = new_ledger(local_window, local_prediction, predictor=predictor,
-                        local_provenance=local_provenance)
+                        local_provenance=local_provenance,
+                        **(dict(p_processing=limits['receiver_spec']['p_processing'], include_local_history=True) if numeric else {}))
     scene, g = ledger['scene'], ledger['g']
     if (service.scene, service.g) != (scene, g) or service.provider == ledger['local_source'] or (service.task_records and prefix is None):
         raise ValueError('one fresh same-time remote service is required per episode')
@@ -145,10 +155,10 @@ def run_task_episode(local_window, local_prediction, motion, features,
     mask = np.asarray(features['active_agent_mask'])
     if mask.shape != (1, 2, 1) or mask.dtype != bool or not mask[0, 0, 0]:
         raise ValueError('fixed single-ego feature mask required')
-    feature_tokens = int(mask.sum()) * 270
+    feature_tokens = 0 if numeric else int(mask.sum()) * 270
     motion = copy.deepcopy(motion)
     driver_config = copy.deepcopy(driver.provenance)
-    driver_context = driver.context_limit
+    driver_context = None if numeric else driver.context_limit
     costs = dict(driver_attempts=0, query_attempts=0, request_bytes=0, response_bytes=0,
                  driver_attempt_seconds=0., generation_seconds=0., service_seconds=0.,
                  receiver_seconds=0., input_build_seconds=0., complete=True)
@@ -159,8 +169,10 @@ def run_task_episode(local_window, local_prediction, motion, features,
         feature_tokens=feature_tokens, status='running', plans=[], requests=[], responses=[],
         decisions=[], ledger_snapshots=[copy.deepcopy(ledger)], events=[], cost_events=[], cost=costs,
         final_plan_id=None, last_valid_plan_id=None, stop_reason=None,
-        execution_kind='injected_contract' if token_counter is not None else 'original_got',
+        execution_kind='structured_numeric' if numeric else 'injected_contract' if token_counter is not None else 'original_got',
         gt_labels_read=False)
+    if numeric:
+        episode['numeric_scene_tokens'] = int(mask.sum()) * 220
     if control_spec is not None:
         episode['control_spec'] = copy.deepcopy(control_spec)
     stage, current, previous = 0, None, None
@@ -168,6 +180,8 @@ def run_task_episode(local_window, local_prediction, motion, features,
     fixed_generation = False
     if prefix is not None:
         prefix=validate_control_prefix(prefix,features,driver)
+        if numeric:
+            validate_numeric_episode(prefix)
         # Only live initial/first-response driver prefixes, not process recovery.
         prefix_calls=len(prefix.get('requests', []))
         if (prefix.get('version') != 'toolv2x_episode_v2' or prefix.get('status') != 'running' or
@@ -177,13 +191,17 @@ def run_task_episode(local_window, local_prediction, motion, features,
                 any(prefix['limits'][k] != limits[k] for k in limits if k != 'policy_id') or
                 prefix['ledger_snapshots'][0] != ledger):
             raise ValueError('control branch requires the same actual driver prefix')
-        if uses_refinement(control_spec) and any(
+        if not numeric and uses_refinement(control_spec) and any(
                 p['prepared'].get('refinement',{}).get('slot_tokens') != control_spec['refinement_slot_tokens']
                 for p in prefix['plans']):
             raise ValueError('paired refinement requires the same slot reserved in the real prefix')
         for plan in prefix['plans']:
             output=plan.get('output') or {}
-            if plan['status']!='valid' or parse_q9(output['q9_raw']).tolist()!=output['waypoints']:
+            if numeric:
+                validate_numeric_output(output, plan['prepared'], limits['execution_spec'])
+            elif parse_q9(output['q9_raw']).tolist()!=output['waypoints']:
+                raise ValueError('invalid driver prefix')
+            if plan['status']!='valid':
                 raise ValueError('invalid driver prefix')
             validate_plan(output['waypoints'], limits['execution_spec'])
         records=service.task_records
@@ -199,7 +217,7 @@ def run_task_episode(local_window, local_prediction, motion, features,
         stage=prefix_calls
         for i in range(prefix_calls+1):
             out=episode['plans'][i]['output']
-            plan=dict(plan_id=episode['plans'][i]['plan_id'],waypoints=out['waypoints'],raw=out['q9_raw'])
+            plan=dict(plan_id=episode['plans'][i]['plan_id'],waypoints=out['waypoints'],raw=out.get('q9_raw'))
             previous,current=current,plan
         reuse_plan=True
 
@@ -221,9 +239,10 @@ def run_task_episode(local_window, local_prediction, motion, features,
         return episode
 
     def frozen_driver():
-        if driver.provenance != driver_config or driver.context_limit != driver_context:
+        if driver.provenance != driver_config or (not numeric and driver.context_limit != driver_context):
             raise ValueError('driver configuration changed within episode')
-        if driver_context != limits['receiver_spec']['context_limit']:
+        validate_driver_binding(limits, driver.provenance)
+        if not numeric and driver_context != limits['receiver_spec']['context_limit']:
             raise ValueError('driver and receiver context capacities differ')
         if predictor.descriptor != episode['predictor_binding']:
             raise ValueError('predictor binding changed within episode')
@@ -242,11 +261,19 @@ def run_task_episode(local_window, local_prediction, motion, features,
                 fixed_generation = False
                 if fixed and episode['plans']:
                     prepared = copy.deepcopy(episode['plans'][-1]['prepared'])
+                    if numeric and uses_refinement(control_spec):
+                        prepared['previous_plan'] = copy.deepcopy(current['waypoints'])
+                        prepared['previous_parent_refs'] = copy.deepcopy(episode['plans'][-1]['output']['parent_refs'])
+                elif numeric:
+                    prior = episode['plans'][-1]['output'] if episode['plans'] else None
+                    prepared = driver.prepare_input(features, motion, ledger, limits['receiver_spec'],
+                        previous_plan=prior['waypoints'] if prior else None,
+                        previous_parent_refs=prior['parent_refs'] if prior else ())
                 else:
                     reserved = control_spec['refinement_slot_tokens'] if uses_refinement(control_spec) else 0
                     prepared = build_task_plan_input(driver.tokenizer, motion, ledger, feature_tokens,
                         limits['receiver_spec'], token_counter=token_counter, extra_prompt_reserve=reserved)
-                if uses_refinement(control_spec):
+                if not numeric and uses_refinement(control_spec):
                     prepared = build_refinement_input(prepared, current, tokenizer=driver.tokenizer,
                         token_counter=token_counter, slot_tokens=control_spec['refinement_slot_tokens'])
             except Exception as exc:
@@ -278,9 +305,15 @@ def run_task_episode(local_window, local_prediction, motion, features,
             seconds = perf_counter() - begin
             plan.update(output=copy.deepcopy(output), driver_attempt_seconds=seconds)
             costs['driver_attempt_seconds'] += seconds
-            generation_cost = output.get('q9_cost')
+            generation_cost = output.get('driver_cost' if numeric else 'q9_cost')
             complete = isinstance(generation_cost, dict) and all(generation_cost.get(k) is not None
-                       for k in ('seconds', 'input_tokens', 'output_tokens', 'feature_tokens'))
+                       for k in (('seconds', 'numeric_token_count', 'output_points', 'model_executed') if numeric
+                                 else ('seconds', 'input_tokens', 'output_tokens', 'feature_tokens')))
+            if numeric:
+                try:
+                    validate_numeric_cost(generation_cost)
+                except (ValueError, TypeError, KeyError):
+                    complete = False
             episode['cost_events'].append(dict(kind='driver', stage=stage, plan_id=plan_id,
                 attempt_seconds=seconds, generation_cost=copy.deepcopy(generation_cost), complete=complete))
             if complete and costs['generation_seconds'] is not None:
@@ -289,19 +322,22 @@ def run_task_episode(local_window, local_prediction, motion, features,
                 costs.update(complete=False, generation_seconds=None)
             try:
                 frozen_driver()
-                if (output.get('status') != 'parsed' or output.get('q9_executed') is not True or
-                        output.get('q8_executed') is not False or output.get('q8_raw')):
-                    raise ValueError('driver did not produce a valid direct answer')
-                actual = parse_q9(output['q9_raw']).tolist()
-                if actual != output['waypoints']:
-                    raise ValueError('parsed waypoints differ from actual raw driver output')
-                waypoints = validate_plan(actual, limits['execution_spec'])
+                if numeric:
+                    waypoints = validate_numeric_output(output, prepared, limits['execution_spec'])
+                else:
+                    if (output.get('status') != 'parsed' or output.get('q9_executed') is not True or
+                            output.get('q8_executed') is not False or output.get('q8_raw')):
+                        raise ValueError('driver did not produce a valid direct answer')
+                    actual = parse_q9(output['q9_raw']).tolist()
+                    if actual != output['waypoints']:
+                        raise ValueError('parsed waypoints differ from actual raw driver output')
+                    waypoints = validate_plan(actual, limits['execution_spec'])
             except Exception as exc:
                 plan['status'] = 'invalid_plan'
                 emit('driver_completed', plan_id, caused_by_request)
                 return fail('invalid_plan', exc, 'driver_validation', plan_id, caused_by_request)
             plan['status'] = 'valid'
-            previous, current = current, dict(plan_id=plan_id, waypoints=waypoints, raw=output['q9_raw'])
+            previous, current = current, dict(plan_id=plan_id, waypoints=waypoints, raw=output.get('q9_raw'))
             episode['last_valid_plan_id'] = plan_id
             emit('driver_completed', plan_id, caused_by_request)
         else:

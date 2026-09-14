@@ -63,6 +63,8 @@ def _action_id(action):
 def _semantic_binding(runtime_binding,spec):
     """Versioned model/settings identity, separate from load paths and run handles."""
     driver=runtime_binding['driver']
+    from planning.driver_contract import validate_driver_binding
+    numeric = validate_driver_binding(spec['limits'], driver)
     settings={k:copy.deepcopy(driver[k]) for k in ('model_class','decoding','my_model_config','context_limit',
         'evidence_format','released_tokenizer_limit','attention_implementation','actual_rgb_input',
         'point_cloud_feature_input','adapted_to_tool_evidence','training_provenance_verified',
@@ -73,6 +75,8 @@ def _semantic_binding(runtime_binding,spec):
         state=driver['local_training_state']
         settings['local_training_state']=dict(version='toolv2x_driver_training_identity_v1',
             **{k:copy.deepcopy(state[k]) for k in ('epoch','next_row','steps','examples_seen','batch_size','seed') if k in state})
+    if numeric:
+        settings = {k: copy.deepcopy(driver[k]) for k in ('driver_kind', 'driver_spec', 'decoding', 'model_version')}
     predictor=runtime_binding['predictor']
     return dict(state_version='toolv2x_query_state_v1',driver=dict(version=spec['limits']['driver_version'],settings=settings),
         predictor={k:copy.deepcopy(predictor[k]) for k in ('model_version','settings')},
@@ -253,6 +257,13 @@ def _check_episode(task,config):
             ep['driver_provenance']!=actual['driver'] or ep['predictor_binding']!=actual['predictor'] or
             any(ep[k]!=task['row'][k] for k in ('sample_id','scene','g'))):
         raise ValueError('branch model/query/receiver/identity binding changed')
+    if ep['limits']['version'] == 'toolv2x_interaction_v2':
+        from planning.driver_contract import validate_numeric_episode
+        from evaluation.framework import _method_cost
+        validate_numeric_episode(ep)
+        if _method_cost(task)['cost_issues']:
+            raise ValueError('numeric branch stage costs differ from actual outputs')
+        return
     for plan in ep['plans']:
         prepared=plan.get('prepared') or {}
         if not {'evidence_used','remote_evidence_used','admission_report','q9_prompt'}<=set(prepared):

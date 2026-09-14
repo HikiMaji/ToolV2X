@@ -125,6 +125,7 @@ METHOD_COST_FIELDS = ('driver_calls', 'calls', 'rpc_rounds', 'control_seconds', 
     'driver_seconds', 'generation_seconds', 'service_seconds', 'peer_model_seconds',
     'receiver_seconds', 'receiver_model_seconds', 'request_bytes', 'response_bytes',
     'input_tokens', 'output_tokens', 'feature_tokens', 'total_compute_seconds')
+NUMERIC_COST_FIELDS = ('numeric_token_count', 'numeric_output_points')
 METHOD_TIMING_SCOPE = ('sum of measured local MTR, input construction, driver attempts, service attempts and receiver updates; '
     'plus explicitly recorded T6 control decisions/candidate construction; generation and peer/receiver MTR '
     'are nested diagnostics, not added again; excludes model loading, unrecorded executor bookkeeping, '
@@ -203,15 +204,24 @@ def _method_cost(task):
                         # one original setup/first return plus the actual suffix.
                         values[i]=duration+suffix
         put(field, values, expected[kind])
+    numeric = ep.get('limits', {}).get('version') == 'toolv2x_interaction_v2'
     for key in ('seconds','input_tokens','output_tokens','feature_tokens'):
         put('generation_seconds' if key=='seconds' else key,
-            [(e.get('generation_cost') or {}).get(key) for e in groups['driver']], expected['driver'])
+            [0 if numeric and key != 'seconds' else (e.get('generation_cost') or {}).get(key)
+             for e in groups['driver']], expected['driver'])
+    if numeric:
+        for key, source in (('numeric_token_count', 'numeric_token_count'), ('numeric_output_points', 'output_points')):
+            put(key, [(e.get('generation_cost') or {}).get(source) for e in groups['driver']], expected['driver'])
     for e in groups['driver']:
         p = next((p for p in plans if p.get('plan_id')==e.get('plan_id')), None)
         if p is None or p.get('driver_attempt_seconds') != e.get('attempt_seconds'):
             issues.append('driver duration differs from its plan record')
-        elif (p.get('output') or {}).get('q9_cost') != e.get('generation_cost'):
+        elif (p.get('output') or {}).get('driver_cost' if numeric else 'q9_cost') != e.get('generation_cost'):
             issues.append('generation cost differs from its actual output record')
+        if numeric:
+            seconds = (e.get('generation_cost') or {}).get('seconds')
+            if _number(seconds) and _number(e.get('attempt_seconds')) and seconds > e['attempt_seconds']:
+                issues.append('numeric model duration exceeds its enclosing driver attempt')
     put('peer_model_seconds', [(e.get('service_cost') or {}).get('model_seconds') for e in groups['service']], expected['service'])
     ledger = (ep.get('ledger_snapshots') or [{}])[-1]
     receiver_models = ledger.get('receiver_events', [])
@@ -266,6 +276,25 @@ def method_plan_row(plan, label, motion, execution_spec):
     result = dict(plan_id=plan.get('plan_id'), stage=plan.get('stage'), saved_status=plan.get('status'),
         raw_answer=output.get('q9_raw'), parse_valid=False, admissibility=None, record_consistent=True,
         raw_ADE3=None, raw_FDE3=None, valid_label_points=sum(label['valid']), errors=[])
+    if (plan.get('prepared') or {}).get('decoding') == 'numeric':
+        from planning.driver_contract import validate_numeric_output
+        if not output:
+            return result
+        result['raw_answer'] = output.get('waypoints')
+        try:
+            points = np.asarray(output.get('waypoints'), dtype=float)
+            if points.shape != (6, 2) or not np.isfinite(points).all():
+                raise ValueError('numeric answer must contain six finite points')
+            result['parse_valid'] = True
+            quality = trajectory_metrics(points, label, motion.get('speed_mps'))
+            result.update(raw_ADE3=quality['ADE3'], raw_FDE3=quality['FDE3'], quality=quality)
+            validate_numeric_output(output, plan['prepared'], execution_spec)
+        except (ValueError, TypeError, KeyError) as exc:
+            result.update(record_consistent=plan.get('status')=='invalid_plan', admissibility=False)
+            result['errors'].append(str(exc))
+        else:
+            result['admissibility'] = True
+        return result
     if output.get('q9_executed') is not True:
         return result
     try:
@@ -324,6 +353,8 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
         label_status=label_status, valid_label_points=sum(usable_label['valid']), plans=[],
         stop_reason=ep.get('stop_reason'), error=task.get('error') or ep.get('error'),
         execution_kind=ep.get('execution_kind'), control_spec=ep.get('control_spec'), reported_cost=ep.get('cost'), **cost)
+    from evaluation.planning import GOT_PREFIX
+    result.update({k: None for k in GOT_PREFIX})
     if not ep:
         if task.get('status') != 'failed':
             result['artifact_status'] = 'incomplete'
@@ -332,6 +363,12 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
     if (ep.get('version') != 'toolv2x_episode_v2' or
             any(ep.get(k) != result[k] for k in ('sample_id','scene','g','policy_id','branch_id'))):
         problems.append('episode identity/version mismatch')
+    if ep.get('limits', {}).get('version') == 'toolv2x_interaction_v2':
+        from planning.driver_contract import validate_numeric_episode
+        try:
+            validate_numeric_episode(ep)
+        except (ValueError, TypeError, KeyError) as exc:
+            problems.append(str(exc))
     raw_plans = ep.get('plans', [])
     if ([p.get('stage') for p in raw_plans] != list(range(len(raw_plans))) or
             len({p.get('plan_id') for p in raw_plans}) != len(raw_plans)):
@@ -355,6 +392,7 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
         elif not problems and task.get('status') in ('completed','running'):
             # A STOP snapshot is already terminal even if interrupted before the outer task status update.
             result.update(task_success=True, artifact_status='completed', ADE3=result['raw_ADE3'], FDE3=result['raw_FDE3'])
+            result.update({k: result['plans'][-1]['quality'][k] for k in GOT_PREFIX})
     elif ep.get('status')=='running' or terminal not in ('STOP','failed'):
         result['artifact_status'] = 'incomplete'
     elif ep.get('final_plan_id') is not None:
@@ -362,6 +400,7 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
     if problems:
         result.update(artifact_status='invalid_artifact', task_success=False, ADE3=None, FDE3=None,
                       cost_complete=False, artifact_errors=problems)
+        result.update({k: None for k in GOT_PREFIX})
     return result
 
 
@@ -375,6 +414,7 @@ def summarize_method(rows):
     keys = [(r['sample_id'],r['policy_id'],r['branch_id']) for r in rows]
     if len(set(keys)) != len(keys):
         raise ValueError('duplicate method evaluation key')
+    from evaluation.planning import GOT_PREFIX
     groups = []
     for policy, branch in sorted({(r['policy_id'],r['branch_id']) for r in rows}):
         selected = [r for r in rows if (r['policy_id'],r['branch_id'])==(policy,branch)]
@@ -394,8 +434,11 @@ def summarize_method(rows):
             cost_complete_attempts=sum(r['cost_complete'] for r in selected),
             artifact_status_counts=dict(Counter(r['artifact_status'] for r in selected)),
             label_status_counts=dict(Counter(r['label_status'] for r in selected)),
-            metrics={k:_known_stats([r[k] for r in selected]) for k in ('ADE3','FDE3')},
+            metrics={k:_known_stats([r.get(k) for r in selected]) for k in ('ADE3','FDE3') + GOT_PREFIX},
             costs={k:_known_stats([r[k] if r['artifact_status'] != 'invalid_artifact' else None for r in selected]) for k in METHOD_COST_FIELDS}, stages=stages))
+        if any(r['execution_kind']=='structured_numeric' for r in selected):
+            groups[-1]['costs'].update({k:_known_stats([r.get(k) if r['artifact_status']!='invalid_artifact' else None for r in selected])
+                for k in NUMERIC_COST_FIELDS})
     return dict(attempts=len(rows), task_successes=sum(r['task_success'] for r in rows),
                 failures=sum(not r['task_success'] for r in rows), groups=groups)
 

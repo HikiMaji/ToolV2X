@@ -25,9 +25,13 @@ def bundle_collection_spec(value):
         raise ValueError('complete versioned bundle collection specification required')
     value['limits']=validate_limits(value['limits']);validate_provenance(value['local_provenance'])
     control=value['control']=normalize_control(value['control'])
-    if (control is None or control['name']!='one_shot' or control['driver_calls']!=2 or
-            control['bundle']['extra_generation'] is not None):
-        raise ValueError('bundle supervision requires initial and final driver only')
+    if control is None or control['name']!='one_shot':
+        raise ValueError('bundle supervision requires a one-shot control')
+    extra = control['bundle']['extra_generation']
+    numeric = value['limits']['version']=='toolv2x_interaction_v2'
+    if not (control['driver_calls']==2 and extra is None or
+            numeric and control['driver_calls']==3 and extra in ('exact_repeat','self_refinement')):
+        raise ValueError('bundle supervision requires initial/final plans and explicit numeric refinements')
     folds=value['recording_folds']
     if not isinstance(folds,dict) or not folds or any(recording(k)!=k or not isinstance(v,str) or not v for k,v in folds.items()):
         raise ValueError('folds must map physical recordings to explicit fold names')
@@ -41,9 +45,9 @@ def _action_key(action):
 def collect_bundle_branches(online_index, out, runtime, controls_spec):
     """Enumerate legal first P/F and independent STOP/continuation terminals.
 
-    One initial GoT is physically shared. For each first tool, the real provider
+    One actual initial driver plan is shared. For each first tool, the real provider
     first return is captured once; siblings fork only this state. Each suffix and
-    final GoT really executes. Deployed charges include all retained prefix costs.
+    final driver attempt really executes. Deployed charges include all retained prefix costs.
     """
     from planning.query_value import _bundle_state
     spec=bundle_collection_spec(controls_spec)
@@ -172,7 +176,7 @@ def validate_bundle_archive(root):
             continue
         _check_episode(initial,config);ep=initial['episode']
         if entry['status']!='prefix_ready' or ep['requests'] or len(ep['plans'])!=1 or ep['events'][-1]['kind']!='driver_completed':
-            raise ValueError('bundle source must be the actual initial GoT only')
+            raise ValueError('bundle source must be the actual initial driver plan only')
         _,envelopes,preflight=decision_state(ep)
         if len(entry['first_actions'])!=len(preflight):raise ValueError('missing first-tool candidate')
         for first,check in zip(entry['first_actions'],preflight):
@@ -226,8 +230,8 @@ def validate_bundle_archive(root):
                     if (actual['responses'][0]['packet']!=packet or actual['responses'][0]['cost']!=record['primitive_responses'][0]['cost'] or
                             _action_key(decoded['continuation'])!=_action_key(branch['action']) or response.get('collection_reuse')!=reuse):
                         raise ValueError('terminal action or first receipt differs from its source')
-                    if tail['status']=='completed' and len(tail['plans'])!=2:
-                        raise ValueError('one-shot requires exactly one actual final driver')
+                    if tail['status']=='completed' and len(tail['plans'])!=spec['control']['driver_calls']:
+                        raise ValueError('one-shot driver attempts differ from the declared final/refinement budget')
                 elif tail['status']!='service_error':raise ValueError('missing actual bundle transport')
                 cost=_method_cost(terminal)
                 if cost['cost_issues']:raise ValueError('inconsistent raw terminal costs: '+str(cost['cost_issues']))

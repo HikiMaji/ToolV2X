@@ -376,7 +376,6 @@ def _load_interaction_runtime(out, config):
     from prediction import cmp_adapter as C
     from planning.inputs import load_ego_features, load_ego_motion
     from planning.run_connection import load_window
-    from planning.v2vgot import V2VGoTPlanner
     from tools.task_spec import FrozenPredictor
     from tools.vehicle import VehicleTools
 
@@ -393,8 +392,16 @@ def _load_interaction_runtime(out, config):
         config['spec']['local_provenance']['prediction'],
         dict(adapter='cmp_causal_window_v1', batch_size=32, device='cuda', allow_tf32=False,
             predictor_load_identity=load_identity))
-    planner = V2VGoTPlanner(checkpoint=Path(config['checkpoint']), adapter_directory=out/'loaded_adapter',
-        evidence_format='compact', context_limit=config['spec']['limits']['receiver_spec']['context_limit'])
+    numeric = config['spec']['limits']['version'] == 'toolv2x_interaction_v2'
+    if numeric:
+        from planning.structured_driver import load_structured_planner
+        planner = load_structured_planner(Path(config['checkpoint']), device='cuda')
+    else:
+        from planning.v2vgot import V2VGoTPlanner
+        planner = V2VGoTPlanner(checkpoint=Path(config['checkpoint']), adapter_directory=out/'loaded_adapter',
+            evidence_format='compact', context_limit=config['spec']['limits']['receiver_spec']['context_limit'])
+    from planning.driver_contract import validate_driver_binding
+    validate_driver_binding(config['spec']['limits'], planner.provenance)
 
     @lru_cache(maxsize=2)
     def archive(path):
@@ -414,6 +421,14 @@ def _load_interaction_runtime(out, config):
         if (features['read_paths'] != row['feature_read_paths'] or motion != row['ego_motion'] or
                 motion_paths != row['motion_read_paths']):
             raise ValueError('causal input changed since index preparation')
+        history_paths = []
+        if numeric:
+            from planning.structured_inputs import load_ego_history
+            history = load_ego_history(M.V2VGOT_ROOT, 'train', row['g'])
+            features.update(ego_pose_history=np.asarray(history['states'], dtype=float),
+                ego_pose_history_valid=np.asarray(history['valid'], dtype=bool),
+                ego_pose_history_times=np.asarray(history['times'], dtype=float))
+            history_paths = history['read_paths']
         begin = perf_counter()
         local_prediction = binding(ego)
         local_seconds = perf_counter() - begin
@@ -424,7 +439,8 @@ def _load_interaction_runtime(out, config):
         return dict(local_window=ego, local_prediction=local_prediction, motion=motion, features=features,
             service=service, metadata=dict(feature_path='ego_features.npz', local_forecast_path='local_forecast.npz',
                 local_prediction_seconds=local_seconds, local_model_targets=int(local_prediction['model_used'].sum()),
-                feature_read_paths=features['read_paths'], motion_read_paths=motion_paths, window_reads=reads))
+                feature_read_paths=features['read_paths'], motion_read_paths=motion_paths, window_reads=reads,
+                **(dict(ego_history_read_paths=history_paths) if numeric else {})))
 
     return SimpleNamespace(driver=planner, predictor=binding, load_inputs=load,
         provenance=dict(mtr=mtr_provenance, driver=planner.provenance, predictor_binding=binding.descriptor))
@@ -451,7 +467,7 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
         control=normalize_control(spec.get('control'))
         if control is not None:
             spec['control']=control
-            if control['name']=='ego_max_context':
+            if control['name']=='ego_max_context' and spec['limits']['version']=='toolv2x_interaction_v1':
                 spec['limits']['receiver_spec']['peer_reserve']=0
         validate_limits(spec['limits'])
         validate_provenance(spec['local_provenance'])

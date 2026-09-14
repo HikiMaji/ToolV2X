@@ -13,8 +13,9 @@ from common.audit_protocol import recording
 from planning.inputs import parse_q8, parse_q9
 
 TIMES = [.5, 1., 1.5, 2., 2.5, 3.]
+GOT_PREFIX = ('got_prefix_L2_1s', 'got_prefix_L2_2s', 'got_prefix_L2_3s', 'got_prefix_L2_avg')
 QUALITY = ('ADE3', 'FDE3', 'L2_1', 'L2_2', 'first_segment_speed_mps', 'peak_segment_speed_mps',
-           'initial_acceleration_estimate_mps2', 'peak_acceleration_estimate_mps2')
+           'initial_acceleration_estimate_mps2', 'peak_acceleration_estimate_mps2') + GOT_PREFIX
 
 
 def trajectory_metrics(points, label, speed):
@@ -39,7 +40,10 @@ def trajectory_metrics(points, label, speed):
         if not np.isfinite(speed) or speed < 0:
             raise ValueError('invalid current speed')
         initial = float(np.linalg.norm((velocity[0] - [speed, 0.]) / .25))
-    return dict(valid_label_points=int(valid.sum()), ADE3=float(error[valid].mean()) if valid.any() else None,
+    prefix = {key: float(error[:n].mean()) if valid[:n].all() else None
+              for key, n in zip(GOT_PREFIX[:3], (2, 4, 6))}
+    prefix[GOT_PREFIX[3]] = float(np.mean(list(prefix.values()))) if valid.all() else None
+    return dict(**prefix, valid_label_points=int(valid.sum()), ADE3=float(error[valid].mean()) if valid.any() else None,
         FDE3=float(error[-1]) if valid[-1] else None, L2_1=float(error[1]) if valid[1] else None,
         L2_2=float(error[3]) if valid[3] else None, first_segment_speed_mps=float(speeds[0]),
         peak_segment_speed_mps=float(speeds.max()), initial_acceleration_estimate_mps2=initial,

@@ -31,7 +31,7 @@ def _numeric_tensor(value, shape, device, name):
         array = np.asarray(value)
         if array.shape != shape or array.dtype.kind not in 'fiu' or not np.isfinite(array).all():
             raise ValueError('invalid ' + name)
-        tensor = torch.as_tensor(array, device=device, dtype=torch.float32)
+        tensor = torch.as_tensor(array if array.flags.writeable else array.copy(), device=device, dtype=torch.float32)
     if tuple(tensor.shape) != shape or not torch.isfinite(tensor).all().item():
         raise ValueError('invalid ' + name)
     return tensor
@@ -46,7 +46,7 @@ def _bool_tensor(value, shape, device, name):
         array = np.asarray(value)
         if array.shape != shape or array.dtype != np.dtype(bool):
             raise ValueError('invalid ' + name)
-        tensor = torch.as_tensor(array, device=device, dtype=torch.bool)
+        tensor = torch.as_tensor(array if array.flags.writeable else array.copy(), device=device, dtype=torch.bool)
     if tuple(tensor.shape) != shape:
         raise ValueError('invalid ' + name)
     return tensor
