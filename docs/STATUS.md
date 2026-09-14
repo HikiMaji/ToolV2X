@@ -1,5 +1,7 @@
 # ToolV2X 项目状态（给后续 agent 的交接文档）
 
+**当前批次（09-15，结构化数值驾驶基础）：** 输入、网络、交互、监督/恢复四项实现及各自独立审查完成，最终全分支审查和完整回归尚未完成。已下载小于 100 MB 的官方 UniV2X/VAD 参考源码；本批不做真实数据训练、新模型生成或方法效果实验。最新状态以 [实现记录](structured_driver_implementation_2026_09_15.md) 和 [审查记录](structured_driver_review_2026_09_15.md) 为准。下方旧训练/实验条目均是带日期的历史记录。
+
 **最新完成（09-14，共同 receiver v2 + 原两帧联调）：** 用户批准两步一起做。已新增 opt-in `toolv2x_receiver_v2` 的 source/track 轮询；v1 默认、预算、P/F/ledger/策略不变。冻结 GoT epoch01/MTR epoch09，在 g5526/g7007 对两版本各跑 Ego/alternating/one_shot，修正数据根环境后 12/12 任务完成、24 次实际 GoT。旧 v1 全阶段提示与答案精确复现旧 T9；v2 两帧 P 后修订均影响实际第二次 F(change)，返回由新请求真实执行。g5526 工具臂误差增大，g7007 减小但仍差于 Ego，不能宣称序贯或 receiver 收益。轻量 302/302、完整模型环境 358/358、定向与独立原始产物核验通过。第一次错误数据根造成 12 次输入失败、0 GoT/0响应，保留在新运行 v1；有效运行 v2 保留完整成本和因果链。见 [实现说明](receiver_round_robin_implementation_2026_09_14.md) 与 [实际结果](receiver_round_robin_smoke_2026_09_14.md)。没有训练、扩帧、分支枚举、缓存重建或自动推送，停在本批。
 
 **最新完成（09-14，9-13-3）：** A1/A2 已复现并修复；bundle 公开训练入口恢复原始 sample/recording/role/fold 并在拟合前拒绝 validation，alternating 监督从实际 prefix/terminal 方案、独立标签及原 utility 重新计算。完整轻量 300/300、CPU 合成契约 10/10、旧 160 条回答复算通过。B 使用已有两帧六任务，全部 12 个 plan stage 提示/token/Z 复算一致，保存 64 行 unit 明细；两臂最终都被 admission 压到同一目标的两份不同 context 预测。共同轮询仅作 token 模拟，多覆盖 1 个目标，未生成新轨迹。本批不改 receiver、不实际训练/采集/推理、不重建缓存，完成后停止。见 [完整回复](review_9_13_3_response.md) 与 [逐 unit 审计](t9_admission_audit_2026_09_13.md)。本批尚未推送；下面 T9 准备和真实联调两批已在此前更新发布到 main，旧“未推送”保留当时含义。

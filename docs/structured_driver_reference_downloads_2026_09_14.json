@@ -1,0 +1,29 @@
+{
+  "download_limit_bytes": 100000000,
+  "records": [
+    {
+      "repository": "https://github.com/AIR-THU/UniV2X",
+      "archive_url": "https://codeload.github.com/AIR-THU/UniV2X/zip/refs/heads/main",
+      "branch": "main",
+      "download_date": "2026-09-14",
+      "archive_bytes": 1598011,
+      "unpacked_bytes": 4070704,
+      "file_count": 159,
+      "destination": "/root/autodl-tmp/UniV2X",
+      "integrity": "zip CRC checked"
+    },
+    {
+      "repository": "https://github.com/hustvl/VAD",
+      "archive_url": "https://codeload.github.com/hustvl/VAD/zip/refs/heads/main",
+      "branch": "main",
+      "download_date": "2026-09-14",
+      "archive_bytes": 542442,
+      "unpacked_bytes": 1602485,
+      "file_count": 185,
+      "destination": "/root/autodl-tmp/VAD",
+      "integrity": "zip CRC checked"
+    }
+  ],
+  "models_downloaded": false,
+  "datasets_downloaded": false
+}

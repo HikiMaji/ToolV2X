@@ -1,5 +1,17 @@
 # GitHub 审查入口
 
+**当前审查准备（09-15，数值驾驶分支）：** 先读 [实现记录](structured_driver_implementation_2026_09_15.md)、[源码映射](structured_driver_source_mapping_2026_09_14.md)、[计划](superpowers/plans/2026-09-14-structured-driver.md) 和 [审查记录](structured_driver_review_2026_09_15.md)。四项实现及各自独立审查完成，最终全分支审查与完整回归尚未完成。以下旧条目是当时快照，不代表新分支已经训练或执行过真实数据。
+
+新分支审查重点：
+
+- `structured_inputs.py` 的共同坐标、源内实体身份、歧义/远端独有目标、合法 history 和 receipt/派生/实际入模依赖。
+- `structured_driver.py` 的位置历史和 F 多模态实际入网、共享数值头、真实 prior、mask 和同信息等价。
+- 共用 episode/control/query/evaluation 的新版本分支、真实反馈、相同证据对照、单轮委托、全部成本和失败保留。
+- 数值监督的独立标签、物理录制隔离、渐增证据/同证据修订、完整可恢复状态；禁止 target-as-prior。
+- 标准关联/融合/数值头是共同基础；新机制收益、闭环表现和与论文误差直接比较均尚未成立。
+
+只读审查可运行资源无关检查；模型环境测试仅做既定合成/归档回归。不要自动启动训练、真实模型生成或新采集。
+
 **当前审查批次（09-14，共同 receiver 轮询与两帧实际对照）：** 先读 [实现说明](receiver_round_robin_implementation_2026_09_14.md)、[真实结果](receiver_round_robin_smoke_2026_09_14.md) 和 [批准的执行范围](superpowers/plans/2026-09-14-receiver-round-robin.md)。变更仅为共享 receiver 可选版本、稳定目标轮询、原 GoT 版本校验及对应测试/审计 helper 复用；旧 v1 默认保留。轻量 302 项、完整模型环境 358 项通过，冻结两帧旧/新 receiver 共 12 任务与 24 次真实 GoT 完成。请核对新 τ1→实际第二请求→provider 返回→最终 Z 与轨迹、所有生成成本、固定预算/共同规则和失败保留；不要把两帧诊断策略当成训练后的 ToolV2X 或公平 strong one-shot 效果试验。首次输入根目录失败与有效运行分目录保存，未训练或扩帧。本批尚未推送；下方审查文字是历史状态。
 
 **当前审查批次（09-14，9-13-3，本地）：** 先读 [本批要求](9-13-3.md)、[修复与审计回复](review_9_13_3_response.md) 和 [admission 明细](t9_admission_audit_2026_09_13.md)。A1/A2 修复原始 role 与真实方案/标签监督绑定；B 只读重放已有六任务的 tokenizer/admission，receiver 算法不变。完整轻量 300 项与 CPU 合成契约 10 项通过，没有实际策略拟合、GoT/MTR 新执行或扩帧；本批尚未推送。下方 T9 准备和真实联调现已发布到 main，T8 的 271 项/尚缺接口等均为历史快照。
