@@ -233,8 +233,14 @@ def _tracks(ledger, units):
             [remote[k] for k in sorted(remote, key=lambda a: _alias_sort(a, ledger['local_source']))])
 
 
-def _angle_distance(a, b):
+def _box_axis_distance(a, b):
+    """Axis-equivalent box yaw distance; front/back is not used for association."""
     return abs((float(a) - float(b) + math.pi / 2) % math.pi - math.pi / 2)
+
+
+def _directed_angle_distance(a, b):
+    """Directed heading distance for ego-motion corroboration."""
+    return abs((float(a) - float(b) + math.pi) % (2 * math.pi) - math.pi)
 
 
 def _pair_metrics(a, b):
@@ -242,7 +248,7 @@ def _pair_metrics(a, b):
     bb = np.asarray(b['records']['anchor']['value']['box'], dtype=float)
     current = float(np.linalg.norm(aa[:2] - bb[:2]))
     ratio = aa[3:6] / bb[3:6]
-    heading = _angle_distance(aa[6], bb[6])
+    heading = _box_axis_distance(aa[6], bb[6])
     common = 0
     history_distance = 0.
     if 'history' in a['records'] and 'history' in b['records']:
@@ -334,9 +340,20 @@ def _forecast(track, item):
         parent_refs=copy.deepcopy(item['parent_refs']))
 
 
-def _role(tracks, ego_history, spec):
-    representative = sorted(tracks, key=lambda t: (0 if t['source_role'] == 'local' else 1,
+def _representative(tracks):
+    return sorted(tracks, key=lambda t: (0 if t['source_role'] == 'local' else 1,
         -float(t['records']['anchor']['value']['score']), t['alias']))[0]
+
+
+def _representative_value(track):
+    return dict(source=track['alias'][0], track_handle=track['alias'][1],
+        box=copy.deepcopy(track['records']['anchor']['value']['box']),
+        score=track['records']['anchor']['value']['score'],
+        selection='local_then_score_then_canonical_alias')
+
+
+def _role(tracks, ego_history, spec):
+    representative = _representative(tracks)
     box = np.asarray(representative['records']['anchor']['value']['box'], dtype=float)
     if np.linalg.norm(box[:2]) > spec.ego_position_threshold_m:
         return 'obstacle'
@@ -355,7 +372,8 @@ def _role(tracks, ego_history, spec):
     states = np.asarray(observed['history'], dtype=float)[valid]
     ego = np.asarray(ego_history['states'], dtype=float)[valid]
     distance = float(np.sqrt(np.mean(np.sum((states[:, :2] - ego[:, :2]) ** 2, axis=1))))
-    heading = max((_angle_distance(a, b) for a, b in zip(states[:, 6], ego[:, 2])), default=math.inf)
+    heading = max((_directed_angle_distance(a, b) for a, b in zip(states[:, 6], ego[:, 2])),
+                  default=math.inf)
     return 'ego' if distance <= spec.ego_history_distance_m and heading <= spec.ego_heading_rad else 'unresolved'
 
 
@@ -421,8 +439,7 @@ def _parents_closed(keys, records):
 def _make_entity(tracks, status, metrics, ledger, ego_history, spec):
     tracks = sorted(tracks, key=lambda t: _alias_sort(t['alias'], ledger['local_source']))
     aliases = [track['alias'] for track in tracks]
-    representative = sorted(tracks, key=lambda t: (0 if t['source_role'] == 'local' else 1,
-        -float(t['records']['anchor']['value']['score']), t['alias']))[0]
+    representative = _representative(tracks)
     observations = [_observation(track) for track in tracks]
     forecasts = [_forecast(track, item) for track in tracks for item in track['forecasts']]
     parents = {field_key(ref): ref for forecast in forecasts for ref in forecast['parent_refs']}
@@ -431,11 +448,7 @@ def _make_entity(tracks, status, metrics, ledger, ego_history, spec):
     return dict(entity_id=_entity_id(aliases, ledger['local_source']),
         aliases=[_alias_value(alias) for alias in aliases], role=_role(tracks, ego_history, spec),
         association=association,
-        representative_anchor=dict(source=representative['alias'][0],
-            track_handle=representative['alias'][1],
-            box=copy.deepcopy(representative['records']['anchor']['value']['box']),
-            score=representative['records']['anchor']['value']['score'],
-            selection='local_then_score_then_canonical_alias'),
+        representative_anchor=_representative_value(representative),
         observations=observations, forecast_sets=forecasts,
         parent_refs=[copy.deepcopy(parents[k]) for k in sorted(parents)], tensor_index=None)
 
@@ -516,6 +529,39 @@ def _tensors(entities, spec):
         entity_mask=entity_mask.tolist()), selected
 
 
+def _admission_groups(entities, spec):
+    field_groups, local_groups = [], []
+    for entity in entities:
+        admitted_entity = entity['tensor_index'] is not None
+        use = 'ego_filter' if entity['role'] == 'ego' else (
+            'tensor' if admitted_entity else 'entity_capacity')
+        for observation in entity['observations']:
+            group = dict(entity_id=entity['entity_id'], tensor_index=entity['tensor_index'],
+                kind='observation', use=use, source_role=observation['source_role'],
+                primary_refs=copy.deepcopy(observation['primary_refs']),
+                anchor_ref=copy.deepcopy(observation['anchor_ref']),
+                tensor_locations=[] if not admitted_entity else [dict(
+                    array='observations', entity=entity['tensor_index'],
+                    source_slot=0 if observation['source_role'] == 'local' else 1)])
+            (local_groups if observation['source_role'] == 'local' else field_groups).append(
+                dict(ref=copy.deepcopy(observation['anchor_ref']), **group)
+                if observation['source_role'] == 'local' else group)
+        for column, forecast in enumerate(sorted(entity['forecast_sets'], key=_forecast_order)):
+            admitted_set = admitted_entity and column < spec.max_forecast_sets_per_entity
+            group = dict(entity_id=entity['entity_id'], tensor_index=entity['tensor_index'],
+                kind='forecast', use='tensor' if admitted_set else (
+                    'ego_filter' if entity['role'] == 'ego' else 'structured_capacity'),
+                source_role=forecast['source_role'], primary_refs=copy.deepcopy(forecast['primary_refs']),
+                anchor_ref=copy.deepcopy(forecast['anchor_ref']), tensor_locations=[dict(
+                    array='forecasts', entity=entity['tensor_index'], forecast_set=column)]
+                    if admitted_set else [])
+            if forecast['source_role'] == 'local':
+                local_groups.append(dict(ref=copy.deepcopy(forecast['primary_refs'][0]), **group))
+            else:
+                field_groups.append(group)
+    return field_groups, local_groups
+
+
 def build_structured_plan_input(motion, ledger, spec, *, ego_history=None,
                                 previous_plan=None, previous_parent_refs=()):
     """Build a JSON-native numeric record from a verified cumulative ledger."""
@@ -564,34 +610,7 @@ def build_structured_plan_input(motion, ledger, spec, *, ego_history=None,
     acquired_refs = [copy.deepcopy(r['ref']) for r in ledger['acquired_fields']]
     derived_refs = [copy.deepcopy(r['ref']) for r in ledger['derived_fields']]
 
-    field_groups, local_groups = [], []
-    for entity in entities:
-        use = 'ego_filter' if entity['role'] == 'ego' else (
-            'tensor' if entity in selected else 'entity_capacity')
-        for observation in entity['observations']:
-            group = dict(entity_id=entity['entity_id'], tensor_index=entity['tensor_index'],
-                kind='observation', use=use, source_role=observation['source_role'],
-                primary_refs=copy.deepcopy(observation['primary_refs']),
-                anchor_ref=copy.deepcopy(observation['anchor_ref']),
-                tensor_locations=[] if entity['tensor_index'] is None else [dict(
-                    array='observations', entity=entity['tensor_index'],
-                    source_slot=0 if observation['source_role'] == 'local' else 1)])
-            (local_groups if observation['source_role'] == 'local' else field_groups).append(
-                dict(ref=copy.deepcopy(observation['anchor_ref']), **group)
-                if observation['source_role'] == 'local' else group)
-        for column, forecast in enumerate(sorted(entity['forecast_sets'], key=_forecast_order)):
-            admitted_set = entity in selected and column < spec.max_forecast_sets_per_entity
-            forecast_group = dict(entity_id=entity['entity_id'], tensor_index=entity['tensor_index'],
-                kind='forecast', use='tensor' if admitted_set else (
-                    'ego_filter' if entity['role'] == 'ego' else 'structured_capacity'),
-                source_role=forecast['source_role'], primary_refs=copy.deepcopy(forecast['primary_refs']),
-                anchor_ref=copy.deepcopy(forecast['anchor_ref']), tensor_locations=[dict(
-                    array='forecasts', entity=entity['tensor_index'], forecast_set=column)]
-                    if admitted_set else [])
-            if forecast['source_role'] == 'local':
-                local_groups.append(dict(ref=copy.deepcopy(forecast['primary_refs'][0]), **forecast_group))
-            else:
-                field_groups.append(forecast_group)
+    field_groups, local_groups = _admission_groups(entities, spec)
     dropped = [dict(ref=copy.deepcopy(records[key]['ref']), reason='structured_capacity')
                for key in sorted(dropped_keys)]
     report = dict(acquired_field_refs=acquired_refs, derived_field_refs=derived_refs,
@@ -666,6 +685,8 @@ def validate_structured_prepared(prepared):
     if type(prepared['entities']) is not list:
         raise ValueError('entities must be a list')
     seen_ids, tensor_indices, entity_refs, derived_parents = set(), [], set(), {}
+    semantic_tracks = {'local': [], 'remote': []}
+    semantic_aliases = set()
     for entity in prepared['entities']:
         _keys(entity, ('entity_id', 'aliases', 'role', 'association', 'representative_anchor',
             'observations', 'forecast_sets', 'parent_refs', 'tensor_index'), 'entity')
@@ -696,6 +717,8 @@ def validate_structured_prepared(prepared):
         if (entity['association']['status'] not in ('matched', 'ambiguous', 'unmatched') or
                 entity['association']['rule'] != 'gated_hungarian_v1_ambiguous_separate'):
             raise ValueError('invalid association result')
+        if ((entity['association']['status'] == 'matched') != (len(alias_keys) == 2)):
+            raise ValueError('association status and alias cardinality disagree')
         representative = entity['representative_anchor']
         _keys(representative, ('source', 'track_handle', 'box', 'score', 'selection'),
               'representative anchor')
@@ -713,6 +736,10 @@ def validate_structured_prepared(prepared):
                     observation['anchor_ref']['field_kind'] != 'anchor'):
                 raise ValueError('observation source and alias disagree')
             roles.append(observation['source_role'])
+            alias = (observation['source'], observation['anchor_ref']['track_handle'])
+            if alias in semantic_aliases:
+                raise ValueError('source-local observation appears in multiple entities')
+            semantic_aliases.add(alias)
             entity_refs.add(field_key(observation['anchor_ref']))
             primary = [field_key(ref) for ref in observation['primary_refs']]
             entity_refs.update(primary)
@@ -737,6 +764,17 @@ def validate_structured_prepared(prepared):
                              history_scores=value['scores'], history_times=value['times'],
                              proxy_status=value['proxy_status'])
                 _field_value('history', check)
+            track = dict(alias=alias, source_role=observation['source_role'], records={
+                'anchor': dict(ref=copy.deepcopy(observation['anchor_ref']), value=dict(
+                    box=copy.deepcopy(value['states'][-1]), score=value['scores'][-1]))}, forecasts=[])
+            if observation['history_ref'] is not None:
+                track['records']['history'] = dict(ref=copy.deepcopy(observation['history_ref']),
+                    value=dict(history=copy.deepcopy(value['states']),
+                        history_valid=copy.deepcopy(value['valid']),
+                        history_scores=copy.deepcopy(value['scores']),
+                        history_times=copy.deepcopy(value['times']),
+                        proxy_status=value['proxy_status']))
+            semantic_tracks[observation['source_role']].append(track)
         if len(roles) != len(set(roles)) or not roles:
             raise ValueError('entity source observation slots must be unique')
         for forecast in entity['forecast_sets']:
@@ -761,6 +799,22 @@ def validate_structured_prepared(prepared):
                 derived_parents.setdefault(key, set()).update(parents)
     if sorted(tensor_indices) != list(range(count)):
         raise ValueError('entity metadata and mask capacity disagree')
+    local_sources = {track['alias'][0] for track in semantic_tracks['local']}
+    if len(local_sources) != 1:
+        raise ValueError('structured entities require one local source')
+    expected_entities = _entities(semantic_tracks['local'], semantic_tracks['remote'],
+        dict(local_source=next(iter(local_sources))), prepared['ego_history_used'], spec)
+    identity = lambda entity: tuple((alias['source'], alias['track_handle'])
+                                    for alias in entity['aliases'])
+    expected_by_alias = {identity(entity): entity for entity in expected_entities}
+    if set(expected_by_alias) != {identity(entity) for entity in prepared['entities']}:
+        raise ValueError('entity aliases do not match recomputed association')
+    for entity in prepared['entities']:
+        expected = expected_by_alias[identity(entity)]
+        if (entity['aliases'] != expected['aliases'] or entity['role'] != expected['role'] or
+                entity['association'] != expected['association'] or
+                entity['representative_anchor'] != expected['representative_anchor']):
+            raise ValueError('entity association, role or representative anchor changed')
     canonical = copy.deepcopy(prepared['entities'])
     for entity in canonical:
         entity['tensor_index'] = None
@@ -782,6 +836,10 @@ def validate_structured_prepared(prepared):
     derived = [field_key(ref) for ref in report['derived_field_refs']]
     admitted = [field_key(ref) for ref in report['admitted_field_refs']]
     dropped = [field_key(ref) for ref in report['dropped_field_refs']]
+    expected_field_groups, expected_local_groups = _admission_groups(prepared['entities'], spec)
+    if (report['field_groups'] != expected_field_groups or
+            report['local_field_groups'] != expected_local_groups):
+        raise ValueError('admission groups or tensor locations changed')
     if (len(acquired) != len(set(acquired)) or len(derived) != len(set(derived)) or
             len(admitted) != len(set(admitted)) or len(dropped) != len(set(dropped)) or
             set(admitted) & set(dropped) or not set(previous_keys) <= set(admitted)):

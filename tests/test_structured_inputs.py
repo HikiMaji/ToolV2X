@@ -280,6 +280,62 @@ class StructuredReceiverTests(unittest.TestCase):
         self.assertFalse(any(prepared['tensor_inputs']['entity_mask']))
         self.assertTrue(prepared['ego_history_used'])
 
+    def test_opposite_ego_heading_remains_unresolved_and_in_tensor(self):
+        local = one_track('ego', .1, 3)
+        local['states'][:, :, 6] = np.pi
+        ledger, _ = self.ledger(local)
+        ego_history = dict(states=[[0., 0., 0.]] * 11, valid=[True] * 11,
+                           times=(np.arange(-10, 1) / 10.).tolist(), read_paths=[])
+        prepared = self.build(ledger, ego_history=ego_history)
+        self.assertEqual(prepared['entities'][0]['role'], 'unresolved')
+        self.assertEqual(prepared['entities'][0]['tensor_index'], 0)
+        self.assertTrue(prepared['tensor_inputs']['entity_mask'][0])
+
+    def matched_prepared(self):
+        ledger, predictor = self.ledger(one_track('ego', 10., 7, score=.8))
+        ledger, _ = self.acquire(ledger, predictor, one_track('peer', 10.2, 99, score=.99))
+        return self.build(ledger)
+
+    def test_validator_recomputes_association_representative_and_role(self):
+        from planning.structured_inputs import validate_structured_prepared
+        prepared = self.matched_prepared()
+        corruptions = []
+        bad = copy.deepcopy(prepared)
+        bad['entities'][0]['association']['status'] = 'unmatched'
+        corruptions.append(bad)
+        bad = copy.deepcopy(prepared)
+        bad['entities'][0]['association']['metrics']['current_distance_m'] += 1.
+        corruptions.append(bad)
+        bad = copy.deepcopy(prepared)
+        bad['entities'][0]['representative_anchor']['box'][0] += 1.
+        corruptions.append(bad)
+        bad = copy.deepcopy(prepared)
+        bad['entities'][0]['role'] = 'unresolved'
+        corruptions.append(bad)
+        for bad in corruptions:
+            with self.subTest(), self.assertRaises(ValueError):
+                validate_structured_prepared(bad)
+
+    def test_validator_requires_exact_bounded_tensor_locations(self):
+        from planning.structured_inputs import validate_structured_prepared
+        prepared = self.matched_prepared()
+        corruptions = []
+        bad = copy.deepcopy(prepared)
+        observation = next(group for groups in ('field_groups', 'local_field_groups')
+                           for group in bad['admission_report'][groups]
+                           if group['kind'] == 'observation' and group['tensor_locations'])
+        observation['tensor_locations'][0]['source_slot'] = 99
+        corruptions.append(bad)
+        bad = copy.deepcopy(prepared)
+        forecast = next(group for groups in ('field_groups', 'local_field_groups')
+                        for group in bad['admission_report'][groups]
+                        if group['kind'] == 'forecast' and group['tensor_locations'])
+        forecast['tensor_locations'][0]['forecast_set'] = 99
+        corruptions.append(bad)
+        for bad in corruptions:
+            with self.subTest(), self.assertRaises(ValueError):
+                validate_structured_prepared(bad)
+
     def test_validator_rejects_shape_mask_and_nonfinite_corruption(self):
         from planning.structured_inputs import validate_structured_prepared
         ledger, _ = self.ledger(one_track('ego', 10.))
