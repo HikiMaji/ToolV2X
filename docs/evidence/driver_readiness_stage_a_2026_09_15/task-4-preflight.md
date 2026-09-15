@@ -1,0 +1,20 @@
+# Task4 controller preparation notes
+
+Read source metadata and source_causal_frames.jsonl in this workspace; controller already whitelisted and checked all existing splits/exclusions using only JSON. source index and source split/config pointers are in task-4-source-metadata.json. acceptance-identity-preview.json has the deterministic first/last g per physical recording, 20 total =16train/4validation. Do not read labels/arrays/checkpoints.
+
+Use actual Task3 _config/API keys from its completed report, not a parallel validation schema. Fit v1 remains unchanged; prepared train config is explicit v2. Include complete specs as literal JSON.
+
+Conditional bootstrap concretizes existing ruling: use fixed Ego task stage0 archives from the initial 20-frame integration attempt, including failed numeric outputs with valid prepared inputs. One row per selected frame, research roles preserved; 16train/4validation expected source coverage, no performance-based selection. Do not use every duplicated initial stage from all four conditions. Maximum3epochs, validation at each epoch processed-batch boundary, retain missing-label/failed coverage denominators. The 20 frames are integration acceptance, not an unbiased effect test. A label/feature/valid-prepared failure is reported and diagnosed before actual training, not silently omitted.
+
+No new bootstrap collection schema. A genuine retained failed numeric task is supported by existing exporter. These statements describe a future gate, not collected data or current model ability.
+
+A bootstrap checkpoint aids recollection; full adaptation fit currently starts fresh seeded initialization and uses recollected data. No warm-start API is implemented or promised, and changing rows/config is never exact resume. Shared-driver capability is evaluated only after actual adaptation/recollection. Describe this explicitly.
+
+Control construction must use existing normalize_control/episode_bundle and check total UTF-8 request + permitted outer response versus episode budget on a synthetic public state. This is a contract probe without provider/model invocation. Do not fake method_run_spec runtime identity before actual loading.
+
+Default readiness settings preserve all interval checkpoints. No real storage/runtime cost has been measured this batch; actual execution preflight must ensure output capacity and choose fresh output paths. Do not add a checkpoint retention framework or auto-delete artifacts.
+
+## Verified integration gap to resolve in preparation
+Existing method_episode.diagnostic_policy and run_framework.interact whitelist only stop/p_current/p_current_f_change. There is no F-only current or unconditional-current PF diagnostic selector. Do not silently label p_current_f_change as a guaranteed PF condition, and do not change to legacy ROI. Minimal shared extension allowed in Task4: add fixed diagnostic IDs f_current and p_current_f_current, route existing callable and CLI whitelist through one exported constant, keeping all existing IDs/semantics. Fixed sequence depends only actual prior remote count; available-actions/budget/STOP remain honored. Tests should cover Ego/P/F/PF scheduled tools, no forecast-preview read, actual legal requested modes, and existing IDs unchanged; real service smoke is not authorized. No learned policy and no new Method mechanism. This makes four collection recipe conditions genuinely expressible by existing runtime after a real load identity is available.
+
+Task3 implementation detail to reconcile after final review: v2 optimizer batches exclude zero-label rows, so an epoch batch count cannot be certified from metadata before independent labels exist. Bootstrap JSON may freeze the expected 16 training-row configuration (8 batches), but real preflight must check actual eligible count and save a complete concrete bootstrap config with interval=ceil(eligible_train_rows/2) before starting; never silently rewrite a running config. Stage A can only prepare/validate the recipe and expected config, not certify label coverage or fabricated runtime identity.

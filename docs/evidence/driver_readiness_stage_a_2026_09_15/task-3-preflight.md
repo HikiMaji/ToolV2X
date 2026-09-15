@@ -1,0 +1,9 @@
+# Task3 concrete shared-data considerations
+- _task_rows permits failed numeric outputs with valid prepared input; no collection schema changes are needed to learn from initial Ego failures.
+- fit(v1) fresh training uses configured seed; checkpoint initialize only enables runtime collection. Conditional bootstrap in A4 is a collection aid; do not silently turn a bootstrap-only checkpoint into resume with new rows/config. Any future warm-start must be explicit, with fresh optimizer/data binding, not disguised exact resume. No warm-start API requested in Task3.
+- Task4 default values consume your exact _config: seed7, epochs20, refinement1, batch2, save25, validation100 plus initial/final, devicecuda future setting. Bootstrap config separately epochs3 and validation at each epoch's prepared batch count; no actual execution.
+- Distinguish output-generation index (initial/current/refinement) and source evidence condition; equivalent receipts define conditions P/F/PF, direct coverage is audited separately.
+- selection excludes no-label rows from labeled denominator and documents incomplete six-point horizons separately. Invalid predictions cannot improve metric by disappearing; all-invalid has no eligible best.
+- No performance-tested claim, actual models only tiny synthetic CPU fixtures.
+- Offline prefix+refinement may perform more than three training forwards for a row; these are training objectives, never an online episode or its billed3-attempt result. Keep main selected-stage metrics separate from additional refinement metrics so comparison matches actual deployable stages.
+- Canonical evidence condition is the set of actual primitive receipt tools: empty=Ego, P=P, F=F, {P,F}=PF. Repeat P or order F->P must not invent PP/FP extra training conditions; keep actual order only in audit. Task4 default named P-state maps canonical P with observations_only spec.

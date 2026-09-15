@@ -111,7 +111,7 @@ Freeze bootstrap budget as a maximum of3epochs of v2 Ego rows, sameoptimizer/see
 
 ## Final delivery
 
-- [ ] Independent whole-branch review; one consolidated fix wave with scoped re-review if needed. No open important findings silently waived.
-- [ ] Required complete lightweight and model-environment regressions on final source, external paths explicit; publish first failures and resolution separately. No real model generation/training.
-- [ ] Update README/STATUS/review entry and detailed report with actual APIs/files/configs/tests/review history/limitations. Archive decision ledger before private-workspace cleanup.
+- [x] Independent whole-branch review; one consolidated fix wave with scoped re-review if needed. No open important findings silently waived.
+- [x] Required complete lightweight and model-environment regressions on final source, external paths explicit; publish first failures and resolution separately. No real model generation/training.
+- [x] Update README/STATUS/review entry and detailed report with actual APIs/files/configs/tests/review history/limitations. Archive decision ledger before private-workspace cleanup.
 - [ ] Locally integrate to main preserving original dirty documents byte-for-byte, no push. Report Stage A complete and real stages B–D not executed.

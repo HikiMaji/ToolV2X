@@ -1,0 +1,33 @@
+{
+  "status": "complete_regressions_pass",
+  "light_python": "/root/miniconda3/bin/python",
+  "model_python": "/root/autodl-tmp/conda-envs/llava/bin/python",
+  "python_versions": "3.8.10 both",
+  "threads": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "model_environment": {
+    "TOOLV2X_V2VGOT_ROOT": "/root/autodl-tmp/V2V-GoT",
+    "TOOLV2X_CMP_ROOT": "/root/autodl-tmp/CMP",
+    "TOOLV2X_LLAVA_BASE": "/root/autodl-tmp/ToolV2X/models/llava-v1.5-7b",
+    "TOOLV2X_CLIP_ROOT": "/root/autodl-tmp/ToolV2X/models/clip-vit-large-patch14-336"
+  },
+  "archived_fixture_comparison": "three train_g0719 JSON files equal main",
+  "main_committed_source": "unchanged from named batch base",
+  "scope": "No real dataset/model training, generation, provider inference or method experiment. Full model environment exercises synthetic CPU model/optimizer and existing archived component contracts.",
+  "light": {
+    "tests": 346,
+    "seconds": 218.261,
+    "exit_code": 0,
+    "command": "/root/miniconda3/bin/python scripts/check_review.py"
+  },
+  "model": {
+    "tests": 448,
+    "seconds": 448.31,
+    "exit_code": 0,
+    "command": "/root/autodl-tmp/conda-envs/llava/bin/python -m unittest discover -s tests -p 'test_*.py'"
+  },
+  "final_review": "spec and quality PASS; no unresolved findings",
+  "source_scope": "isolated feature/driver-readiness; post-test changes only documentation/evidence; local main integration next"
+}

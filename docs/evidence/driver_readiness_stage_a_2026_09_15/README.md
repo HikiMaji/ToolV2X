@@ -1,9 +1,9 @@
-# Stage A implementation evidence
+# Stage A implementation and verification evidence
 
-All four task implementations and independent reviews are complete. Whole-branch review and full regression remain pending at this snapshot. These reports retain first failures and scoped fixes; no real dataset training, provider inference, model generation or method experiment occurred.
+All four implementations, task reviews/fix reviews and whole-branch review passed. Complete lightweight regression:346/346 in218.261s; complete model-environment regression:448/448 in448.310s; both exit0. Commands and explicit external-resource environment are in verification_manifest.json.
 
-Task1: decision accounting. Task2: direct/indirect evidence audit and acquired/derived split. Task3: versioned objective/weights/periodic validation/resume. Task4: frozen metadata/configuration, fixed diagnostic selectors and portable validation.
+Task1 records decision accounting; Task2 evidence-use audit and acquired/derived split; Task3 stage objective, weights, periodic validation and exact resume; Task4 frozen preparation and diagnostic selectors. Task reports retain first failures and scoped fixes. final-review.md is the independent whole-branch verdict. decision_ledger.md records all three rulings and rework costs.
 
-`decision_ledger.md` records the three controller rulings and their rework costs. Task reports and review files are named by task number; logs include synthetic CPU contract tests. Original paths name their execution worktree and temporary fixtures; those private paths are historical. The public validation command is in the preparation document and works without private inputs.
+No real dataset training, original7B generation, real provider collection or new method experiment occurred. Model-environment tests use synthetic CPU network/optimizer and archived component contracts. Logs retain the observed tokenizer-length,PEFT-config and Transformer optimization warnings; passing these tests does not establish CUDA parity or task quality. Published text logs trim trailing whitespace only.
 
-Published text logs trim trailing whitespace only; test messages, counts and exit evidence are retained.
+Original report paths identify their historical execution worktree and temporary fixtures. Public preparation validation works without private files. Local integration evidence is recorded separately after the actual merge; no GitHub push is automatic.
