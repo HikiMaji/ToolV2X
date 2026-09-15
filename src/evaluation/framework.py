@@ -127,9 +127,9 @@ METHOD_COST_FIELDS = ('driver_calls', 'calls', 'rpc_rounds', 'control_seconds', 
     'input_tokens', 'output_tokens', 'feature_tokens', 'total_compute_seconds')
 NUMERIC_COST_FIELDS = ('numeric_token_count', 'numeric_output_points')
 METHOD_TIMING_SCOPE = ('sum of measured local MTR, input construction, driver attempts, service attempts and receiver updates; '
-    'plus explicitly recorded T6 control decisions/candidate construction; generation and peer/receiver MTR '
-    'are nested diagnostics, not added again; excludes model loading, unrecorded executor bookkeeping, '
-    'persistence I/O and network transport; old runs have no measured policy stage; shared local MTR charged once per task; '
+    'plus every explicitly recorded request decision and candidate construction interval; generation and peer/receiver MTR '
+    'are nested diagnostics, not added again; excludes model loading, process management, unrecorded executor bookkeeping, '
+    'persistence I/O and network transport; legacy runs with missing decision timing remain unknown; shared local MTR charged once per task; '
     'offline bundle forks charge one retained first-return duration plus the measured post-restore suffix, '
     'while repeated setup in the outer physical attempt is collection overhead')
 
@@ -140,6 +140,7 @@ def _number(value):
 
 def _method_cost(task):
     """Read non-overlapping measured stages; keep known prefixes when totals are unknown."""
+    from planning.method_episode import COMPUTE_ACCOUNTING_VERSION, DECISION_TIMING_VERSION
     from probe.kinematic_tools import encode
     ep = task.get('episode') or {}
     events, plans = ep.get('events', []), ep.get('plans', [])
@@ -175,11 +176,18 @@ def _method_cost(task):
     put('calls', primitive_counts)
     control_events=[e for e in charges if e['kind']=='control']
     control_stages={e['stage'] for e in control_events}
-    expected_control={e['stage'] for e in events if e['kind']=='decision'} if ep.get('control_spec') else set()
+    expected_control={e['stage'] for e in events if e['kind']=='decision'} | control_stages
     if len(control_stages)!=len(control_events):
         issues.append('duplicate control cost stage')
-    put('control_seconds', [e.get('seconds') if e.get('timing_version')=='toolv2x_control_compute_v2' else None
-                            for e in control_events] + [None]*len(expected_control-control_stages))
+    accounting_version=ep.get('compute_accounting_version')
+    recognized=accounting_version in (None, COMPUTE_ACCOUNTING_VERSION)
+    if not recognized:
+        issues.append('unknown compute accounting version')
+    put('control_seconds', [e.get('seconds') if (recognized and e.get('timing_version')==DECISION_TIMING_VERSION
+                            and e.get('complete') is True) else None for e in control_events]
+                            + [None]*len(expected_control-control_stages))
+    known['control_seconds'] = sum(e['seconds'] for e in control_events
+        if recognized and e.get('timing_version')==DECISION_TIMING_VERSION and _number(e.get('seconds')))
     if expected['driver'] != len(plans):
         issues.append('driver attempts and plan records disagree')
     for kind, field, value_key in [('driver','driver_seconds','attempt_seconds'),
@@ -353,6 +361,7 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
         label_status=label_status, valid_label_points=sum(usable_label['valid']), plans=[],
         stop_reason=ep.get('stop_reason'), error=task.get('error') or ep.get('error'),
         execution_kind=ep.get('execution_kind'), control_spec=ep.get('control_spec'), reported_cost=ep.get('cost'), **cost)
+    result['compute_accounting_version'] = ep.get('compute_accounting_version')
     from evaluation.planning import GOT_PREFIX
     result.update({k: None for k in GOT_PREFIX})
     if not ep:
@@ -516,11 +525,16 @@ def evaluate_method(episodes_root, out, labels_root):
         issues.append('source run is incomplete or lacks progress record')
     if progress and progress.get('terminal_tasks') != len(expected):
         issues.append('source terminal count differs from expected samples')
+    accounting_versions=Counter(r.get('compute_accounting_version') or 'legacy_unspecified' for r in rows)
+    from planning.method_episode import COMPUTE_ACCOUNTING_VERSION
     report = dict(version='toolv2x_method_evaluation_v1', status='evaluation_completed',
         **summarize_method(rows), archive_issues=issues, source_progress=progress,
         by_recording={group:summarize_method([r for r in rows if r['recording']==group])
                       for group in sorted({r['recording'] for r in rows})},
-        timing_scope=METHOD_TIMING_SCOPE, cost_scope='toolv2x_measured_stages_v3' if config['spec'].get('control') else 'toolv2x_measured_stages_v1',
+        timing_scope=METHOD_TIMING_SCOPE,
+        cost_scope=('toolv2x_measured_stages_v4' if set(accounting_versions)=={COMPUTE_ACCOUNTING_VERSION}
+                    else 'toolv2x_measured_stages_mixed_or_legacy'),
+        compute_accounting_versions=dict(accounting_versions),
         task_success_definition='actual terminal STOP with valid direct answer and configured admissibility; not safety or low-error success',
         raw_metric_scope='last recorded driver attempt may be only a failed episode prefix; never substituted for successful final metrics',
         label_scope='offline only; missing/partial labels change metric coverage, not parsing or execution success',

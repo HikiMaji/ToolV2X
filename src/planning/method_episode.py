@@ -18,6 +18,10 @@ from tools.task_spec import (ExecutionSpec, TASK_VERSION, TIMES, validate_plan,
                              validate_task_request, _check_json_native, _version_pair)
 
 
+COMPUTE_ACCOUNTING_VERSION = 'toolv2x_compute_accounting_v1'
+DECISION_TIMING_VERSION = 'toolv2x_control_compute_v2'
+
+
 def validate_limits(limits):
     _check_json_native(limits)
     required = {'version', 'execution_spec', 'receiver_spec', 'max_calls', 'policy_id', 'driver_version'}
@@ -162,7 +166,8 @@ def run_task_episode(local_window, local_prediction, motion, features,
     costs = dict(driver_attempts=0, query_attempts=0, request_bytes=0, response_bytes=0,
                  driver_attempt_seconds=0., generation_seconds=0., service_seconds=0.,
                  receiver_seconds=0., input_build_seconds=0., complete=True)
-    episode = dict(version='toolv2x_episode_v2', sample_id=sample_id or '%s_g%d' % (scene, g),
+    episode = dict(version='toolv2x_episode_v2', compute_accounting_version=COMPUTE_ACCOUNTING_VERSION,
+        sample_id=sample_id or '%s_g%d' % (scene, g),
         branch_id=branch_id, policy_id=limits['policy_id'], scene=scene, g=g, provider=service.provider,
         coordinate_frame='ego_at_t', times=list(TIMES), limits=limits, ego_motion=motion,
         predictor_binding=predictor.descriptor, driver_provenance=driver_config,
@@ -184,7 +189,8 @@ def run_task_episode(local_window, local_prediction, motion, features,
             validate_numeric_episode(prefix)
         # Only live initial/first-response driver prefixes, not process recovery.
         prefix_calls=len(prefix.get('requests', []))
-        if (prefix.get('version') != 'toolv2x_episode_v2' or prefix.get('status') != 'running' or
+        if (prefix.get('version') != 'toolv2x_episode_v2' or
+                prefix.get('compute_accounting_version') != COMPUTE_ACCOUNTING_VERSION or prefix.get('status') != 'running' or
                 prefix_calls not in (0,1) or len(prefix.get('plans', [])) != prefix_calls+1 or
                 len(prefix.get('responses', [])) != prefix_calls or prefix['events'][-1]['kind'] != 'driver_completed' or
                 any(prefix.get(k) != episode[k] for k in ('sample_id','scene','g','provider','driver_provenance','predictor_binding','ego_motion','feature_tokens')) or
@@ -348,10 +354,13 @@ def run_task_episode(local_window, local_prediction, motion, features,
             emit('same_evidence_generation', plan_id, caused_by_request)
             stage += 1
             continue
+        control_event = dict(kind='control', stage=stage, timing_version=DECISION_TIMING_VERSION,
+                             seconds=None, complete=False)
+        episode['cost_events'].append(control_event)
         control_elapsed = 0.
         control_begin = perf_counter()
         try:
-            state,candidates,preflight=decision_state(episode)
+            state,candidates,preflight=decision_state(dict(episode,cost_events=episode['cost_events'][:-1]))
             actions=state['available_actions'];remaining=state['remaining_budget']['calls']
             forced_reason=None
             if not remaining:
@@ -365,14 +374,15 @@ def run_task_episode(local_window, local_prediction, motion, features,
                     dict(tool=decision['tool'], mode=decision['mode']) not in actions):
                 raise ValueError('policy must select an available action, not request content')
         except Exception as exc:
-            if control_spec:
-                episode['cost_events'].append(dict(kind='control',stage=stage,timing_version='toolv2x_control_compute_v2',seconds=control_elapsed+perf_counter()-control_begin,complete=False))
+            control_event['seconds'] = control_elapsed + perf_counter() - control_begin
+            costs['complete'] = False
             return fail('policy_error',exc,'request_preflight_or_policy',plan_id)
         recorded=dict(state=state,action=copy.deepcopy(decision),executed_action=None,
             policy_called=forced_reason is None,forced_reason=forced_reason,
             request_preflight=preflight,infeasible_actions=[p for p in preflight if not p['feasible']],execution_override=None)
         episode['decisions'].append(recorded)
         control_elapsed += perf_counter()-control_begin
+        control_event['seconds'] = control_elapsed
         emit('decision',plan_id)
         control_begin=perf_counter()
         if decision['tool']!='STOP':
@@ -388,12 +398,11 @@ def run_task_episode(local_window, local_prediction, motion, features,
                 elif not is_bundle:
                     validate_task_request(request,{r['receipt_id']:r['record_refs'] for r in ledger['receipts']})
             except Exception as exc:
-                if control_spec:
-                    episode['cost_events'].append(dict(kind='control',stage=stage,timing_version='toolv2x_control_compute_v2',seconds=control_elapsed+perf_counter()-control_begin,complete=False))
+                control_event['seconds'] = control_elapsed + perf_counter() - control_begin
+                costs['complete'] = False
                 return fail('driver_error',exc,'frozen_configuration_or_dispatch',plan_id)
         recorded['executed_action']=copy.deepcopy(decision)
-        if control_spec:
-            episode['cost_events'].append(dict(kind='control',stage=stage,timing_version='toolv2x_control_compute_v2',seconds=control_elapsed+perf_counter()-control_begin,complete=True))
+        control_event.update(seconds=control_elapsed+perf_counter()-control_begin, complete=True)
         if decision['tool'] == 'STOP':
             episode.update(status='completed', final_plan_id=current['plan_id'], stop_reason=decision['reason'])
             emit('STOP', plan_id)
