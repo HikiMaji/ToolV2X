@@ -7,3 +7,5 @@ Task1 records decision accounting; Task2 evidence-use audit and acquired/derived
 No real dataset training, original7B generation, real provider collection or new method experiment occurred. Model-environment tests use synthetic CPU network/optimizer and archived component contracts. Logs retain the observed tokenizer-length,PEFT-config and Transformer optimization warnings; passing these tests does not establish CUDA parity or task quality. Published text logs trim trailing whitespace only.
 
 Original report paths identify their historical execution worktree and temporary fixtures. Public preparation validation works without private files. Local integration evidence is recorded separately after the actual merge; no GitHub push is automatic.
+
+Local main integration completed; local_integration.json records exact source comparison and original-document preservation. No push occurred.

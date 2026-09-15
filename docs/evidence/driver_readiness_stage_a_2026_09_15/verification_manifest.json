@@ -29,5 +29,5 @@
     "command": "/root/autodl-tmp/conda-envs/llava/bin/python -m unittest discover -s tests -p 'test_*.py'"
   },
   "final_review": "spec and quality PASS; no unresolved findings",
-  "source_scope": "isolated feature/driver-readiness; post-test changes only documentation/evidence; local main integration next"
+  "source_scope": "verified in isolated feature/driver-readiness; actual local main fast-forward checked equal; later changes only docs/evidence"
 }

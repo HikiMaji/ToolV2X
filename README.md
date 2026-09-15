@@ -1,6 +1,6 @@
 # ToolV2X
 
-**最新完成（09-15，Stage A）：** 全部决策计时、购得/派生/直接入模审计、v2训练目标与周期验证、四条件准备包已完成并通过独立整批审查。完整轻量346/346、模型环境448/448通过。见[实施记录](docs/driver_readiness_stage_a_2026_09_15.md)、[准备规格](docs/structured_driver_readiness_2026_09_15.md)和[验证证据](docs/evidence/driver_readiness_stage_a_2026_09_15/README.md)。没有真实数据训练、新模型生成或新方法实验；准备包仍为prepared_not_executed，本批不自动推送。下文为带日期历史记录。
+**最新完成（09-15，Stage A）：** 全部决策计时、购得/派生/直接入模审计、v2训练目标与周期验证、四条件准备包已完成并通过独立整批审查。完整轻量346/346、模型环境448/448通过。见[实施记录](docs/driver_readiness_stage_a_2026_09_15.md)、[准备规格](docs/structured_driver_readiness_2026_09_15.md)和[验证证据](docs/evidence/driver_readiness_stage_a_2026_09_15/README.md)。没有真实数据训练、新模型生成或新方法实验；准备包仍为prepared_not_executed，本批不自动推送。下文为带日期历史记录。 本批已同步本地main，尚未推送GitHub。
 
 **当前批次（09-15，结构化数值驾驶基础）：** 输入、网络、交互、监督/恢复四项实现、独立审查及修复复审全部完成；轻量 322/322、本地 main 完整模型环境 416/416 通过。已同步本地 main，尚未推送 GitHub。已下载小于 100 MB 的官方 UniV2X/VAD 参考源码；本批没有真实数据训练、新模型生成或方法效果实验。最新状态以 [实现记录](docs/structured_driver_implementation_2026_09_15.md) 和 [审查记录](docs/structured_driver_review_2026_09_15.md) 为准。下方旧训练/实验条目均是带日期的历史记录。
 

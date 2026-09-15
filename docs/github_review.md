@@ -1,6 +1,6 @@
 # GitHub 审查入口
 
-**当前审查批次（09-15，Stage A）：** [要求核验](review_9_15_1_response.md)、[实施记录](driver_readiness_stage_a_2026_09_15.md)、[准备规格](structured_driver_readiness_2026_09_15.md)、[批准计划](superpowers/plans/2026-09-15-driver-readiness.md)及[独立审查/验证证据](evidence/driver_readiness_stage_a_2026_09_15/README.md)。四项和整批审查完成，完整轻量346/346、模型环境448/448通过。准备包不是真实训练/集成完成结果；本批不自动推送GitHub。
+**当前审查批次（09-15，Stage A）：** [要求核验](review_9_15_1_response.md)、[实施记录](driver_readiness_stage_a_2026_09_15.md)、[准备规格](structured_driver_readiness_2026_09_15.md)、[批准计划](superpowers/plans/2026-09-15-driver-readiness.md)及[独立审查/验证证据](evidence/driver_readiness_stage_a_2026_09_15/README.md)。四项和整批审查完成，完整轻量346/346、模型环境448/448通过。准备包不是真实训练/集成完成结果；本批不自动推送GitHub。 本批已同步本地main，尚未推送GitHub。
 
 本批重点：全部实际请求决策的计费与未知费用；真实receipt-acquired和receiver-derived分别统计，direct字段以真实tensor location/mask为准；v1兼容、v2所选阶段监督/固定帧条件权重、严格失败分母/验证选模/精确恢复；3095帧既有因果索引与录制组、20帧固定验收、单轮总预算、四条件诊断入口和未执行边界。普通数值驾驶网络与本批工程准备均不包装为ToolV2X创新。
 
