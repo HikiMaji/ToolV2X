@@ -1,0 +1,9 @@
+{
+  "source_frames": 20,
+  "source_tasks": 80,
+  "source_task_bytes": 1071526235,
+  "projected_frames": 3095,
+  "linear_task_bytes_estimate": 165818684866.25,
+  "disk_free_bytes_at_check": 31389462528,
+  "scope": "Linear estimate from existing padded full JSON task archives only; excludes features, checkpoints and training snapshots; not a measured full collection."
+}

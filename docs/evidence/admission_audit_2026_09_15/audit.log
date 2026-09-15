@@ -1,0 +1,61 @@
+testoutput_CAV_data_2022-03-15-10-09-50_0:10
+testoutput_CAV_data_2022-03-15-10-09-50_2:82
+testoutput_CAV_data_2022-03-15-16-00-17_0:10
+testoutput_CAV_data_2022-03-15-16-00-17_0:97
+testoutput_CAV_data_2022-03-17-10-43-13:10
+testoutput_CAV_data_2022-03-17-10-43-13:359
+testoutput_CAV_data_2022-03-17-12-04-22_0:10
+testoutput_CAV_data_2022-03-17-12-04-22_0:73
+testoutput_CAV_data_2022-03-17-12-14-33_0:10
+testoutput_CAV_data_2022-03-17-12-14-33_1:29
+testoutput_CAV_data_2022-03-17-14-44-47_1:10
+testoutput_CAV_data_2022-03-17-14-44-47_6:126
+testoutput_CAV_data_2022-03-17-14-59-30_0:10
+testoutput_CAV_data_2022-03-17-14-59-30_0:224
+testoutput_CAV_data_2022-03-17-15-55-26_0:10
+testoutput_CAV_data_2022-03-17-15-55-26_1:178
+testoutput_CAV_data_2022-03-17-16-06-11_0:10
+testoutput_CAV_data_2022-03-17-16-06-11_0:69
+testoutput_CAV_data_2022-03-21-09-50-20_10:10
+testoutput_CAV_data_2022-03-21-09-50-20_10:57
+{
+  "validated": 60,
+  "totals": {
+    "P": {
+      "acquired": {
+        "history": 78
+      },
+      "direct": {
+        "history": 68
+      },
+      "non_direct": {
+        "ego_filter": 10
+      }
+    },
+    "F": {
+      "acquired": {
+        "forecast": 78
+      },
+      "direct": {
+        "forecast": 78
+      },
+      "non_direct": {}
+    },
+    "PF": {
+      "acquired": {
+        "forecast": 78,
+        "history": 78
+      },
+      "direct": {
+        "forecast": 68,
+        "history": 68
+      },
+      "non_direct": {
+        "ego_filter": 20
+      }
+    }
+  },
+  "missing_count": 30,
+  "changed_forecasts": 10,
+  "same_sets": true
+}

@@ -1,0 +1,1 @@
+{"rows": 160, "label_frames": 20, "train_rows": 128, "validation_rows": 32, "train_recordings": 8, "validation_recordings": 2, "first_eight_conditions": ["P", "Ego", "Ego", "P", "Ego", "P", "Ego", "Ego"]}

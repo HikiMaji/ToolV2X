@@ -1,0 +1,7 @@
+{
+  "model_equal": false,
+  "optimizer_equal": false,
+  "rng_equal": true,
+  "parameter_max_abs_difference": 9.519030754745472e-07,
+  "different_tensors": 81
+}

@@ -1,0 +1,19 @@
+{
+  "version": "toolv2x_structured_driver_small_fit_v1",
+  "status": "authorized_one_epoch",
+  "source_data": "/root/autodl-tmp/ToolV2X/outputs/structured_training_preflight_2026_09_15_v1",
+  "train_rows": 128,
+  "validation_rows": 32,
+  "train_frames": 16,
+  "validation_frames": 4,
+  "expected_optimizer_steps": 64,
+  "max_epochs": 1,
+  "initialization": "fresh seed7 v2; selected preflight initialization, not v1 or step4 warm start",
+  "provider_calls": 0,
+  "got_calls": 0,
+  "mtr_calls": 0,
+  "training_config": "training_config.json",
+  "archive_mode": "existing uncompressed inputs; gzip reader not yet implemented",
+  "scope": "one shared driver, fixed archived evidence, offline imitation; no query policy fitting or recollection",
+  "stop": "after one epoch and independent checkpoint/validation verification; no automatic additional epochs"
+}

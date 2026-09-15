@@ -1,0 +1,795 @@
+{
+  "tasks": 80,
+  "plans": 160,
+  "all_old_audit_fields_unchanged": true,
+  "raw_task_files_unchanged": true,
+  "final_remote_exclusions": {
+    "Ego": {
+      "by_reason": {},
+      "by_kind": {},
+      "admitted_dependency": 0,
+      "dropped": 0
+    },
+    "P": {
+      "by_reason": {
+        "ego_filter": 10
+      },
+      "by_kind": {
+        "history": 10
+      },
+      "admitted_dependency": 10,
+      "dropped": 0
+    },
+    "F": {
+      "by_reason": {},
+      "by_kind": {},
+      "admitted_dependency": 0,
+      "dropped": 0
+    },
+    "PF": {
+      "by_reason": {
+        "ego_filter": 20
+      },
+      "by_kind": {
+        "history": 10,
+        "forecast": 10
+      },
+      "admitted_dependency": 10,
+      "dropped": 10
+    }
+  },
+  "details": [
+    {
+      "g": 2932,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 2932,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "entity_id": "no_fusion_cav1:593",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 2932,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 2932,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "entity_id": "no_fusion_cav1:593",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 2932,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 2932,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "entity_id": "no_fusion_cav1:593",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 3597,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3597,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "entity_id": "no_fusion_cav1:1",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 3597,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3597,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "entity_id": "no_fusion_cav1:1",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 3597,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3597,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "entity_id": "no_fusion_cav1:1",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 3658,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3658,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "entity_id": "no_fusion_cav1:10",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 3658,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3658,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "entity_id": "no_fusion_cav1:10",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 3658,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3658,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "entity_id": "no_fusion_cav1:10",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 3766,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3766,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "entity_id": "no_fusion_cav1:2",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 3766,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3766,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "entity_id": "no_fusion_cav1:2",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 3766,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3766,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "entity_id": "no_fusion_cav1:2",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 4736,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4736,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "entity_id": "no_fusion_cav1:3",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 4736,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4736,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "entity_id": "no_fusion_cav1:3",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 4736,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 4736,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "entity_id": "no_fusion_cav1:3",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 4950,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4950,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "entity_id": "no_fusion_cav1:3",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 4950,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4950,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "entity_id": "no_fusion_cav1:3",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 4950,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 4950,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "entity_id": "no_fusion_cav1:3",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 5526,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5526,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "entity_id": "no_fusion_cav1:20",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 5526,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5526,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "entity_id": "no_fusion_cav1:20",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 5526,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 5526,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "entity_id": "no_fusion_cav1:20",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 5585,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5585,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "entity_id": "no_fusion_cav1:20",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 5585,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5585,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "entity_id": "no_fusion_cav1:20",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 5585,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 5585,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "entity_id": "no_fusion_cav1:20",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 7007,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7007,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "entity_id": "no_fusion_cav1:0",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 7007,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7007,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "entity_id": "no_fusion_cav1:0",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 7007,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 7007,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "entity_id": "no_fusion_cav1:0",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    },
+    {
+      "g": 7054,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7054,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "entity_id": "no_fusion_cav1:0",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 7054,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7054,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "entity_id": "no_fusion_cav1:0",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "dropped": false,
+      "legacy_reason": null
+    },
+    {
+      "g": 7054,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 7054,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "entity_id": "no_fusion_cav1:0",
+      "source_role": "remote",
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "dropped": true,
+      "legacy_reason": "structured_capacity"
+    }
+  ],
+  "scope": "replay of existing saved evidence only",
+  "model_modules_imported": false
+}

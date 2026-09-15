@@ -1,0 +1,9 @@
+{
+  "mode": "continuous",
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_training_preflight_2026_09_15_v1/continuous/checkpoint_000004.pt",
+  "optimizer_steps": 4,
+  "wall_seconds": 274.55604895111173,
+  "peak_allocated_bytes": 399590912,
+  "peak_reserved_bytes": 440401920,
+  "completed": true
+}

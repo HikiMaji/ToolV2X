@@ -231,3 +231,8 @@ __pycache__/
 !/outputs/framework_epoch01_quick_eval_2026_09_12/evaluation/motion_reference.jsonl
 !/outputs/framework_baseline_restart_v1/
 !/outputs/framework_baseline_restart_v1/user_stop.json
+
+# Prepared numeric training configuration; no runtime outputs or weights.
+!/configs/
+/configs/*
+!/configs/structured_driver_training_next_v1/

@@ -1,0 +1,68 @@
+{
+  "version": "toolv2x_structured_training_preflight_v1",
+  "source": "/root/autodl-tmp/ToolV2X/outputs/structured_driver_fix_2026_09_15_v1/acceptance",
+  "lineage_steps": 4,
+  "interrupt_after": 2,
+  "total_optimizer_steps_across_two_lineages": 8,
+  "config": "training_config.json",
+  "rows": "rows.jsonl",
+  "first_eight_training_rows": [
+    {
+      "index": 82,
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-44-47_1:10",
+      "stage": 1,
+      "condition": "P"
+    },
+    {
+      "index": 121,
+      "sample_id": "testoutput_CAV_data_2022-03-17-15-55-26_1:178",
+      "stage": 0,
+      "condition": "Ego"
+    },
+    {
+      "index": 19,
+      "sample_id": "testoutput_CAV_data_2022-03-15-16-00-17_0:10",
+      "stage": 0,
+      "condition": "Ego"
+    },
+    {
+      "index": 50,
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:10",
+      "stage": 1,
+      "condition": "P"
+    },
+    {
+      "index": 83,
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-44-47_1:10",
+      "stage": 0,
+      "condition": "Ego"
+    },
+    {
+      "index": 6,
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+      "stage": 1,
+      "condition": "P"
+    },
+    {
+      "index": 9,
+      "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_2:82",
+      "stage": 0,
+      "condition": "Ego"
+    },
+    {
+      "index": 105,
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:224",
+      "stage": 0,
+      "condition": "Ego"
+    }
+  ],
+  "offline_fixed_evidence": true,
+  "new_provider_calls": 0,
+  "new_got_generations": 0,
+  "validation_scope": "four already-used development frames; not independent test",
+  "role_filter_control": {
+    "status": "declared_not_executed",
+    "definition": "Future separate fixed lawful evidence keep-versus-filter inferred ego entities; same shared driver and generation budget; no free PF history in F-only"
+  },
+  "stop": "No full collection, full adaptation, policy fitting or online recollection."
+}

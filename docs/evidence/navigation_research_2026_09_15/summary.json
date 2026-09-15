@@ -1,0 +1,30 @@
+{
+  "status": "research_complete_navigation_not_implemented",
+  "recorded_utc": "2026-09-15T10:44:47.823015+00:00",
+  "report": "docs/navigation_research_2026_09_15.md",
+  "source_items": 17,
+  "downloaded_reference_items": 15,
+  "downloaded_reference_bytes": 9241623,
+  "local_reference_copies": 2,
+  "measurement_samples": 3,
+  "measurement_bytes": 28430,
+  "small_sample_fields_finite": true,
+  "sample_targets_match_recorded_far_nodes": true,
+  "sample_split": "unverified_research_only",
+  "reference_coordinate_formula_checked": true,
+  "toolv2x_coordinate_adapter_validated": false,
+  "original_sample_route_and_collection_version_verified": false,
+  "navigation_input_recommendation": "one untimed local route goal encoded as one ordinary MLP token in the existing shared driver",
+  "first_implementation_scope": "complete N0 data/coordinate binding, then N1 versioned navigation input and shared driver integration",
+  "training": false,
+  "model_inference": false,
+  "simulation": false,
+  "navigation_production_code_changes": false,
+  "main_data_navigation_source": "no verified native navigation in the inspected local prepared records",
+  "deferred": [
+    "small-sample training degradation diagnosis",
+    "navigation-conditioned training",
+    "closed-loop integration"
+  ],
+  "claim_boundary": "Source and interface feasibility only; no navigation efficacy, cooperative gain or closed-loop capability established."
+}

@@ -277,6 +277,58 @@ class StructuredAdmissionContractTests(LedgerFixture):
         self.assertEqual(len(prior_only_forecasts), 1)
         self.assertNotIn(prior_only_forecasts[0], prior_only['direct_primary_refs'])
 
+    def test_role_transition_reports_pf_drop_and_fp_prior_dependency(self):
+        from evaluation.structured import audit_structured_episode
+        history = dict(states=[[0., 0., 0.]] * 11, valid=[True] * 11,
+            times=(np.arange(-10, 1) / 10.).tolist(), read_paths=[])
+        for tools in (('P', 'F'), ('F', 'P')):
+            with self.subTest(tools=tools):
+                ep = self.episode(empty_window('ego'), one_track('peer', .1, y=0.),
+                                  tools=tools, ego_history=history)
+                original = copy.deepcopy(ep)
+                rows = audit_structured_episode(ep)
+                self.assertEqual(ep, original, 'derived audit must not mutate archived input')
+                self.assertEqual(ep['status'], 'completed')
+                self.assertEqual(rows[-1]['exclusion_reason_version'],
+                                 'toolv2x_structured_exclusion_reasons_v1')
+                details = {x['ref']['field_kind']: x for x in rows[-1]['non_direct_primary_fields']
+                           if x['source_role'] == 'remote'}
+                self.assertEqual(set(details), {'history', 'forecast'})
+                self.assertEqual({x['reason'] for x in details.values()}, {'ego_filter'})
+                self.assertTrue(details['history']['admitted_dependency'])
+                self.assertFalse(details['history']['dropped'])
+                self.assertEqual(details['forecast']['dropped'], tools == ('P', 'F'))
+                self.assertEqual(details['forecast']['admitted_dependency'], tools == ('F', 'P'))
+                self.assertEqual(details['forecast']['legacy_reason'],
+                                 'structured_capacity' if tools == ('P', 'F') else None)
+                self.assertEqual(rows[-1]['direct_remote_primary_refs'], [])
+                if tools == ('F', 'P'):
+                    entity0 = ep['plans'][1]['prepared']['entities'][0]
+                    entity1 = ep['plans'][2]['prepared']['entities'][0]
+                    self.assertEqual(entity0['role'], 'unresolved')
+                    self.assertEqual(entity1['role'], 'ego')
+                    self.assertEqual(entity0['aliases'], entity1['aliases'])
+                    self.assertEqual(entity0['forecast_sets'], entity1['forecast_sets'])
+                    self.assertEqual([x['field_kind'] for x in rows[1]['direct_remote_primary_refs']],
+                                     ['forecast'])
+                    self.assertIn(details['forecast']['ref'], rows[-1]['prior_dependency_closure_refs'])
+
+    def test_forecast_exclusions_distinguish_entity_and_forecast_set_capacity(self):
+        from evaluation.structured import audit_structured_episode
+        for peer_x, entities, forecasts, reason in (
+                (30., 1, 4, 'entity_capacity'),
+                (10.2, 2, 1, 'forecast_set_capacity')):
+            with self.subTest(reason=reason):
+                ep = self.episode(one_track('ego', 10.), one_track('peer', peer_x, 99),
+                    tools=('F',), max_entities=entities, max_forecasts=forecasts)
+                rows = audit_structured_episode(ep)
+                item = next(x for x in rows[-1]['non_direct_primary_fields']
+                            if x['source_role'] == 'remote' and x['ref']['field_kind'] == 'forecast')
+                self.assertEqual(item['reason'], reason)
+                self.assertTrue(item['dropped'])
+                self.assertFalse(item['admitted_dependency'])
+                self.assertEqual(item['legacy_reason'], 'structured_capacity')
+
     def test_corrupt_locations_and_receipts_are_rejected_and_old_got_stays_unbound(self):
         from evaluation.framework import evaluate_method_task
         from evaluation.structured import audit_structured_episode

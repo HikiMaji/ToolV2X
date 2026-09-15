@@ -1,0 +1,47 @@
+Replayed 20
+Replayed 40
+Replayed 60
+Replayed 80
+{
+  "tasks": 80,
+  "plans": 160,
+  "all_old_audit_fields_unchanged": true,
+  "raw_task_files_unchanged": true,
+  "final_remote_exclusions": {
+    "Ego": {
+      "by_reason": {},
+      "by_kind": {},
+      "admitted_dependency": 0,
+      "dropped": 0
+    },
+    "P": {
+      "by_reason": {
+        "ego_filter": 10
+      },
+      "by_kind": {
+        "history": 10
+      },
+      "admitted_dependency": 10,
+      "dropped": 0
+    },
+    "F": {
+      "by_reason": {},
+      "by_kind": {},
+      "admitted_dependency": 0,
+      "dropped": 0
+    },
+    "PF": {
+      "by_reason": {
+        "ego_filter": 20
+      },
+      "by_kind": {
+        "history": 10,
+        "forecast": 10
+      },
+      "admitted_dependency": 10,
+      "dropped": 10
+    }
+  },
+  "scope": "replay of existing saved evidence only",
+  "model_modules_imported": false
+}

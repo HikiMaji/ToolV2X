@@ -1,0 +1,33 @@
+{
+  "assumption": "All 3095 frames reach Ego/P/F/PF boundaries and retain 8 stage rows each; extrapolation only.",
+  "expected_train_stage_rows": 23896,
+  "batches_per_epoch": 11948,
+  "configured_epochs": 20,
+  "configured_total_batches": 238960,
+  "interval_checkpoints_lower_bound": 9559,
+  "observed_checkpoint_bytes": 56949594,
+  "interval_checkpoint_bytes_lower_estimate": 544381169046,
+  "observed_checkpoint_sizes": [
+    [
+      "checkpoint_000000.pt",
+      19148806
+    ],
+    [
+      "checkpoint_000001.pt",
+      56938138
+    ],
+    [
+      "checkpoint_000002.pt",
+      56938138
+    ],
+    [
+      "checkpoint_000003.pt",
+      56938138
+    ],
+    [
+      "checkpoint_000004.pt",
+      56949594
+    ]
+  ],
+  "scope": "Not authorization to execute this schedule; checkpoints retained, no deletion performed."
+}

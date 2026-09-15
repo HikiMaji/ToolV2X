@@ -1,0 +1,30 @@
+{
+  "frames": 3095,
+  "roles": {
+    "train": 2987,
+    "validation": 108
+  },
+  "frame_keys": [
+    "ego_motion",
+    "feature_read_paths",
+    "g",
+    "local_frame",
+    "motion_read_paths",
+    "physical_split",
+    "role",
+    "sample_id",
+    "scene"
+  ],
+  "explicit_nav_keys_found": [],
+  "scanned_roots": [
+    {
+      "root": "/root/autodl-tmp/V2V-GoT",
+      "candidate_files": []
+    },
+    {
+      "root": "/root/autodl-tmp/CMP",
+      "candidate_files": []
+    }
+  ],
+  "scope": "Whitelist frame-key audit and filename inventory, not proof that no metadata exists in every possible raw archive."
+}

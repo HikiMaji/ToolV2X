@@ -1,0 +1,122 @@
+{
+  "retrieved_utc": "2026-09-15T10:32:01.493182+00:00",
+  "scope": "read-only reference sources; no execution",
+  "items": [
+    {
+      "file": "v2xverse_agent.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/pnp_agent_e2e.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/pnp_agent_e2e.py",
+      "bytes": 20702,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_route.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/planner_pnp.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/planner_pnp.py",
+      "bytes": 3679,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_base_agent.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/base_agent.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/base_agent.py",
+      "bytes": 70588,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_autopilot.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/auto_pilot.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/simulation/leaderboard/team_code/auto_pilot.py",
+      "bytes": 46301,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_data.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/codriving/data_utils/datasets/planning_with_gt_dataset.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/codriving/data_utils/datasets/planning_with_gt_dataset.py",
+      "bytes": 15431,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_pnp_data.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/codriving/data_utils/datasets/pnp_dataset.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/codriving/data_utils/datasets/pnp_dataset.py",
+      "bytes": 18938,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_model.py",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/codriving/models/planning_end2end.py",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/codriving/models/planning_end2end.py",
+      "bytes": 6848,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2xverse_readme.md",
+      "url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/README.md",
+      "final_url": "https://raw.githubusercontent.com/CollaborativePerception/V2Xverse/main/README.md",
+      "bytes": 14595,
+      "status": "downloaded"
+    },
+    {
+      "file": "transfuser_agent.py",
+      "url": "https://raw.githubusercontent.com/autonomousvision/transfuser/2022/team_code_transfuser/submission_agent.py",
+      "final_url": "https://raw.githubusercontent.com/autonomousvision/transfuser/2022/team_code_transfuser/submission_agent.py",
+      "bytes": 32387,
+      "status": "downloaded"
+    },
+    {
+      "file": "transfuser_data.py",
+      "url": "https://raw.githubusercontent.com/autonomousvision/transfuser/2022/team_code_transfuser/data.py",
+      "final_url": "https://raw.githubusercontent.com/autonomousvision/transfuser/2022/team_code_transfuser/data.py",
+      "bytes": 35895,
+      "status": "downloaded"
+    },
+    {
+      "file": "transfuser_model.py",
+      "url": "https://raw.githubusercontent.com/autonomousvision/transfuser/2022/team_code_transfuser/model.py",
+      "final_url": "https://raw.githubusercontent.com/autonomousvision/transfuser/2022/team_code_transfuser/model.py",
+      "bytes": 46311,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2v4real_readme.md",
+      "url": "https://raw.githubusercontent.com/ucla-mobility/V2V4Real/main/README.md",
+      "final_url": "https://raw.githubusercontent.com/ucla-mobility/V2V4Real/main/README.md",
+      "bytes": 12847,
+      "status": "downloaded"
+    },
+    {
+      "file": "v2v4real_site.html",
+      "url": "https://mobility-lab.seas.ucla.edu/v2v4real/",
+      "final_url": "https://mobility-lab.seas.ucla.edu/v2v4real/",
+      "bytes": 122104,
+      "status": "downloaded"
+    },
+    {
+      "file": "carla_guide.html",
+      "url": "https://leaderboard.carla.org/get_started_v2_0/",
+      "final_url": "https://leaderboard.carla.org/get_started_v2_0/",
+      "bytes": 50334,
+      "status": "downloaded"
+    },
+    {
+      "file": "vad_converter.py",
+      "local_source": "/root/autodl-tmp/VAD/tools/data_converter/vad_nuscenes_converter.py",
+      "status": "local_reference_copy",
+      "bytes": 42317
+    },
+    {
+      "file": "vad_head.py",
+      "local_source": "/root/autodl-tmp/VAD/projects/mmdet3d_plugin/VAD/VAD_head.py",
+      "status": "local_reference_copy",
+      "bytes": 91044
+    },
+    {
+      "file": "hidden_biases_2306_07957v2.pdf",
+      "url": "https://arxiv.org/pdf/2306.07957v2",
+      "bytes": 8744663,
+      "status": "downloaded_and_text_extracted"
+    }
+  ]
+}

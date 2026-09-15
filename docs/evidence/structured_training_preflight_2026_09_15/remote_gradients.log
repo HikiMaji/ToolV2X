@@ -1,0 +1,6 @@
+{"arm": "Ego", "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10", "stage": 0, "loss": 0.0413215309381485, "remote_input_gradient_squared_norms": {"history": 0.0, "forecast": 0.0}, "supervised_remote_locations": {"history": 0, "forecast": 0}, "supervised_forwards": 2, "invalid_prior_masks": 0, "optimizer_steps": 0, "weights_unchanged": true}
+{"arm": "P", "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10", "stage": 1, "loss": 0.03934018313884735, "remote_input_gradient_squared_norms": {"history": 4.889818605580132e-09, "forecast": 0.0}, "supervised_remote_locations": {"history": 8, "forecast": 0}, "supervised_forwards": 2, "invalid_prior_masks": 0, "optimizer_steps": 0, "weights_unchanged": true}
+Traceback (most recent call last):
+  File "outputs/structured_training_preflight_2026_09_15_v1/check_remote_gradients.py", line 47, in <module>
+    assert (norms['history']>0)==('P' in arm)
+AssertionError

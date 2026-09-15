@@ -1,0 +1,416 @@
+{
+  "version": "toolv2x_archive_compression_probe_v1",
+  "tasks": 80,
+  "frames": 20,
+  "original_bytes": 1071526235,
+  "gzip_level1_bytes": 60145370,
+  "ratio": 0.05613056221623916,
+  "byte_roundtrip_pass": true,
+  "linear_full_3095_frames_gzip_bytes": 9307496007.5,
+  "seconds": 9.18303081812337,
+  "disk_archives_modified": false,
+  "training_reader_support_implemented": false,
+  "scope": "Measured existing 80 full JSON tasks only; full-size total is extrapolated and excludes all other artifacts.",
+  "files": [
+    {
+      "file": "g2035_Ego.json",
+      "original_bytes": 5461571,
+      "gzip_bytes": 168509
+    },
+    {
+      "file": "g2035_F.json",
+      "original_bytes": 11134595,
+      "gzip_bytes": 368335
+    },
+    {
+      "file": "g2035_P.json",
+      "original_bytes": 11107370,
+      "gzip_bytes": 368232
+    },
+    {
+      "file": "g2035_PF.json",
+      "original_bytes": 16918616,
+      "gzip_bytes": 597429
+    },
+    {
+      "file": "g2435_Ego.json",
+      "original_bytes": 5691180,
+      "gzip_bytes": 191258
+    },
+    {
+      "file": "g2435_F.json",
+      "original_bytes": 11784722,
+      "gzip_bytes": 441360
+    },
+    {
+      "file": "g2435_P.json",
+      "original_bytes": 11689624,
+      "gzip_bytes": 424164
+    },
+    {
+      "file": "g2435_PF.json",
+      "original_bytes": 18008393,
+      "gzip_bytes": 699456
+    },
+    {
+      "file": "g2522_Ego.json",
+      "original_bytes": 5698618,
+      "gzip_bytes": 202382
+    },
+    {
+      "file": "g2522_F.json",
+      "original_bytes": 11800795,
+      "gzip_bytes": 469942
+    },
+    {
+      "file": "g2522_P.json",
+      "original_bytes": 11733183,
+      "gzip_bytes": 461167
+    },
+    {
+      "file": "g2522_PF.json",
+      "original_bytes": 18084720,
+      "gzip_bytes": 772404
+    },
+    {
+      "file": "g2583_Ego.json",
+      "original_bytes": 7521749,
+      "gzip_bytes": 486554
+    },
+    {
+      "file": "g2583_F.json",
+      "original_bytes": 15516446,
+      "gzip_bytes": 1040947
+    },
+    {
+      "file": "g2583_P.json",
+      "original_bytes": 15433184,
+      "gzip_bytes": 1021640
+    },
+    {
+      "file": "g2583_PF.json",
+      "original_bytes": 23737193,
+      "gzip_bytes": 1621241
+    },
+    {
+      "file": "g2932_Ego.json",
+      "original_bytes": 6722338,
+      "gzip_bytes": 384924
+    },
+    {
+      "file": "g2932_F.json",
+      "original_bytes": 13884287,
+      "gzip_bytes": 837843
+    },
+    {
+      "file": "g2932_P.json",
+      "original_bytes": 13816214,
+      "gzip_bytes": 829306
+    },
+    {
+      "file": "g2932_PF.json",
+      "original_bytes": 21271105,
+      "gzip_bytes": 1330513
+    },
+    {
+      "file": "g3534_Ego.json",
+      "original_bytes": 6212869,
+      "gzip_bytes": 298309
+    },
+    {
+      "file": "g3534_F.json",
+      "original_bytes": 12848416,
+      "gzip_bytes": 662065
+    },
+    {
+      "file": "g3534_P.json",
+      "original_bytes": 12752840,
+      "gzip_bytes": 637274
+    },
+    {
+      "file": "g3534_PF.json",
+      "original_bytes": 19664211,
+      "gzip_bytes": 1036947
+    },
+    {
+      "file": "g3597_Ego.json",
+      "original_bytes": 6383419,
+      "gzip_bytes": 323189
+    },
+    {
+      "file": "g3597_F.json",
+      "original_bytes": 13194969,
+      "gzip_bytes": 715194
+    },
+    {
+      "file": "g3597_P.json",
+      "original_bytes": 13125542,
+      "gzip_bytes": 706668
+    },
+    {
+      "file": "g3597_PF.json",
+      "original_bytes": 20253687,
+      "gzip_bytes": 1147086
+    },
+    {
+      "file": "g3658_Ego.json",
+      "original_bytes": 6479848,
+      "gzip_bytes": 350879
+    },
+    {
+      "file": "g3658_F.json",
+      "original_bytes": 13388725,
+      "gzip_bytes": 769058
+    },
+    {
+      "file": "g3658_P.json",
+      "original_bytes": 13322829,
+      "gzip_bytes": 761866
+    },
+    {
+      "file": "g3658_PF.json",
+      "original_bytes": 20525951,
+      "gzip_bytes": 1229217
+    },
+    {
+      "file": "g3766_Ego.json",
+      "original_bytes": 6742494,
+      "gzip_bytes": 398331
+    },
+    {
+      "file": "g3766_F.json",
+      "original_bytes": 13924452,
+      "gzip_bytes": 865926
+    },
+    {
+      "file": "g3766_P.json",
+      "original_bytes": 13856658,
+      "gzip_bytes": 855892
+    },
+    {
+      "file": "g3766_PF.json",
+      "original_bytes": 21355073,
+      "gzip_bytes": 1373848
+    },
+    {
+      "file": "g3827_Ego.json",
+      "original_bytes": 6642189,
+      "gzip_bytes": 375057
+    },
+    {
+      "file": "g3827_F.json",
+      "original_bytes": 13719523,
+      "gzip_bytes": 818308
+    },
+    {
+      "file": "g3827_P.json",
+      "original_bytes": 13659537,
+      "gzip_bytes": 813892
+    },
+    {
+      "file": "g3827_PF.json",
+      "original_bytes": 21039754,
+      "gzip_bytes": 1311850
+    },
+    {
+      "file": "g4675_Ego.json",
+      "original_bytes": 6459412,
+      "gzip_bytes": 336307
+    },
+    {
+      "file": "g4675_F.json",
+      "original_bytes": 13349307,
+      "gzip_bytes": 738277
+    },
+    {
+      "file": "g4675_P.json",
+      "original_bytes": 13285385,
+      "gzip_bytes": 733626
+    },
+    {
+      "file": "g4675_PF.json",
+      "original_bytes": 20428958,
+      "gzip_bytes": 1185900
+    },
+    {
+      "file": "g4736_Ego.json",
+      "original_bytes": 6390269,
+      "gzip_bytes": 334852
+    },
+    {
+      "file": "g4736_F.json",
+      "original_bytes": 13206888,
+      "gzip_bytes": 733651
+    },
+    {
+      "file": "g4736_P.json",
+      "original_bytes": 13139151,
+      "gzip_bytes": 729274
+    },
+    {
+      "file": "g4736_PF.json",
+      "original_bytes": 20248690,
+      "gzip_bytes": 1178534
+    },
+    {
+      "file": "g4950_Ego.json",
+      "original_bytes": 6636079,
+      "gzip_bytes": 368159
+    },
+    {
+      "file": "g4950_F.json",
+      "original_bytes": 13709446,
+      "gzip_bytes": 804812
+    },
+    {
+      "file": "g4950_P.json",
+      "original_bytes": 13641857,
+      "gzip_bytes": 796762
+    },
+    {
+      "file": "g4950_PF.json",
+      "original_bytes": 20984851,
+      "gzip_bytes": 1279531
+    },
+    {
+      "file": "g5011_Ego.json",
+      "original_bytes": 5961238,
+      "gzip_bytes": 252341
+    },
+    {
+      "file": "g5011_F.json",
+      "original_bytes": 12336712,
+      "gzip_bytes": 572673
+    },
+    {
+      "file": "g5011_P.json",
+      "original_bytes": 12242450,
+      "gzip_bytes": 549129
+    },
+    {
+      "file": "g5011_PF.json",
+      "original_bytes": 18894909,
+      "gzip_bytes": 903092
+    },
+    {
+      "file": "g5465_Ego.json",
+      "original_bytes": 7064812,
+      "gzip_bytes": 440427
+    },
+    {
+      "file": "g5465_F.json",
+      "original_bytes": 14583449,
+      "gzip_bytes": 947613
+    },
+    {
+      "file": "g5465_P.json",
+      "original_bytes": 14520665,
+      "gzip_bytes": 944888
+    },
+    {
+      "file": "g5465_PF.json",
+      "original_bytes": 22292424,
+      "gzip_bytes": 1499738
+    },
+    {
+      "file": "g5526_Ego.json",
+      "original_bytes": 7078036,
+      "gzip_bytes": 457684
+    },
+    {
+      "file": "g5526_F.json",
+      "original_bytes": 14607027,
+      "gzip_bytes": 983549
+    },
+    {
+      "file": "g5526_P.json",
+      "original_bytes": 14540003,
+      "gzip_bytes": 975952
+    },
+    {
+      "file": "g5526_PF.json",
+      "original_bytes": 22338459,
+      "gzip_bytes": 1548280
+    },
+    {
+      "file": "g5585_Ego.json",
+      "original_bytes": 7404959,
+      "gzip_bytes": 497073
+    },
+    {
+      "file": "g5585_F.json",
+      "original_bytes": 15275987,
+      "gzip_bytes": 1062907
+    },
+    {
+      "file": "g5585_P.json",
+      "original_bytes": 15208007,
+      "gzip_bytes": 1056265
+    },
+    {
+      "file": "g5585_PF.json",
+      "original_bytes": 23396663,
+      "gzip_bytes": 1673268
+    },
+    {
+      "file": "g7007_Ego.json",
+      "original_bytes": 6909093,
+      "gzip_bytes": 424999
+    },
+    {
+      "file": "g7007_F.json",
+      "original_bytes": 14264006,
+      "gzip_bytes": 916830
+    },
+    {
+      "file": "g7007_P.json",
+      "original_bytes": 14198042,
+      "gzip_bytes": 908268
+    },
+    {
+      "file": "g7007_PF.json",
+      "original_bytes": 21824515,
+      "gzip_bytes": 1445468
+    },
+    {
+      "file": "g7054_Ego.json",
+      "original_bytes": 5968365,
+      "gzip_bytes": 257601
+    },
+    {
+      "file": "g7054_F.json",
+      "original_bytes": 12348347,
+      "gzip_bytes": 586440
+    },
+    {
+      "file": "g7054_P.json",
+      "original_bytes": 12270652,
+      "gzip_bytes": 571190
+    },
+    {
+      "file": "g7054_PF.json",
+      "original_bytes": 18936733,
+      "gzip_bytes": 942923
+    },
+    {
+      "file": "g719_Ego.json",
+      "original_bytes": 5964509,
+      "gzip_bytes": 255102
+    },
+    {
+      "file": "g719_F.json",
+      "original_bytes": 12344063,
+      "gzip_bytes": 579023
+    },
+    {
+      "file": "g719_P.json",
+      "original_bytes": 12269489,
+      "gzip_bytes": 569125
+    },
+    {
+      "file": "g719_PF.json",
+      "original_bytes": 18893439,
+      "gzip_bytes": 935375
+    }
+  ]
+}

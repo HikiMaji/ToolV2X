@@ -1,0 +1,1881 @@
+{
+  "scope": "offline saved receiver audit only; no model generation, no labels, no training",
+  "validated_final_prepared": 60,
+  "no_model_modules_imported": true,
+  "totals": {
+    "P": {
+      "acquired": {
+        "history": 78
+      },
+      "direct": {
+        "history": 68
+      },
+      "non_direct": {
+        "ego_filter": 10
+      }
+    },
+    "F": {
+      "acquired": {
+        "forecast": 78
+      },
+      "direct": {
+        "forecast": 78
+      },
+      "non_direct": {}
+    },
+    "PF": {
+      "acquired": {
+        "forecast": 78,
+        "history": 78
+      },
+      "direct": {
+        "forecast": 68,
+        "history": 68
+      },
+      "non_direct": {
+        "ego_filter": 20
+      }
+    }
+  },
+  "same_forecast_sets_all_20_frames": true,
+  "identical_shared_forecast_values": 78,
+  "role_transitions": [
+    {
+      "g": 2932,
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:359",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 2932,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 593
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 3597,
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:73",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3597,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 1
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 3658,
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_0:10",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3658,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 10
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 3766,
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_1:29",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3766,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 2
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 4736,
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:10",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 4736,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 4950,
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:224",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 4950,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 5526,
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 5526,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 5585,
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:69",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 5585,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 7007,
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 7007,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    },
+    {
+      "g": 7054,
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:57",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 7054,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "f_use": "tensor",
+      "pf_use": "ego_filter",
+      "f_role": "unresolved",
+      "pf_role": "ego",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "same_representative_anchor": true,
+      "association_status": "unmatched",
+      "f_has_history": false,
+      "pf_has_history": true
+    }
+  ],
+  "missing": [
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:359",
+      "g": 2932,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 2932,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:593",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 593
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        593
+      ],
+      "current_distance_m": 0.1257480790836769,
+      "dimensions": [
+        4.261120796203613,
+        1.974341630935669,
+        2.16894793510437
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.10889322903802194,
+      "heading_max_rad": 0.1212625805443488
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:359",
+      "g": 2932,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 2932,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:593",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 593
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        593
+      ],
+      "current_distance_m": 0.1257480790836769,
+      "dimensions": [
+        4.261120796203613,
+        1.974341630935669,
+        2.16894793510437
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.10889322903802194,
+      "heading_max_rad": 0.1212625805443488
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:359",
+      "g": 2932,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 2932,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "track_handle": 593
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:593",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 593
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        593
+      ],
+      "current_distance_m": 0.1257480790836769,
+      "dimensions": [
+        4.261120796203613,
+        1.974341630935669,
+        2.16894793510437
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.10889322903802194,
+      "heading_max_rad": 0.1212625805443488
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:73",
+      "g": 3597,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3597,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:1",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 1
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        1
+      ],
+      "current_distance_m": 0.14421675743047296,
+      "dimensions": [
+        4.3740620613098145,
+        1.980615258216858,
+        2.159619092941284
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 13,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.18481886938211414,
+      "heading_max_rad": 0.10379912499117916
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:73",
+      "g": 3597,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3597,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:1",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 1
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        1
+      ],
+      "current_distance_m": 0.14421675743047296,
+      "dimensions": [
+        4.3740620613098145,
+        1.980615258216858,
+        2.159619092941284
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 14,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.18481886938211414,
+      "heading_max_rad": 0.10379912499117916
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:73",
+      "g": 3597,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3597,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "track_handle": 1
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:1",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 1
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        1
+      ],
+      "current_distance_m": 0.14421675743047296,
+      "dimensions": [
+        4.3740620613098145,
+        1.980615258216858,
+        2.159619092941284
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 14,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.18481886938211414,
+      "heading_max_rad": 0.10379912499117916
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_0:10",
+      "g": 3658,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3658,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:10",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 10
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        10
+      ],
+      "current_distance_m": 0.03768584407561252,
+      "dimensions": [
+        4.609112739562988,
+        2.019524574279785,
+        2.0361979007720947
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 15,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.43771427787561684,
+      "heading_max_rad": 0.06786945364557528
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_0:10",
+      "g": 3658,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3658,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:10",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 10
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        10
+      ],
+      "current_distance_m": 0.03768584407561252,
+      "dimensions": [
+        4.609112739562988,
+        2.019524574279785,
+        2.0361979007720947
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 15,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.43771427787561684,
+      "heading_max_rad": 0.06786945364557528
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_0:10",
+      "g": 3658,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3658,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "track_handle": 10
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:10",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 10
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        10
+      ],
+      "current_distance_m": 0.03768584407561252,
+      "dimensions": [
+        4.609112739562988,
+        2.019524574279785,
+        2.0361979007720947
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 15,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.43771427787561684,
+      "heading_max_rad": 0.06786945364557528
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_1:29",
+      "g": 3766,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3766,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:2",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 2
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        2
+      ],
+      "current_distance_m": 0.07718178879659734,
+      "dimensions": [
+        4.7020368576049805,
+        2.054342031478882,
+        2.2055015563964844
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.09611335306685445,
+      "heading_max_rad": 0.03526206011969801
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_1:29",
+      "g": 3766,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 3766,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:2",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 2
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        2
+      ],
+      "current_distance_m": 0.07718178879659734,
+      "dimensions": [
+        4.7020368576049805,
+        2.054342031478882,
+        2.2055015563964844
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.09611335306685445,
+      "heading_max_rad": 0.03526206011969801
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_1:29",
+      "g": 3766,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 3766,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "track_handle": 2
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:2",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 2
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        2
+      ],
+      "current_distance_m": 0.07718178879659734,
+      "dimensions": [
+        4.7020368576049805,
+        2.054342031478882,
+        2.2055015563964844
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.09611335306685445,
+      "heading_max_rad": 0.03526206011969801
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:10",
+      "g": 4736,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4736,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:3",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        3
+      ],
+      "current_distance_m": 0.30886922343971746,
+      "dimensions": [
+        4.757587909698486,
+        2.0920560359954834,
+        2.09405255317688
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 13,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.42798847818272867,
+      "heading_max_rad": 0.05834740627357293
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:10",
+      "g": 4736,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 4736,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:3",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        3
+      ],
+      "current_distance_m": 0.30886922343971746,
+      "dimensions": [
+        4.757587909698486,
+        2.0920560359954834,
+        2.09405255317688
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 13,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.42798847818272867,
+      "heading_max_rad": 0.05834740627357293
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:10",
+      "g": 4736,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4736,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:3",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        3
+      ],
+      "current_distance_m": 0.30886922343971746,
+      "dimensions": [
+        4.757587909698486,
+        2.0920560359954834,
+        2.09405255317688
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 13,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.42798847818272867,
+      "heading_max_rad": 0.05834740627357293
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:224",
+      "g": 4950,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4950,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:3",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        3
+      ],
+      "current_distance_m": 0.19585677063621748,
+      "dimensions": [
+        4.714176177978516,
+        2.0922372341156006,
+        1.9917017221450806
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.24597185814892047,
+      "heading_max_rad": 0.10500725330639193
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:224",
+      "g": 4950,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 4950,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:3",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        3
+      ],
+      "current_distance_m": 0.19585677063621748,
+      "dimensions": [
+        4.714176177978516,
+        2.0922372341156006,
+        1.9917017221450806
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.24597185814892047,
+      "heading_max_rad": 0.10500725330639193
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:224",
+      "g": 4950,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 4950,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "track_handle": 3
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:3",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 3
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        3
+      ],
+      "current_distance_m": 0.19585677063621748,
+      "dimensions": [
+        4.714176177978516,
+        2.0922372341156006,
+        1.9917017221450806
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 17,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.24597185814892047,
+      "heading_max_rad": 0.10500725330639193
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+      "g": 5526,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5526,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:20",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        20
+      ],
+      "current_distance_m": 0.627451565143327,
+      "dimensions": [
+        4.734066963195801,
+        2.0521326065063477,
+        2.078772783279419
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 21,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.48433334568573366,
+      "heading_max_rad": 0.1110809903304224
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+      "g": 5526,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 5526,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:20",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        20
+      ],
+      "current_distance_m": 0.627451565143327,
+      "dimensions": [
+        4.734066963195801,
+        2.0521326065063477,
+        2.078772783279419
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 21,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.48433334568573366,
+      "heading_max_rad": 0.1110809903304224
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+      "g": 5526,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5526,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:20",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        20
+      ],
+      "current_distance_m": 0.627451565143327,
+      "dimensions": [
+        4.734066963195801,
+        2.0521326065063477,
+        2.078772783279419
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 21,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.48433334568573366,
+      "heading_max_rad": 0.1110809903304224
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:69",
+      "g": 5585,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5585,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:20",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        20
+      ],
+      "current_distance_m": 0.5098116221191696,
+      "dimensions": [
+        4.448019504547119,
+        1.9809417724609375,
+        1.9819791316986084
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 26,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.38348678252663476,
+      "heading_max_rad": 0.05162038572121741
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:69",
+      "g": 5585,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 5585,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:20",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        20
+      ],
+      "current_distance_m": 0.5098116221191696,
+      "dimensions": [
+        4.448019504547119,
+        1.9809417724609375,
+        1.9819791316986084
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 27,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.38348678252663476,
+      "heading_max_rad": 0.05162038572121741
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:69",
+      "g": 5585,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 5585,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "track_handle": 20
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:20",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 20
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        20
+      ],
+      "current_distance_m": 0.5098116221191696,
+      "dimensions": [
+        4.448019504547119,
+        1.9809417724609375,
+        1.9819791316986084
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 27,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.38348678252663476,
+      "heading_max_rad": 0.05162038572121741
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "g": 7007,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7007,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:0",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        0
+      ],
+      "current_distance_m": 0.16353770203119405,
+      "dimensions": [
+        4.6203718185424805,
+        2.0581376552581787,
+        2.1956658363342285
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 20,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.22975949880027174,
+      "heading_max_rad": 0.08031713156469555
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "g": 7007,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 7007,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:0",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        0
+      ],
+      "current_distance_m": 0.16353770203119405,
+      "dimensions": [
+        4.6203718185424805,
+        2.0581376552581787,
+        2.1956658363342285
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 20,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.22975949880027174,
+      "heading_max_rad": 0.08031713156469555
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+      "g": 7007,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7007,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:0",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        0
+      ],
+      "current_distance_m": 0.16353770203119405,
+      "dimensions": [
+        4.6203718185424805,
+        2.0581376552581787,
+        2.1956658363342285
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 20,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.22975949880027174,
+      "heading_max_rad": 0.08031713156469555
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:57",
+      "g": 7054,
+      "arm": "P",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7054,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:0",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        0
+      ],
+      "current_distance_m": 0.2481590430566417,
+      "dimensions": [
+        4.610489845275879,
+        2.037928342819214,
+        2.18019437789917
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 10,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.27667398271591614,
+      "heading_max_rad": 0.03430594182148239
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:57",
+      "g": 7054,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "forecast",
+        "g": 7054,
+        "producer_version": {
+          "name": "CMP_MTR_full_seed20",
+          "revision": "epoch09"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": false,
+      "reported_dropped": true,
+      "raw_drop_reason": "structured_capacity",
+      "entity_id": "no_fusion_cav1:0",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        0
+      ],
+      "current_distance_m": 0.2481590430566417,
+      "dimensions": [
+        4.610489845275879,
+        2.037928342819214,
+        2.18019437789917
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 11,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.27667398271591614,
+      "heading_max_rad": 0.03430594182148239
+    },
+    {
+      "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:57",
+      "g": 7054,
+      "arm": "PF",
+      "ref": {
+        "context_version": {
+          "name": "fixed_ego_at_t",
+          "revision": "11x100ms_v1"
+        },
+        "field_kind": "history",
+        "g": 7054,
+        "producer_version": {
+          "name": "toolv2x_causal_tracker",
+          "revision": "causal_windows_v1"
+        },
+        "provider": "no_fusion_cav1",
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "track_handle": 0
+      },
+      "reason": "ego_filter",
+      "admitted_dependency": true,
+      "reported_dropped": false,
+      "raw_drop_reason": null,
+      "entity_id": "no_fusion_cav1:0",
+      "aliases": [
+        {
+          "source": "no_fusion_cav1",
+          "track_handle": 0
+        }
+      ],
+      "role": "ego",
+      "representative_source": "remote",
+      "representative_alias": [
+        "no_fusion_cav1",
+        0
+      ],
+      "current_distance_m": 0.2481590430566417,
+      "dimensions": [
+        4.610489845275879,
+        2.037928342819214,
+        2.18019437789917
+      ],
+      "role_without_history_diagnostic": "unresolved",
+      "tensor_index": null,
+      "entity_slots_used": 11,
+      "max_entity_slots": 64,
+      "common_steps": 11,
+      "history_rmse_m": 0.27667398271591614,
+      "heading_max_rad": 0.03430594182148239
+    }
+  ],
+  "claims_excluded": [
+    "true-identity ground truth verification",
+    "P/F or sequential quality benefit",
+    "new model experiment"
+  ]
+}

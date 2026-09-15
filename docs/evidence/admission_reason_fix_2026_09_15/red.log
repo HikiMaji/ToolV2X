@@ -1,0 +1,37 @@
+
+======================================================================
+ERROR: test_role_transition_reports_pf_drop_and_fp_prior_dependency (test_structured_admission.StructuredAdmissionContractTests) (tools=('P', 'F'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_admission.py", line 292, in test_role_transition_reports_pf_drop_and_fp_prior_dependency
+    self.assertEqual(rows[-1]['exclusion_reason_version'],
+KeyError: 'exclusion_reason_version'
+
+======================================================================
+ERROR: test_role_transition_reports_pf_drop_and_fp_prior_dependency (test_structured_admission.StructuredAdmissionContractTests) (tools=('F', 'P'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_admission.py", line 292, in test_role_transition_reports_pf_drop_and_fp_prior_dependency
+    self.assertEqual(rows[-1]['exclusion_reason_version'],
+KeyError: 'exclusion_reason_version'
+
+======================================================================
+ERROR: test_forecast_exclusions_distinguish_entity_and_forecast_set_capacity (test_structured_admission.StructuredAdmissionContractTests) (reason='entity_capacity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_admission.py", line 325, in test_forecast_exclusions_distinguish_entity_and_forecast_set_capacity
+    item = next(x for x in rows[-1]['non_direct_primary_fields']
+KeyError: 'non_direct_primary_fields'
+
+======================================================================
+ERROR: test_forecast_exclusions_distinguish_entity_and_forecast_set_capacity (test_structured_admission.StructuredAdmissionContractTests) (reason='forecast_set_capacity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_admission.py", line 325, in test_forecast_exclusions_distinguish_entity_and_forecast_set_capacity
+    item = next(x for x in rows[-1]['non_direct_primary_fields']
+KeyError: 'non_direct_primary_fields'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.492s
+
+FAILED (errors=4)

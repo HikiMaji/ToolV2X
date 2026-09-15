@@ -130,6 +130,23 @@ def audit_structured_episode(episode):
 
         observation_coverage, forecast_coverage = _coverage(prepared)
         groups = remote_groups + local_groups
+        # Derive reasons from validated admission decisions, not the legacy
+        # catch-all dropped.reason. Excluded primary inputs may still feed a prior.
+        dropped_keys = {field_key(ref) for ref in report['dropped_field_refs']}
+        legacy_reasons = {field_key(item['ref']): item['reason'] for item in report['dropped']}
+        non_direct = []
+        for group in groups:
+            if group['use'] == 'tensor':
+                continue
+            reason = ('ego_filter' if group['use'] == 'ego_filter' else
+                      'entity_capacity' if group['tensor_index'] is None else
+                      'forecast_set_capacity')
+            for ref in group['primary_refs']:
+                key = field_key(ref)
+                non_direct.append(dict(ref=copy.deepcopy(ref), entity_id=group['entity_id'],
+                    source_role=group['source_role'], reason=reason,
+                    admitted_dependency=key in admitted_keys, dropped=key in dropped_keys,
+                    legacy_reason=legacy_reasons.get(key)))
         entity_mask = prepared['tensor_inputs']['entity_mask']
         capacities = dict(max_entities=prepared['driver_spec']['max_entities'],
             max_forecast_sets_per_entity=prepared['driver_spec']['max_forecast_sets_per_entity'],
@@ -169,6 +186,8 @@ def audit_structured_episode(episode):
             previously_receiver_derived_remote_refs=previous_derived,
             admitted_refs=copy.deepcopy(report['admitted_field_refs']),
             dropped_refs=copy.deepcopy(report['dropped_field_refs']),
+            exclusion_reason_version='toolv2x_structured_exclusion_reasons_v1',
+            non_direct_primary_fields=non_direct,
             direct_primary_refs=direct, direct_remote_primary_refs=direct_remote,
             direct_local_primary_refs=direct_local,
             direct_dependency_closure_refs=direct_closure,

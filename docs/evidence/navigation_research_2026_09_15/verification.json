@@ -1,0 +1,26 @@
+{
+  "verified_utc": "2026-09-15T10:45:39.895980+00:00",
+  "production_source_snapshot_comparison": {
+    "snapshot_python_files": 57,
+    "current_python_files": 57,
+    "changed": [],
+    "added": [],
+    "removed": [],
+    "method": "direct byte comparison against snapshot taken before this research"
+  },
+  "reference_manifest_files_verified": 17,
+  "measurement_json_files_verified": 3,
+  "paper": {
+    "pages": 18,
+    "bytes": 8744663,
+    "pdf_header_valid": true,
+    "text_nonempty": true
+  },
+  "research_json_parse": "pass",
+  "research_local_markdown_links": "pass",
+  "research_markdown_trailing_whitespace": "pass",
+  "git_diff_check": "pass",
+  "production_unit_or_regression_tests": "not_run_no_production_changes",
+  "navigation_contract_or_model_tests": "not_run_navigation_not_implemented",
+  "preexisting_worktree_changes": "preserved; no commit or push performed"
+}

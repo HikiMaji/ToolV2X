@@ -1,0 +1,19 @@
+{
+  "version": "toolv2x_structured_driver_20ep_fit_v1",
+  "status": "authorized_training_default_existing_data",
+  "source_data": "/root/autodl-tmp/ToolV2X/outputs/structured_training_preflight_2026_09_15_v1",
+  "train_rows": 128,
+  "validation_rows": 32,
+  "train_frames": 16,
+  "validation_frames": 4,
+  "expected_optimizer_steps": 1280,
+  "max_epochs": 20,
+  "initialization": "fresh seed7; changed epochs config prevents exact resume; previous checkpoints retained",
+  "provider_calls": 0,
+  "got_calls": 0,
+  "mtr_calls": 0,
+  "training_config": "training_config.json",
+  "archive_mode": "existing uncompressed inputs; gzip reader not yet implemented",
+  "scope": "one shared driver, fixed archived evidence, offline imitation; no query policy fitting or recollection",
+  "stop": "20 epochs then independent verification; no automatic expansion"
+}

@@ -1,0 +1,9 @@
+{
+  "mode": "training",
+  "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_driver_fit_2026_09_15_v1/training/checkpoint_000064.pt",
+  "optimizer_steps": 64,
+  "wall_seconds": 331.27701276983134,
+  "peak_allocated_bytes": 399590912,
+  "peak_reserved_bytes": 436207616,
+  "completed": true
+}
