@@ -89,6 +89,45 @@ class MethodEpisodeTests(LedgerFixture):
             on_progress=progress, local_provenance=provenance(), sample_id='sample', branch_id='feedback',
             token_counter=lambda prompt: len(prompt) // 4)
 
+    def test_fixed_diagnostic_ids_schedule_only_current_receipt_count(self):
+        from planning.method_episode import DIAGNOSTIC_POLICY_IDS, diagnostic_policy
+
+        self.assertEqual(DIAGNOSTIC_POLICY_IDS,
+            ('stop', 'p_current', 'p_current_f_change', 'f_current', 'p_current_f_current'))
+
+        class NoForecastPreview(dict):
+            def __getitem__(self, key):
+                if 'forecast' in key:
+                    raise AssertionError('diagnostic selector read a forecast preview')
+                return super().__getitem__(key)
+
+        actions = [dict(tool='STOP', mode=None), dict(tool='P', mode='current'),
+                   dict(tool='F', mode='current'), dict(tool='F', mode='change')]
+        expected = {
+            'stop': [('STOP', None), ('STOP', None), ('STOP', None)],
+            'p_current': [('P', 'current'), ('STOP', None), ('STOP', None)],
+            'f_current': [('F', 'current'), ('STOP', None), ('STOP', None)],
+            'p_current_f_current': [('P', 'current'), ('F', 'current'), ('STOP', None)],
+        }
+        for policy_id, schedule in expected.items():
+            for receipts, wanted in enumerate(schedule):
+                state = NoForecastPreview(policy_id=policy_id,
+                    response_receipts=[dict(receipt_id='r%d' % i) for i in range(receipts)],
+                    previous_plan=dict(waypoints=[[99., 99.]] * 6) if receipts == 0 else None,
+                    available_actions=actions)
+                decision = diagnostic_policy(state)
+                with self.subTest(policy_id=policy_id, receipts=receipts):
+                    self.assertEqual((decision['tool'], decision['mode']), wanted)
+                    self.assertIn(dict(tool=decision['tool'], mode=decision['mode']), actions)
+
+        changed = NoForecastPreview(policy_id='p_current_f_change', response_receipts=[{}],
+            previous_plan=dict(waypoints=[[1., 0.]] * 6), available_actions=actions)
+        self.assertEqual(diagnostic_policy(changed)['mode'], 'change')
+        unavailable = NoForecastPreview(policy_id='f_current', response_receipts=[],
+            previous_plan=None, available_actions=[dict(tool='STOP', mode=None),
+                                                   dict(tool='P', mode='current')])
+        self.assertEqual(diagnostic_policy(unavailable)['tool'], 'STOP')
+
     def test_actual_response_drives_revision_then_second_change_request(self):
         result = self.execute()
         self.assertEqual(self.events, ['driver:0', 'query:P_current', 'driver:1', 'query:F_change', 'driver:2'])

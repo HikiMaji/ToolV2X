@@ -20,6 +20,8 @@ from tools.task_spec import (ExecutionSpec, TASK_VERSION, TIMES, validate_plan,
 
 COMPUTE_ACCOUNTING_VERSION = 'toolv2x_compute_accounting_v1'
 DECISION_TIMING_VERSION = 'toolv2x_control_compute_v2'
+DIAGNOSTIC_POLICY_IDS = ('stop', 'p_current', 'p_current_f_change',
+                         'f_current', 'p_current_f_current')
 
 
 def validate_limits(limits):
@@ -45,12 +47,17 @@ def validate_limits(limits):
 def diagnostic_policy(state):
     """T4 CLI wiring check only; not the T8 learned request policy or a result claim."""
     name = state['policy_id']
-    if name not in ('stop', 'p_current', 'p_current_f_change'):
+    if name not in DIAGNOSTIC_POLICY_IDS:
         raise ValueError('unknown diagnostic policy')
     if name == 'stop':
         return dict(tool='STOP', mode=None, reason='diagnostic_stop')
-    if state['previous_plan'] is None:
-        return dict(tool='P', mode='current', reason='diagnostic_first_request')
+    calls = len(state['response_receipts'])
+    if calls == 0:
+        tool = 'F' if name == 'f_current' else 'P'
+        if dict(tool=tool, mode='current') in state['available_actions']:
+            return dict(tool=tool, mode='current', reason='diagnostic_first_request')
+    if name == 'p_current_f_current' and calls == 1 and dict(tool='F', mode='current') in state['available_actions']:
+        return dict(tool='F', mode='current', reason='diagnostic_fixed_second_request')
     if name == 'p_current_f_change' and dict(tool='F', mode='change') in state['available_actions']:
         return dict(tool='F', mode='change', reason='diagnostic_actual_revision')
     return dict(tool='STOP', mode=None, reason='diagnostic_done_or_unchanged')

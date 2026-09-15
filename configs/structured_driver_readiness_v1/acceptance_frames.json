@@ -1,0 +1,162 @@
+[
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_0:10",
+    "scene": "testoutput_CAV_data_2022-03-15-10-09-50_0",
+    "g": 719,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-15-10-09-50_2:82",
+    "scene": "testoutput_CAV_data_2022-03-15-10-09-50_2",
+    "g": 2035,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 82
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-15-16-00-17_0:10",
+    "scene": "testoutput_CAV_data_2022-03-15-16-00-17_0",
+    "g": 2435,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-15-16-00-17_0:97",
+    "scene": "testoutput_CAV_data_2022-03-15-16-00-17_0",
+    "g": 2522,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 97
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:10",
+    "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+    "g": 2583,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-10-43-13:359",
+    "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+    "g": 2932,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 359
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:10",
+    "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+    "g": 3534,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-12-04-22_0:73",
+    "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+    "g": 3597,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 73
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_0:10",
+    "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+    "g": 3658,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-12-14-33_1:29",
+    "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+    "g": 3766,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 29
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-14-44-47_1:10",
+    "scene": "testoutput_CAV_data_2022-03-17-14-44-47_1",
+    "g": 3827,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-14-44-47_6:126",
+    "scene": "testoutput_CAV_data_2022-03-17-14-44-47_6",
+    "g": 4675,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 126
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:10",
+    "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+    "g": 4736,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-14-59-30_0:224",
+    "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+    "g": 4950,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 224
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-15-55-26_0:10",
+    "scene": "testoutput_CAV_data_2022-03-17-15-55-26_0",
+    "g": 5011,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-15-55-26_1:178",
+    "scene": "testoutput_CAV_data_2022-03-17-15-55-26_1",
+    "g": 5465,
+    "role": "train",
+    "physical_split": "train",
+    "local_frame": 178
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:10",
+    "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+    "g": 5526,
+    "role": "validation",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-17-16-06-11_0:69",
+    "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+    "g": 5585,
+    "role": "validation",
+    "physical_split": "train",
+    "local_frame": 69
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:10",
+    "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+    "g": 7007,
+    "role": "validation",
+    "physical_split": "train",
+    "local_frame": 10
+  },
+  {
+    "sample_id": "testoutput_CAV_data_2022-03-21-09-50-20_10:57",
+    "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+    "g": 7054,
+    "role": "validation",
+    "physical_split": "train",
+    "local_frame": 57
+  }
+]

@@ -451,7 +451,8 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
     """Explicit new execution route; prepare/generate and their v1 five policies remain intact."""
     import copy
     import shutil
-    from planning.method_episode import run_task_episode, diagnostic_policy, validate_limits
+    from planning.method_episode import (DIAGNOSTIC_POLICY_IDS, diagnostic_policy,
+                                         run_task_episode, validate_limits)
     from tools.task_spec import validate_provenance
 
     if role not in ('train', 'validation'):
@@ -471,7 +472,7 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
                 spec['limits']['receiver_spec']['peer_reserve']=0
         validate_limits(spec['limits'])
         validate_provenance(spec['local_provenance'])
-        if spec['limits']['policy_id'] not in ('stop', 'p_current', 'p_current_f_change'):
+        if spec['limits']['policy_id'] not in DIAGNOSTIC_POLICY_IDS:
             raise ValueError('T4 CLI supports only explicitly labeled diagnostic policies')
     rows = [r for r in select_rows(data, per_recording) if r['role'] == role]
     if not rows or len({r['sample_id'] for r in rows}) != len(rows):
@@ -485,7 +486,7 @@ def interact(data, out, checkpoint, spec_path, role='validation', per_recording=
         control=run_spec['control'];spec=run_spec
         expected_binding=validate_runtime_binding(run_spec['runtime_binding'],run_spec)
         selections={k:v for k,v in (('request',value_checkpoint),('bundle',bundle_value_checkpoint)) if v is not None}
-        if value_checkpoint is None and run_spec['limits']['policy_id'] not in ('stop','p_current','p_current_f_change'):
+        if value_checkpoint is None and run_spec['limits']['policy_id'] not in DIAGNOSTIC_POLICY_IDS:
             raise ValueError('bundle-only execution requires an explicit diagnostic outer policy_id')
         if bundle_value_checkpoint is not None and (control is None or control['name']!='one_shot'):
             raise ValueError('bundle value checkpoint requires one_shot control')

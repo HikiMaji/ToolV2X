@@ -1,0 +1,225 @@
+{
+  "version": "toolv2x_structured_driver_readiness_v1",
+  "lifecycle": "prepared_not_executed",
+  "runtime_load_identity": null,
+  "execution_spec": {
+    "version": "toolv2x_execution_v1",
+    "profile": "real_smoke_v1",
+    "sigma_m": 5.0,
+    "max_targets": 4,
+    "max_request_bytes": 16384,
+    "max_response_bytes": 65536,
+    "max_episode_bytes": 196608,
+    "ego_geometry": "circumscribed_circle",
+    "ego_length_m": 4.8,
+    "ego_width_m": 2.0,
+    "max_plan_speed_mps": 80.0,
+    "max_plan_acceleration_mps2": 30.0
+  },
+  "driver_spec": {
+    "version": "toolv2x_structured_driver_v1",
+    "hidden_dim": 256,
+    "attention_heads": 4,
+    "interaction_layers": 2,
+    "max_entities": 64,
+    "max_forecast_sets_per_entity": 4,
+    "p_processing": "observations_only",
+    "position_scale_m": 50.0,
+    "size_scale_m": 10.0,
+    "time_scale_s": 3.0,
+    "association_distance_m": 2.0,
+    "association_history_distance_m": 2.0,
+    "association_size_ratio_min": 0.5,
+    "association_size_ratio_max": 2.0,
+    "association_heading_rad": 1.0471975511965976,
+    "association_ambiguity_margin_m": 0.25,
+    "ego_position_threshold_m": 1.5,
+    "ego_history_distance_m": 0.5,
+    "ego_heading_rad": 0.5235987755982988,
+    "ego_min_common_history": 2,
+    "ego_length_min_m": 3.0,
+    "ego_length_max_m": 6.0,
+    "ego_width_min_m": 1.4,
+    "ego_width_max_m": 3.0,
+    "ego_height_min_m": 1.0,
+    "ego_height_max_m": 3.0
+  },
+  "local_provenance": {
+    "version": "toolv2x_provenance_v1",
+    "tracking": {
+      "name": "toolv2x_causal_tracker",
+      "revision": "causal_windows_v1"
+    },
+    "prediction": {
+      "name": "CMP_MTR_full_seed20",
+      "revision": "epoch09"
+    },
+    "context": {
+      "name": "fixed_ego_at_t",
+      "revision": "11x100ms_v1"
+    }
+  },
+  "source": {
+    "frame_manifest": "frames.jsonl",
+    "acceptance_manifest": "acceptance_frames.json",
+    "source_index": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/episodes/selected_index.jsonl",
+    "source_split_manifest": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1/split_manifest.json",
+    "source_exclusions_config": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1/config.json",
+    "paths_are_audit_only": true,
+    "portable_validation": "full structural and deterministic selection validation; optional exact local source comparison"
+  },
+  "frame_counts": {
+    "train": 2987,
+    "validation": 108
+  },
+  "acceptance_counts": {
+    "train": 16,
+    "validation": 4
+  },
+  "recording_roles": {
+    "testoutput_CAV_data_2022-03-15-10-09-50": "train",
+    "testoutput_CAV_data_2022-03-15-16-00-17": "train",
+    "testoutput_CAV_data_2022-03-17-10-43-13": "train",
+    "testoutput_CAV_data_2022-03-17-12-04-22": "train",
+    "testoutput_CAV_data_2022-03-17-12-14-33": "train",
+    "testoutput_CAV_data_2022-03-17-14-44-47": "train",
+    "testoutput_CAV_data_2022-03-17-14-59-30": "train",
+    "testoutput_CAV_data_2022-03-17-15-55-26": "train",
+    "testoutput_CAV_data_2022-03-17-16-06-11": "validation",
+    "testoutput_CAV_data_2022-03-21-09-50-20": "validation"
+  },
+  "existing_exclusion_counts": {
+    "train": {
+      "original": 3027,
+      "kept": 2987,
+      "excluded": 40,
+      "recordings": 8
+    },
+    "validation": {
+      "original": 108,
+      "kept": 108,
+      "excluded": 0,
+      "recordings": 2
+    }
+  },
+  "selection": {
+    "acceptance_per_physical_recording": 2,
+    "method": "first_and_last_eligible_in_source_order",
+    "basis": "causal identity coverage only; no labels, quality, gains, or model outputs",
+    "all_failures_remain_in_denominator": true,
+    "adaptation_population": "all 3095 accepted frame metadata rows"
+  },
+  "collection": {
+    "conditions": {
+      "Ego": "stop",
+      "P": "p_current",
+      "F": "f_current",
+      "PF": "p_current_f_current"
+    },
+    "diagnostic_policy_ids": [
+      "stop",
+      "p_current",
+      "p_current_f_change",
+      "f_current",
+      "p_current_f_current"
+    ],
+    "max_remote_calls": 2,
+    "max_driver_attempts": 3,
+    "shared_driver_and_inputs": true,
+    "p_processing": "observations_only",
+    "runtime_requirements": [
+      "actual driver load identity",
+      "actual predictor load identity",
+      "fresh non-existing output paths",
+      "output capacity preflight"
+    ],
+    "ready_to_run_method_spec": false
+  },
+  "controls": {
+    "feedback": {
+      "version": "toolv2x_controls_v1",
+      "name": "feedback",
+      "driver_calls": 3,
+      "repeat_after_calls": 0,
+      "refinement_slot_tokens": 256,
+      "baseline": "Ego",
+      "bundle": null
+    },
+    "one_shot": {
+      "version": "toolv2x_controls_v1",
+      "name": "one_shot",
+      "driver_calls": 3,
+      "repeat_after_calls": 0,
+      "refinement_slot_tokens": 256,
+      "baseline": "Ego",
+      "bundle": {
+        "continuation_policy_id": "diagnostic_conditional_v1",
+        "candidate_sources": [
+          "initial",
+          "slower",
+          "constant_motion"
+        ],
+        "slowdown_scale": 0.5,
+        "max_candidates": 3,
+        "wrapper_reserve_bytes": 2048,
+        "extra_generation": "self_refinement",
+        "summary_spec": {
+          "version": "toolv2x_bundle_summary_v1",
+          "selection": "distance_then_field",
+          "field_kinds": [
+            "anchor",
+            "forecast"
+          ],
+          "max_fields": 8,
+          "max_bytes": 1536
+        },
+        "response_budget": {
+          "version": "toolv2x_bundle_budget_v1",
+          "mode": "episode_aggregate",
+          "outer_response_cap": null,
+          "primitive_response_caps": null
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "status": "conditional_recipe_only",
+    "source": "retained initial Ego stage-0 prepared inputs from the 20-frame integration attempt",
+    "expected_training_rows": 16,
+    "expected_validation_rows": 4,
+    "expected_batches_per_epoch": 8,
+    "eligible_label_count_certified": false,
+    "runtime_interval_rule": "ceil(eligible_train_rows/2)",
+    "maximum_epochs": 3,
+    "acceptance_after_each_epoch": true,
+    "failed_and_missing_coverage_retained": true,
+    "full_adaptation_initialization": "fresh_seeded_initialization_after_recollection",
+    "warm_start_api_available": false
+  },
+  "metrics": {
+    "diagnostic": [
+      "finite_execution_valid_initial_rate",
+      "requested_acquisition_boundary_rate",
+      "budget_empty_rate",
+      "history_receipt_direct_use_audit"
+    ],
+    "selection": [
+      "weighted_invalid_plan_rate",
+      "got_prefix_L2_avg",
+      "earliest_processed_batch"
+    ],
+    "interpretation": "integration and offline imitation diagnostics; not paper superiority or closed-loop safety"
+  },
+  "stage_gates": {
+    "B": "audit all 20x4 initial tasks; conditionally bootstrap at most 3 epochs only if validity blocks evidence coverage; otherwise stop on unexpected failures",
+    "C": "after full adaptation, recollect all four conditions with one frozen shared driver and report every failure/STOP/call count",
+    "D": "compare feedback and controls under the same weights, inputs, evidence rules, and total bidirectional budget"
+  },
+  "execution_status": {
+    "collection": false,
+    "training": false,
+    "inference": false,
+    "provider_access": false,
+    "model_access": false
+  }
+}

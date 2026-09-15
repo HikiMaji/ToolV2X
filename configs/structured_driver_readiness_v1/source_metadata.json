@@ -1,0 +1,85 @@
+{
+  "source_index": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/episodes/selected_index.jsonl",
+  "source_bytes": 4624115,
+  "source_split_manifest": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1/split_manifest.json",
+  "source_exclusions_config": "/root/autodl-tmp/ToolV2X/outputs/paired_driving_data_v1/config.json",
+  "source_execution_spec": "/root/autodl-tmp/ToolV2X/docs/evidence/receiver_round_robin_2026_09_14/launch.json",
+  "counts": {
+    "train": 2987,
+    "validation": 108
+  },
+  "recording_roles": {
+    "testoutput_CAV_data_2022-03-15-10-09-50": "train",
+    "testoutput_CAV_data_2022-03-15-16-00-17": "train",
+    "testoutput_CAV_data_2022-03-17-10-43-13": "train",
+    "testoutput_CAV_data_2022-03-17-12-04-22": "train",
+    "testoutput_CAV_data_2022-03-17-12-14-33": "train",
+    "testoutput_CAV_data_2022-03-17-14-44-47": "train",
+    "testoutput_CAV_data_2022-03-17-14-59-30": "train",
+    "testoutput_CAV_data_2022-03-17-15-55-26": "train",
+    "testoutput_CAV_data_2022-03-17-16-06-11": "validation",
+    "testoutput_CAV_data_2022-03-21-09-50-20": "validation"
+  },
+  "existing_exclusion_counts": {
+    "train": {
+      "original": 3027,
+      "kept": 2987,
+      "excluded": 40,
+      "recordings": 8
+    },
+    "validation": {
+      "original": 108,
+      "kept": 108,
+      "excluded": 0,
+      "recordings": 2
+    }
+  },
+  "execution_spec": {
+    "version": "toolv2x_execution_v1",
+    "profile": "real_smoke_v1",
+    "sigma_m": 5.0,
+    "max_targets": 4,
+    "max_request_bytes": 16384,
+    "max_response_bytes": 65536,
+    "max_episode_bytes": 196608,
+    "ego_geometry": "circumscribed_circle",
+    "ego_length_m": 4.8,
+    "ego_width_m": 2.0,
+    "max_plan_speed_mps": 80.0,
+    "max_plan_acceleration_mps2": 30.0
+  },
+  "local_provenance": {
+    "version": "toolv2x_provenance_v1",
+    "tracking": {
+      "name": "toolv2x_causal_tracker",
+      "revision": "causal_windows_v1"
+    },
+    "prediction": {
+      "name": "CMP_MTR_full_seed20",
+      "revision": "epoch09"
+    },
+    "context": {
+      "name": "fixed_ego_at_t",
+      "revision": "11x100ms_v1"
+    }
+  },
+  "approved_row_fields": [
+    "sample_id",
+    "scene",
+    "g",
+    "role",
+    "physical_split",
+    "local_frame",
+    "ego_motion",
+    "feature_read_paths",
+    "motion_read_paths"
+  ],
+  "forbidden_original_fields_removed": [
+    "window_archive_refs",
+    "action_queries",
+    "tool_outputs_materialized",
+    "directory",
+    "feature_frames"
+  ],
+  "scope": "read existing JSON only; no new sample construction, labels, arrays, checkpoint/model or provider access"
+}
