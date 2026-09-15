@@ -1,0 +1,19 @@
+{
+  "version": "toolv2x_structured_driver_fix_acceptance_v1",
+  "driver_version": "toolv2x_structured_driver_v2",
+  "seed": 7,
+  "optimizer_steps": 0,
+  "training_allowed": false,
+  "frame_source": "configs/structured_driver_readiness_v1/acceptance_frames.json",
+  "frames": 20,
+  "tasks": 80,
+  "execution_spec_changed": false,
+  "conditions_changed": false,
+  "stop_after": "one complete 20-frame Ego/P/F/PF batch and audit",
+  "changes": [
+    "scalar canonical angle encoding in v2",
+    "causal signed history velocity base with speed or zero fallback",
+    "small nonzero acceleration residual integrated at fixed 0.5s; actual previous plan retained for refinement"
+  ],
+  "claim": "integration only; initialization is untrained and does not establish cooperation or method benefit"
+}

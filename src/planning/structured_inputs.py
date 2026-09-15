@@ -45,7 +45,7 @@ class StructuredDriverSpec:
     ego_height_max_m: float = 3.
 
     def __post_init__(self):
-        if self.version != 'toolv2x_structured_driver_v1':
+        if self.version not in ('toolv2x_structured_driver_v1', 'toolv2x_structured_driver_v2'):
             raise ValueError('unsupported structured driver specification')
         if self.p_processing not in ('observations_only', 'local_mtr'):
             raise ValueError('structured P processing must be explicit')
@@ -503,10 +503,17 @@ def _tensors(entities, spec):
             valid = np.asarray(value['valid'], dtype=bool)
             scores = np.asarray(value['scores'], dtype=float)
             times = np.asarray(value['times'], dtype=float)
+            # v1 archives keep their original NumPy encoding. v2 uses one scalar
+            # path so allocation-dependent ufunc rounding cannot break exact replay.
+            if spec.version == 'toolv2x_structured_driver_v2':
+                sine = [math.sin(float(yaw)) for yaw in states[:, 6]]
+                cosine = [math.cos(float(yaw)) for yaw in states[:, 6]]
+            else:
+                sine, cosine = np.sin(states[:, 6]), np.cos(states[:, 6])
             encoded = np.stack([states[:, 0] / spec.position_scale_m,
                 states[:, 1] / spec.position_scale_m, states[:, 2] / spec.position_scale_m,
                 states[:, 3] / spec.size_scale_m, states[:, 4] / spec.size_scale_m,
-                states[:, 5] / spec.size_scale_m, np.sin(states[:, 6]), np.cos(states[:, 6]),
+                states[:, 5] / spec.size_scale_m, sine, cosine,
                 scores, times / spec.time_scale_s], axis=-1)
             observations[row, slot, valid] = encoded[valid]
             observation_mask[row, slot] = valid

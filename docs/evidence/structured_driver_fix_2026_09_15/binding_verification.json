@@ -1,0 +1,10 @@
+{
+  "checkpoint": "outputs/structured_driver_fix_2026_09_15_v1/acceptance/initialized_seed7.pt",
+  "binding_verified": true,
+  "model_revision": "v2",
+  "optimizer_steps": 0,
+  "source_files_literal_equal": 167,
+  "old_frozen_package_unchanged": true,
+  "only_readiness_change": "driver_spec.version v1 -> v2",
+  "execution_spec_unchanged": true
+}

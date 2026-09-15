@@ -12,7 +12,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / 'configs/structured_driver_readiness_v1'
-SOURCE = ROOT / '.superpowers/sdd/2026-09-15-driver-readiness/source_causal_frames.jsonl'
+# Public reference for mutation/CLI contracts, not an independent provenance audit.
+REFERENCE_FRAMES = PACKAGE / 'frames.jsonl'
 HELPER = ROOT / 'scripts/prepare_driver_readiness.py'
 
 
@@ -31,7 +32,7 @@ class DriverReadinessPreparationTests(unittest.TestCase):
         return temporary, target
 
     def test_frozen_package_validates_actual_configs_selection_and_budget(self):
-        result = module().validate_package(PACKAGE, source_frames=SOURCE)
+        result = module().validate_package(PACKAGE)
         self.assertEqual(result['frame_counts'], {'train': 2987, 'validation': 108})
         self.assertEqual(result['acceptance_counts'], {'train': 16, 'validation': 4})
         self.assertEqual(result['one_shot']['candidate_ids'],
@@ -56,7 +57,7 @@ class DriverReadinessPreparationTests(unittest.TestCase):
                 rows[0] = json.dumps(first)
                 path.write_text('\n'.join(rows) + '\n')
                 with self.subTest(mutation=mutation), self.assertRaises(ValueError):
-                    module().validate_package(target, source_frames=SOURCE)
+                    module().validate_package(target, source_frames=REFERENCE_FRAMES)
 
     def test_altered_acceptance_identity_fails(self):
         temporary, target = self.copy_package()
@@ -102,7 +103,7 @@ class DriverReadinessPreparationTests(unittest.TestCase):
         commands = (
             [sys.executable, str(HELPER), str(PACKAGE), '--validate-only'],
             [sys.executable, str(HELPER), str(PACKAGE), '--validate-only',
-             '--source-frames', str(SOURCE)],
+             '--source-frames', str(REFERENCE_FRAMES)],
         )
         for command, compared in zip(commands, (False, True)):
             result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)

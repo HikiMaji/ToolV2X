@@ -1,0 +1,67 @@
+EEEE
+======================================================================
+ERROR: test_v2_angles_have_one_scalar_encoding_and_exact_tamper_check (test_structured_inputs.CanonicalV2TensorTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_inputs.py", line 399, in test_v2_angles_have_one_scalar_encoding_and_exact_tamper_check
+    spec = StructuredDriverSpec(version='toolv2x_structured_driver_v2')
+  File "<string>", line 29, in __init__
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 49, in __post_init__
+    raise ValueError('unsupported structured driver specification')
+ValueError: unsupported structured driver specification
+
+======================================================================
+ERROR: test_acceleration_residual_integrates_without_clipping (test_structured_driver.StructuredDriverV2Tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 322, in test_acceleration_residual_integrates_without_clipping
+    spec, batch = self.batch()
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 281, in batch
+    spec = tiny_spec(version='toolv2x_structured_driver_v2')
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 24, in tiny_spec
+    return StructuredDriverSpec.from_dict(values)
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 88, in from_dict
+    return cls(**value)
+  File "<string>", line 29, in __init__
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 49, in __post_init__
+    raise ValueError('unsupported structured driver specification')
+ValueError: unsupported structured driver specification
+
+======================================================================
+ERROR: test_causal_signed_velocity_missing_history_and_refinement_base (test_structured_driver.StructuredDriverV2Tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 301, in test_causal_signed_velocity_missing_history_and_refinement_base
+    spec, batch = self.batch()
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 281, in batch
+    spec = tiny_spec(version='toolv2x_structured_driver_v2')
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 24, in tiny_spec
+    return StructuredDriverSpec.from_dict(values)
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 88, in from_dict
+    return cls(**value)
+  File "<string>", line 29, in __init__
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 49, in __post_init__
+    raise ValueError('unsupported structured driver specification')
+ValueError: unsupported structured driver specification
+
+======================================================================
+ERROR: test_seeded_initial_plan_is_legal_and_evidence_still_receives_gradients (test_structured_driver.StructuredDriverV2Tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 288, in test_seeded_initial_plan_is_legal_and_evidence_still_receives_gradients
+    spec, batch = self.batch()
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 281, in batch
+    spec = tiny_spec(version='toolv2x_structured_driver_v2')
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 24, in tiny_spec
+    return StructuredDriverSpec.from_dict(values)
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 88, in from_dict
+    return cls(**value)
+  File "<string>", line 29, in __init__
+  File "/root/autodl-tmp/ToolV2X/src/planning/structured_inputs.py", line 49, in __post_init__
+    raise ValueError('unsupported structured driver specification')
+ValueError: unsupported structured driver specification
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+FAILED (errors=4)

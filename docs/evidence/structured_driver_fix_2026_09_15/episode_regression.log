@@ -1,0 +1,65 @@
+.........................E..
+======================================================================
+ERROR: test_frame_contract_rejects_role_forbidden_field_and_source_drift (test_driver_readiness_preparation.DriverReadinessPreparationTests) (mutation='source')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_driver_readiness_preparation.py", line 59, in test_frame_contract_rejects_role_forbidden_field_and_source_drift
+    module().validate_package(target, source_frames=SOURCE)
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 290, in validate_package
+    if source_frames is not None and rows != read_jsonl(source_frames):
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 62, in read_jsonl
+    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1236, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1222, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1078, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.superpowers/sdd/2026-09-15-driver-readiness/source_causal_frames.jsonl'
+
+======================================================================
+ERROR: test_frozen_package_validates_actual_configs_selection_and_budget (test_driver_readiness_preparation.DriverReadinessPreparationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_driver_readiness_preparation.py", line 34, in test_frozen_package_validates_actual_configs_selection_and_budget
+    result = module().validate_package(PACKAGE, source_frames=SOURCE)
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 290, in validate_package
+    if source_frames is not None and rows != read_jsonl(source_frames):
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 62, in read_jsonl
+    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1236, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1222, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1078, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.superpowers/sdd/2026-09-15-driver-readiness/source_causal_frames.jsonl'
+
+======================================================================
+FAIL: test_public_validate_only_cli_needs_no_private_preparation_inputs (test_driver_readiness_preparation.DriverReadinessPreparationTests) (source_comparison=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_driver_readiness_preparation.py", line 110, in test_public_validate_only_cli_needs_no_private_preparation_inputs
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 353, in <module>
+    main()
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 342, in main
+    result = validate_package(args.out, source_frames=args.source_frames)
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 290, in validate_package
+    if source_frames is not None and rows != read_jsonl(source_frames):
+  File "/root/autodl-tmp/ToolV2X/scripts/prepare_driver_readiness.py", line 62, in read_jsonl
+    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1236, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1222, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/pathlib.py", line 1078, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.superpowers/sdd/2026-09-15-driver-readiness/source_causal_frames.jsonl'
+
+
+----------------------------------------------------------------------
+Ran 30 tests in 34.440s
+
+FAILED (failures=1, errors=2)

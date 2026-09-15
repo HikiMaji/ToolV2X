@@ -1,0 +1,21 @@
+{
+  "scope": "real 20-frame integration and at most 3 bootstrap epochs; stop before full adaptation",
+  "python": "/root/autodl-tmp/conda-envs/llava/bin/python",
+  "runtime_env": {
+    "PYTHONPATH": "src:vendor/cmp_mtr:vendor/v2vgot_llava",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "TOOLV2X_V2VGOT_ROOT": "/root/autodl-tmp/V2V-GoT",
+    "TOOLV2X_CMP_ROOT": "/root/autodl-tmp/CMP"
+  },
+  "source": "main after sdd/readiness-verified; per-run literal code snapshots retained",
+  "changes_to_production_code": false,
+  "initial_checkpoint": "initial/initialized_seed7.pt",
+  "bootstrap_training_rows": "offline_bootstrap/rows.jsonl",
+  "first_epoch_checkpoint": "captured_bootstrap_epoch1/checkpoint_000008.pt",
+  "long_training_started": false,
+  "unresolved_issue": "intermittent strict tensor reconstruction mismatch; no validator bypass or tolerance change"
+}

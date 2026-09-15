@@ -384,5 +384,29 @@ class StructuredReceiverTests(unittest.TestCase):
                 validate_structured_prepared(bad)
 
 
+class CanonicalV2TensorTests(unittest.TestCase):
+    def test_v2_angles_have_one_scalar_encoding_and_exact_tamper_check(self):
+        import math
+        from planning.structured_inputs import StructuredDriverSpec, validate_structured_prepared
+        receiver = StructuredReceiverTests()
+        local = one_track('ego', 10., 7)
+        local['states'][0, :, 6] = .17458057403564453
+        ledger, _ = receiver.ledger(local)
+        spec = StructuredDriverSpec(version='toolv2x_structured_driver_v2')
+        value = receiver.build(ledger, spec=spec)
+        values = value['tensor_inputs']['observations'][0][0]
+        for state, valid in zip(values, value['tensor_inputs']['observation_mask'][0][0]):
+            if valid:
+                self.assertEqual(state[6], math.sin(.17458057403564453))
+                self.assertEqual(state[7], math.cos(.17458057403564453))
+        for _ in range(8):
+            validate_structured_prepared(json.loads(json.dumps(value)))
+        bad = copy.deepcopy(value)
+        index = next(i for i, valid in enumerate(bad['tensor_inputs']['observation_mask'][0][0]) if valid)
+        bad['tensor_inputs']['observations'][0][0][index][6] = float(np.nextafter(values[index][6], np.inf))
+        with self.assertRaisesRegex(ValueError, 'tensors disagree'):
+            validate_structured_prepared(bad)
+
+
 if __name__ == '__main__':
     unittest.main()

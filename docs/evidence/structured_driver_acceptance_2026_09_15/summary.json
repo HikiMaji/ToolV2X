@@ -1,0 +1,272 @@
+{
+  "status": "stopped_at_three_epoch_cap",
+  "formal_adaptation_started": false,
+  "full_four_condition_collection_started": false,
+  "production_code_changed": false,
+  "train_frames": 16,
+  "validation_frames": 4,
+  "all_labels_complete": true,
+  "total_fixed_tasks": 400,
+  "runs": [
+    {
+      "name": "initial",
+      "wall_seconds": 172.16940502007492,
+      "attempted_tasks": 80,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 3,
+      "issued_requests": {},
+      "pass_gate": false,
+      "per_condition": [
+        {
+          "condition": "Ego",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "P",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "F",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "PF",
+          "attempted": 20,
+          "completed": 0
+        }
+      ]
+    },
+    {
+      "name": "initial_recheck",
+      "wall_seconds": 174.0669263259042,
+      "attempted_tasks": 80,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "issued_requests": {},
+      "pass_gate": false,
+      "per_condition": [
+        {
+          "condition": "Ego",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "P",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "F",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "PF",
+          "attempted": 20,
+          "completed": 0
+        }
+      ]
+    },
+    {
+      "name": "acceptance_epoch1",
+      "wall_seconds": 179.43108029011637,
+      "attempted_tasks": 80,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "issued_requests": {},
+      "pass_gate": false,
+      "per_condition": [
+        {
+          "condition": "Ego",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "P",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "F",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "PF",
+          "attempted": 20,
+          "completed": 0
+        }
+      ]
+    },
+    {
+      "name": "acceptance_epoch2",
+      "wall_seconds": 175.36880612396635,
+      "attempted_tasks": 80,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "issued_requests": {},
+      "pass_gate": false,
+      "per_condition": [
+        {
+          "condition": "Ego",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "P",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "F",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "PF",
+          "attempted": 20,
+          "completed": 0
+        }
+      ]
+    },
+    {
+      "name": "acceptance_epoch3",
+      "wall_seconds": 174.09389536897652,
+      "attempted_tasks": 80,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "issued_requests": {},
+      "pass_gate": false,
+      "per_condition": [
+        {
+          "condition": "Ego",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "P",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "F",
+          "attempted": 20,
+          "completed": 0
+        },
+        {
+          "condition": "PF",
+          "attempted": 20,
+          "completed": 0
+        }
+      ]
+    }
+  ],
+  "epochs": [
+    {
+      "epoch": 1,
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/captured_bootstrap_epoch1/checkpoint_000008.pt",
+      "optimizer_steps": 8,
+      "fit_seconds": null,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "pass_gate": false
+    },
+    {
+      "epoch": 2,
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch2/checkpoint_000016.pt",
+      "optimizer_steps": 16,
+      "fit_seconds": 19.860790255945176,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "pass_gate": false
+    },
+    {
+      "epoch": 3,
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch3/checkpoint_000024.pt",
+      "optimizer_steps": 24,
+      "fit_seconds": 18.875714221969247,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "pass_gate": false
+    }
+  ],
+  "validation": [
+    {
+      "epoch": 1,
+      "optimizer_steps": 8,
+      "loss": 9.390031576156616,
+      "valid_plans": 0,
+      "total_plans": 4,
+      "selected_checkpoint": null
+    },
+    {
+      "epoch": 2,
+      "optimizer_steps": 16,
+      "loss": 9.203705787658691,
+      "valid_plans": 0,
+      "total_plans": 4,
+      "selected_checkpoint": null
+    },
+    {
+      "epoch": 3,
+      "optimizer_steps": 24,
+      "loss": 5.074051022529602,
+      "valid_plans": 0,
+      "total_plans": 4,
+      "selected_checkpoint": null
+    }
+  ],
+  "retained_lineage_checkpoints": [
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch3/checkpoint_000000.pt",
+      "epoch": 0,
+      "optimizer_steps": 0,
+      "bytes": 18938630,
+      "complete_binding_verified": true
+    },
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch3/checkpoint_000008.pt",
+      "epoch": 1,
+      "optimizer_steps": 8,
+      "bytes": 56732826,
+      "complete_binding_verified": true
+    },
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch3/checkpoint_000016.pt",
+      "epoch": 2,
+      "optimizer_steps": 16,
+      "bytes": 56737562,
+      "complete_binding_verified": true
+    },
+    {
+      "path": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch3/checkpoint_000024.pt",
+      "epoch": 3,
+      "optimizer_steps": 24,
+      "bytes": 56742170,
+      "complete_binding_verified": true
+    }
+  ],
+  "code_state": "main with per-run literal source snapshots; no production code edits",
+  "historical_inconsistency": "Three initial runtime tensor reconstruction errors and one pretraining verification failure retained. Later full recheck and strict training completed. Root cause remains unlocalized; no validator bypass or tolerance change.",
+  "conclusions_allowed": [
+    "Current frozen initialization and bounded bootstrap readiness result only"
+  ],
+  "conclusions_not_allowed": [
+    "P/F effectiveness",
+    "feedback method benefit",
+    "paper comparison",
+    "closed-loop safety"
+  ],
+  "summarized_utc": "2026-09-15T06:04:48.221221+00:00"
+}

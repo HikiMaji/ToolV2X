@@ -1,0 +1,51 @@
+FFFE
+======================================================================
+ERROR: test_seeded_initial_plan_is_legal_and_evidence_still_receives_gradients (test_structured_driver.StructuredDriverV2Tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 294, in test_seeded_initial_plan_is_legal_and_evidence_still_receives_gradients
+    validate_plan(path[0].detach().tolist(), ExecutionSpec())
+  File "/root/autodl-tmp/ToolV2X/src/tools/task_spec.py", line 210, in validate_plan
+    raise ValueError('plan exceeds configured admissibility bounds')
+ValueError: plan exceeds configured admissibility bounds
+
+======================================================================
+FAIL: test_v2_angles_have_one_scalar_encoding_and_exact_tamper_check (test_structured_inputs.CanonicalV2TensorTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_inputs.py", line 404, in test_v2_angles_have_one_scalar_encoding_and_exact_tamper_check
+    self.assertEqual(state[6], math.sin(.17458057403564453))
+AssertionError: 0.17369510241310937 != 0.17369510241310934
+
+======================================================================
+FAIL: test_acceleration_residual_integrates_without_clipping (test_structured_driver.StructuredDriverV2Tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 331, in test_acceleration_residual_integrates_without_clipping
+    torch.testing.assert_close(acceleration, torch.tensor([[2., -1.]]).expand(6, 2))
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/site-packages/torch/testing/_comparison.py", line 1520, in assert_close
+    raise error_metas[0].to_error(msg)
+AssertionError: Tensor-likes are not close!
+
+Mismatched elements: 12 / 12 (100.0%)
+Greatest absolute difference: 74.0 at index (1, 0) (up to 1e-05 allowed)
+Greatest relative difference: 37.0 at index (1, 0) (up to 1.3e-06 allowed)
+
+======================================================================
+FAIL: test_causal_signed_velocity_missing_history_and_refinement_base (test_structured_driver.StructuredDriverV2Tests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/tests/test_structured_driver.py", line 311, in test_causal_signed_velocity_missing_history_and_refinement_base
+    torch.testing.assert_close(model(batch)[0], expected)
+  File "/root/autodl-tmp/conda-envs/llava/lib/python3.8/site-packages/torch/testing/_comparison.py", line 1520, in assert_close
+    raise error_metas[0].to_error(msg)
+AssertionError: Tensor-likes are not close!
+
+Mismatched elements: 12 / 12 (100.0%)
+Greatest absolute difference: 6.0 at index (5, 0) (up to 1e-05 allowed)
+Greatest relative difference: 1.0 at index (0, 0) (up to 1.3e-06 allowed)
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.157s
+
+FAILED (failures=3, errors=1)

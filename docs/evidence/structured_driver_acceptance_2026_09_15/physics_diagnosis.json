@@ -1,0 +1,1299 @@
+[
+  {
+    "run": "initial",
+    "g": 719,
+    "role": "train",
+    "output": null,
+    "offline_label": {
+      "max_speed_mps": 28.209244085391592,
+      "max_acceleration_mps2": 2.224665305152263
+    }
+  },
+  {
+    "run": "initial",
+    "g": 2035,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.023642324496503,
+      "max_acceleration_mps2": 45.994952773023016
+    },
+    "offline_label": {
+      "max_speed_mps": 28.508473113085593,
+      "max_acceleration_mps2": 0.15851591390808176
+    }
+  },
+  {
+    "run": "initial",
+    "g": 2435,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.409351717882373,
+      "max_acceleration_mps2": 48.574409361487305
+    },
+    "offline_label": {
+      "max_speed_mps": 27.377056288948474,
+      "max_acceleration_mps2": 2.137080341185088
+    }
+  },
+  {
+    "run": "initial",
+    "g": 2522,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.931398494794482,
+      "max_acceleration_mps2": 47.55107052991852
+    },
+    "offline_label": {
+      "max_speed_mps": 27.9324207006281,
+      "max_acceleration_mps2": 3.372763203870943
+    }
+  },
+  {
+    "run": "initial",
+    "g": 2583,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 30.086468334606156,
+      "max_acceleration_mps2": 51.45033084248211
+    },
+    "offline_label": {
+      "max_speed_mps": 2.951473680969131,
+      "max_acceleration_mps2": 4.501408725706173
+    }
+  },
+  {
+    "run": "initial",
+    "g": 2932,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.570752140815625,
+      "max_acceleration_mps2": 48.97780618172124
+    },
+    "offline_label": {
+      "max_speed_mps": 0.0285140398451889,
+      "max_acceleration_mps2": 0.056202882003299676
+    }
+  },
+  {
+    "run": "initial",
+    "g": 3534,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.648085765774777,
+      "max_acceleration_mps2": 46.40198889302003
+    },
+    "offline_label": {
+      "max_speed_mps": 5.530110019195918,
+      "max_acceleration_mps2": 2.362666028130635
+    }
+  },
+  {
+    "run": "initial",
+    "g": 3597,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.757187283313023,
+      "max_acceleration_mps2": 46.70130145989111
+    },
+    "offline_label": {
+      "max_speed_mps": 8.440249090075799,
+      "max_acceleration_mps2": 0.8426098329771496
+    }
+  },
+  {
+    "run": "initial",
+    "g": 3658,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.0443654249092,
+      "max_acceleration_mps2": 47.5835099039352
+    },
+    "offline_label": {
+      "max_speed_mps": 13.996405195409315,
+      "max_acceleration_mps2": 3.979302904177915
+    }
+  },
+  {
+    "run": "initial",
+    "g": 3766,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 30.12497354048905,
+      "max_acceleration_mps2": 51.66722113395282
+    },
+    "offline_label": {
+      "max_speed_mps": 0.02189810005729041,
+      "max_acceleration_mps2": 0.06864718203020378
+    }
+  },
+  {
+    "run": "initial",
+    "g": 3827,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.63652733310697,
+      "max_acceleration_mps2": 48.92452348765948
+    },
+    "offline_label": {
+      "max_speed_mps": 14.099603544548236,
+      "max_acceleration_mps2": 1.2835335286980472
+    }
+  },
+  {
+    "run": "initial",
+    "g": 4675,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.59964744808755,
+      "max_acceleration_mps2": 46.31486266548251
+    },
+    "offline_label": {
+      "max_speed_mps": 11.53842164460637,
+      "max_acceleration_mps2": 0.9592262568161621
+    }
+  },
+  {
+    "run": "initial",
+    "g": 4736,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.938999731063067,
+      "max_acceleration_mps2": 46.89358953456772
+    },
+    "offline_label": {
+      "max_speed_mps": 13.959671277122364,
+      "max_acceleration_mps2": 3.2349490251480795
+    }
+  },
+  {
+    "run": "initial",
+    "g": 4950,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.391875136001556,
+      "max_acceleration_mps2": 48.50012738678653
+    },
+    "offline_label": {
+      "max_speed_mps": 13.676173986592877,
+      "max_acceleration_mps2": 2.121835676393817
+    }
+  },
+  {
+    "run": "initial",
+    "g": 5011,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.52303110920178,
+      "max_acceleration_mps2": 46.0348153437934
+    },
+    "offline_label": {
+      "max_speed_mps": 6.846392826142241,
+      "max_acceleration_mps2": 1.3406060333885486
+    }
+  },
+  {
+    "run": "initial",
+    "g": 5465,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.604420581020847,
+      "max_acceleration_mps2": 49.35158341742839
+    },
+    "offline_label": {
+      "max_speed_mps": 14.63466133300811,
+      "max_acceleration_mps2": 0.8813915589922406
+    }
+  },
+  {
+    "run": "initial",
+    "g": 5526,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 30.18166321953236,
+      "max_acceleration_mps2": 50.307162700478706
+    },
+    "offline_label": {
+      "max_speed_mps": 15.744341108031424,
+      "max_acceleration_mps2": 3.5242097554665848
+    }
+  },
+  {
+    "run": "initial",
+    "g": 5585,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 29.837169245382622,
+      "max_acceleration_mps2": 51.370847447701586
+    },
+    "offline_label": {
+      "max_speed_mps": 13.565676229685323,
+      "max_acceleration_mps2": 0.405005892234739
+    }
+  },
+  {
+    "run": "initial",
+    "g": 7007,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 29.11656785975384,
+      "max_acceleration_mps2": 47.80138099493931
+    },
+    "offline_label": {
+      "max_speed_mps": 15.529668123359107,
+      "max_acceleration_mps2": 0.6852866236386189
+    }
+  },
+  {
+    "run": "initial",
+    "g": 7054,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 28.83067903475043,
+      "max_acceleration_mps2": 47.50005976676305
+    },
+    "offline_label": {
+      "max_speed_mps": 17.278082498202416,
+      "max_acceleration_mps2": 0.5440338677224892
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 719,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.184827486327602,
+      "max_acceleration_mps2": 47.74106719658064
+    },
+    "offline_label": {
+      "max_speed_mps": 28.209244085391592,
+      "max_acceleration_mps2": 2.224665305152263
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 2035,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.023642324496503,
+      "max_acceleration_mps2": 45.994952773023016
+    },
+    "offline_label": {
+      "max_speed_mps": 28.508473113085593,
+      "max_acceleration_mps2": 0.15851591390808176
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 2435,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.409351717882373,
+      "max_acceleration_mps2": 48.574409361487305
+    },
+    "offline_label": {
+      "max_speed_mps": 27.377056288948474,
+      "max_acceleration_mps2": 2.137080341185088
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 2522,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.931398494794482,
+      "max_acceleration_mps2": 47.55107052991852
+    },
+    "offline_label": {
+      "max_speed_mps": 27.9324207006281,
+      "max_acceleration_mps2": 3.372763203870943
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 2583,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 30.086468334606156,
+      "max_acceleration_mps2": 51.45033084248211
+    },
+    "offline_label": {
+      "max_speed_mps": 2.951473680969131,
+      "max_acceleration_mps2": 4.501408725706173
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 2932,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.570752140815625,
+      "max_acceleration_mps2": 48.97780618172124
+    },
+    "offline_label": {
+      "max_speed_mps": 0.0285140398451889,
+      "max_acceleration_mps2": 0.056202882003299676
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 3534,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.648085765774777,
+      "max_acceleration_mps2": 46.40198889302003
+    },
+    "offline_label": {
+      "max_speed_mps": 5.530110019195918,
+      "max_acceleration_mps2": 2.362666028130635
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 3597,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.757187283313023,
+      "max_acceleration_mps2": 46.70130145989111
+    },
+    "offline_label": {
+      "max_speed_mps": 8.440249090075799,
+      "max_acceleration_mps2": 0.8426098329771496
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 3658,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.0443654249092,
+      "max_acceleration_mps2": 47.5835099039352
+    },
+    "offline_label": {
+      "max_speed_mps": 13.996405195409315,
+      "max_acceleration_mps2": 3.979302904177915
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 3766,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 30.12497354048905,
+      "max_acceleration_mps2": 51.66722113395282
+    },
+    "offline_label": {
+      "max_speed_mps": 0.02189810005729041,
+      "max_acceleration_mps2": 0.06864718203020378
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 3827,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.63652733310697,
+      "max_acceleration_mps2": 48.92452348765948
+    },
+    "offline_label": {
+      "max_speed_mps": 14.099603544548236,
+      "max_acceleration_mps2": 1.2835335286980472
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 4675,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.59964744808755,
+      "max_acceleration_mps2": 46.31486266548251
+    },
+    "offline_label": {
+      "max_speed_mps": 11.53842164460637,
+      "max_acceleration_mps2": 0.9592262568161621
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 4736,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.938999731063067,
+      "max_acceleration_mps2": 46.89358953456772
+    },
+    "offline_label": {
+      "max_speed_mps": 13.959671277122364,
+      "max_acceleration_mps2": 3.2349490251480795
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 4950,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.391875136001556,
+      "max_acceleration_mps2": 48.50012738678653
+    },
+    "offline_label": {
+      "max_speed_mps": 13.676173986592877,
+      "max_acceleration_mps2": 2.121835676393817
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 5011,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.52303110920178,
+      "max_acceleration_mps2": 46.0348153437934
+    },
+    "offline_label": {
+      "max_speed_mps": 6.846392826142241,
+      "max_acceleration_mps2": 1.3406060333885486
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 5465,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.604420581020847,
+      "max_acceleration_mps2": 49.35158341742839
+    },
+    "offline_label": {
+      "max_speed_mps": 14.63466133300811,
+      "max_acceleration_mps2": 0.8813915589922406
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 5526,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 30.18166321953236,
+      "max_acceleration_mps2": 50.307162700478706
+    },
+    "offline_label": {
+      "max_speed_mps": 15.744341108031424,
+      "max_acceleration_mps2": 3.5242097554665848
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 5585,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 29.837169245382622,
+      "max_acceleration_mps2": 51.370847447701586
+    },
+    "offline_label": {
+      "max_speed_mps": 13.565676229685323,
+      "max_acceleration_mps2": 0.405005892234739
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 7007,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 29.11656785975384,
+      "max_acceleration_mps2": 47.80138099493931
+    },
+    "offline_label": {
+      "max_speed_mps": 15.529668123359107,
+      "max_acceleration_mps2": 0.6852866236386189
+    }
+  },
+  {
+    "run": "initial_recheck",
+    "g": 7054,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 28.83067903475043,
+      "max_acceleration_mps2": 47.50005976676305
+    },
+    "offline_label": {
+      "max_speed_mps": 17.278082498202416,
+      "max_acceleration_mps2": 0.5440338677224892
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 719,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 16.71205885712324,
+      "max_acceleration_mps2": 38.46375762106897
+    },
+    "offline_label": {
+      "max_speed_mps": 28.209244085391592,
+      "max_acceleration_mps2": 2.224665305152263
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 2035,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 19.204992552008157,
+      "max_acceleration_mps2": 38.87084949610942
+    },
+    "offline_label": {
+      "max_speed_mps": 28.508473113085593,
+      "max_acceleration_mps2": 0.15851591390808176
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 2435,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 17.699794634215465,
+      "max_acceleration_mps2": 36.56958215915727
+    },
+    "offline_label": {
+      "max_speed_mps": 27.377056288948474,
+      "max_acceleration_mps2": 2.137080341185088
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 2522,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 17.59908933865159,
+      "max_acceleration_mps2": 36.260384694285506
+    },
+    "offline_label": {
+      "max_speed_mps": 27.9324207006281,
+      "max_acceleration_mps2": 3.372763203870943
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 2583,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 11.857908802056855,
+      "max_acceleration_mps2": 45.70556392623394
+    },
+    "offline_label": {
+      "max_speed_mps": 2.951473680969131,
+      "max_acceleration_mps2": 4.501408725706173
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 2932,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 13.122777440760043,
+      "max_acceleration_mps2": 43.42935416655656
+    },
+    "offline_label": {
+      "max_speed_mps": 0.0285140398451889,
+      "max_acceleration_mps2": 0.056202882003299676
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 3534,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 14.908033374997686,
+      "max_acceleration_mps2": 41.26561243821272
+    },
+    "offline_label": {
+      "max_speed_mps": 5.530110019195918,
+      "max_acceleration_mps2": 2.362666028130635
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 3597,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 14.933136974125999,
+      "max_acceleration_mps2": 41.21256506653641
+    },
+    "offline_label": {
+      "max_speed_mps": 8.440249090075799,
+      "max_acceleration_mps2": 0.8426098329771496
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 3658,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 14.536298791850532,
+      "max_acceleration_mps2": 41.33838458965374
+    },
+    "offline_label": {
+      "max_speed_mps": 13.996405195409315,
+      "max_acceleration_mps2": 3.979302904177915
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 3766,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 12.199737848825757,
+      "max_acceleration_mps2": 43.49781916637815
+    },
+    "offline_label": {
+      "max_speed_mps": 0.02189810005729041,
+      "max_acceleration_mps2": 0.06864718203020378
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 3827,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 13.73991820747549,
+      "max_acceleration_mps2": 42.64772611238266
+    },
+    "offline_label": {
+      "max_speed_mps": 14.099603544548236,
+      "max_acceleration_mps2": 1.2835335286980472
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 4675,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 14.615203875017949,
+      "max_acceleration_mps2": 41.80401920982229
+    },
+    "offline_label": {
+      "max_speed_mps": 11.53842164460637,
+      "max_acceleration_mps2": 0.9592262568161621
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 4736,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 14.583331793468453,
+      "max_acceleration_mps2": 41.08297844329081
+    },
+    "offline_label": {
+      "max_speed_mps": 13.959671277122364,
+      "max_acceleration_mps2": 3.2349490251480795
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 4950,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 13.265634386790431,
+      "max_acceleration_mps2": 42.88769946122774
+    },
+    "offline_label": {
+      "max_speed_mps": 13.676173986592877,
+      "max_acceleration_mps2": 2.121835676393817
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 5011,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 16.24935908861834,
+      "max_acceleration_mps2": 38.94071539675166
+    },
+    "offline_label": {
+      "max_speed_mps": 6.846392826142241,
+      "max_acceleration_mps2": 1.3406060333885486
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 5465,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 12.164588860827914,
+      "max_acceleration_mps2": 44.204676012869534
+    },
+    "offline_label": {
+      "max_speed_mps": 14.63466133300811,
+      "max_acceleration_mps2": 0.8813915589922406
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 5526,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 12.272125009596218,
+      "max_acceleration_mps2": 43.616093711869084
+    },
+    "offline_label": {
+      "max_speed_mps": 15.744341108031424,
+      "max_acceleration_mps2": 3.5242097554665848
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 5585,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 11.633349136286082,
+      "max_acceleration_mps2": 45.7710872808981
+    },
+    "offline_label": {
+      "max_speed_mps": 13.565676229685323,
+      "max_acceleration_mps2": 0.405005892234739
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 7007,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 13.478970476869032,
+      "max_acceleration_mps2": 42.72691979873144
+    },
+    "offline_label": {
+      "max_speed_mps": 15.529668123359107,
+      "max_acceleration_mps2": 0.6852866236386189
+    }
+  },
+  {
+    "run": "acceptance_epoch1",
+    "g": 7054,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 16.28655667882777,
+      "max_acceleration_mps2": 38.72995806161403
+    },
+    "offline_label": {
+      "max_speed_mps": 17.278082498202416,
+      "max_acceleration_mps2": 0.5440338677224892
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 719,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 27.78634260526172,
+      "max_acceleration_mps2": 49.405361213984314
+    },
+    "offline_label": {
+      "max_speed_mps": 28.209244085391592,
+      "max_acceleration_mps2": 2.224665305152263
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 2035,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 29.971027530021097,
+      "max_acceleration_mps2": 53.88143191999366
+    },
+    "offline_label": {
+      "max_speed_mps": 28.508473113085593,
+      "max_acceleration_mps2": 0.15851591390808176
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 2435,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.78199052503001,
+      "max_acceleration_mps2": 51.18799445598167
+    },
+    "offline_label": {
+      "max_speed_mps": 27.377056288948474,
+      "max_acceleration_mps2": 2.137080341185088
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 2522,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 28.715522266788522,
+      "max_acceleration_mps2": 51.246376706669196
+    },
+    "offline_label": {
+      "max_speed_mps": 27.9324207006281,
+      "max_acceleration_mps2": 3.372763203870943
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 2583,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 23.830366523802073,
+      "max_acceleration_mps2": 41.98698188924036
+    },
+    "offline_label": {
+      "max_speed_mps": 2.951473680969131,
+      "max_acceleration_mps2": 4.501408725706173
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 2932,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 25.19839906500468,
+      "max_acceleration_mps2": 44.661895095421976
+    },
+    "offline_label": {
+      "max_speed_mps": 0.0285140398451889,
+      "max_acceleration_mps2": 0.056202882003299676
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 3534,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 26.635894921433188,
+      "max_acceleration_mps2": 47.55489559509371
+    },
+    "offline_label": {
+      "max_speed_mps": 5.530110019195918,
+      "max_acceleration_mps2": 2.362666028130635
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 3597,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 26.485890626065093,
+      "max_acceleration_mps2": 46.91300826381083
+    },
+    "offline_label": {
+      "max_speed_mps": 8.440249090075799,
+      "max_acceleration_mps2": 0.8426098329771496
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 3658,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 26.134464385805437,
+      "max_acceleration_mps2": 46.16120582681644
+    },
+    "offline_label": {
+      "max_speed_mps": 13.996405195409315,
+      "max_acceleration_mps2": 3.979302904177915
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 3766,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 24.690306877721444,
+      "max_acceleration_mps2": 43.414469293139405
+    },
+    "offline_label": {
+      "max_speed_mps": 0.02189810005729041,
+      "max_acceleration_mps2": 0.06864718203020378
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 3827,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 25.61601000972494,
+      "max_acceleration_mps2": 45.33437516454771
+    },
+    "offline_label": {
+      "max_speed_mps": 14.099603544548236,
+      "max_acceleration_mps2": 1.2835335286980472
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 4675,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 26.1488485365081,
+      "max_acceleration_mps2": 46.40902286390671
+    },
+    "offline_label": {
+      "max_speed_mps": 11.53842164460637,
+      "max_acceleration_mps2": 0.9592262568161621
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 4736,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 26.302129172342312,
+      "max_acceleration_mps2": 46.61783199485132
+    },
+    "offline_label": {
+      "max_speed_mps": 13.959671277122364,
+      "max_acceleration_mps2": 3.2349490251480795
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 4950,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 25.398930629532792,
+      "max_acceleration_mps2": 44.96848465969153
+    },
+    "offline_label": {
+      "max_speed_mps": 13.676173986592877,
+      "max_acceleration_mps2": 2.121835676393817
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 5011,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 27.594154558478884,
+      "max_acceleration_mps2": 49.27893937605547
+    },
+    "offline_label": {
+      "max_speed_mps": 6.846392826142241,
+      "max_acceleration_mps2": 1.3406060333885486
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 5465,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 24.617312066338062,
+      "max_acceleration_mps2": 43.48806311460639
+    },
+    "offline_label": {
+      "max_speed_mps": 14.63466133300811,
+      "max_acceleration_mps2": 0.8813915589922406
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 5526,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 24.667612558840037,
+      "max_acceleration_mps2": 43.588267915549636
+    },
+    "offline_label": {
+      "max_speed_mps": 15.744341108031424,
+      "max_acceleration_mps2": 3.5242097554665848
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 5585,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 23.57729519943048,
+      "max_acceleration_mps2": 41.35693006561462
+    },
+    "offline_label": {
+      "max_speed_mps": 13.565676229685323,
+      "max_acceleration_mps2": 0.405005892234739
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 7007,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 25.187016934066488,
+      "max_acceleration_mps2": 44.55052271376668
+    },
+    "offline_label": {
+      "max_speed_mps": 15.529668123359107,
+      "max_acceleration_mps2": 0.6852866236386189
+    }
+  },
+  {
+    "run": "acceptance_epoch2",
+    "g": 7054,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 27.392252627937413,
+      "max_acceleration_mps2": 48.52928676038075
+    },
+    "offline_label": {
+      "max_speed_mps": 17.278082498202416,
+      "max_acceleration_mps2": 0.5440338677224892
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 719,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 37.15114298000598,
+      "max_acceleration_mps2": 62.205877948265915
+    },
+    "offline_label": {
+      "max_speed_mps": 28.209244085391592,
+      "max_acceleration_mps2": 2.224665305152263
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 2035,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 40.987112410805146,
+      "max_acceleration_mps2": 70.66716249969558
+    },
+    "offline_label": {
+      "max_speed_mps": 28.508473113085593,
+      "max_acceleration_mps2": 0.15851591390808176
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 2435,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 39.04595182215502,
+      "max_acceleration_mps2": 66.0284118389597
+    },
+    "offline_label": {
+      "max_speed_mps": 27.377056288948474,
+      "max_acceleration_mps2": 2.137080341185088
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 2522,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 38.86860006925196,
+      "max_acceleration_mps2": 65.92048294296742
+    },
+    "offline_label": {
+      "max_speed_mps": 27.9324207006281,
+      "max_acceleration_mps2": 3.372763203870943
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 2583,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 30.44348314589347,
+      "max_acceleration_mps2": 47.42769709282757
+    },
+    "offline_label": {
+      "max_speed_mps": 2.951473680969131,
+      "max_acceleration_mps2": 4.501408725706173
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 2932,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 32.81275908525954,
+      "max_acceleration_mps2": 52.814383255685335
+    },
+    "offline_label": {
+      "max_speed_mps": 0.0285140398451889,
+      "max_acceleration_mps2": 0.056202882003299676
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 3534,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 35.38713694415383,
+      "max_acceleration_mps2": 58.606666575783024
+    },
+    "offline_label": {
+      "max_speed_mps": 5.530110019195918,
+      "max_acceleration_mps2": 2.362666028130635
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 3597,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 34.53219657762893,
+      "max_acceleration_mps2": 56.29789398739977
+    },
+    "offline_label": {
+      "max_speed_mps": 8.440249090075799,
+      "max_acceleration_mps2": 0.8426098329771496
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 3658,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 34.028350138734616,
+      "max_acceleration_mps2": 55.18348186709854
+    },
+    "offline_label": {
+      "max_speed_mps": 13.996405195409315,
+      "max_acceleration_mps2": 3.979302904177915
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 3766,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 32.66572104348973,
+      "max_acceleration_mps2": 52.100069475586054
+    },
+    "offline_label": {
+      "max_speed_mps": 0.02189810005729041,
+      "max_acceleration_mps2": 0.06864718203020378
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 3827,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 33.32203285697581,
+      "max_acceleration_mps2": 53.73481888730138
+    },
+    "offline_label": {
+      "max_speed_mps": 14.099603544548236,
+      "max_acceleration_mps2": 1.2835335286980472
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 4675,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 34.05719967067336,
+      "max_acceleration_mps2": 55.46020017326883
+    },
+    "offline_label": {
+      "max_speed_mps": 11.53842164460637,
+      "max_acceleration_mps2": 0.9592262568161621
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 4736,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 34.322782650459146,
+      "max_acceleration_mps2": 55.99951605201588
+    },
+    "offline_label": {
+      "max_speed_mps": 13.959671277122364,
+      "max_acceleration_mps2": 3.2349490251480795
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 4950,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 33.17892111582201,
+      "max_acceleration_mps2": 53.50012230696888
+    },
+    "offline_label": {
+      "max_speed_mps": 13.676173986592877,
+      "max_acceleration_mps2": 2.121835676393817
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 5011,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 36.82840802312829,
+      "max_acceleration_mps2": 61.75128192169718
+    },
+    "offline_label": {
+      "max_speed_mps": 6.846392826142241,
+      "max_acceleration_mps2": 1.3406060333885486
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 5465,
+    "role": "train",
+    "output": {
+      "max_speed_mps": 31.452117349754953,
+      "max_acceleration_mps2": 49.539588946885665
+    },
+    "offline_label": {
+      "max_speed_mps": 14.63466133300811,
+      "max_acceleration_mps2": 0.8813915589922406
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 5526,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 31.46385987309013,
+      "max_acceleration_mps2": 49.47546217048508
+    },
+    "offline_label": {
+      "max_speed_mps": 15.744341108031424,
+      "max_acceleration_mps2": 3.5242097554665848
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 5585,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 30.277672386720155,
+      "max_acceleration_mps2": 46.90937371991717
+    },
+    "offline_label": {
+      "max_speed_mps": 13.565676229685323,
+      "max_acceleration_mps2": 0.405005892234739
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 7007,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 32.27396189403512,
+      "max_acceleration_mps2": 51.523082587677536
+    },
+    "offline_label": {
+      "max_speed_mps": 15.529668123359107,
+      "max_acceleration_mps2": 0.6852866236386189
+    }
+  },
+  {
+    "run": "acceptance_epoch3",
+    "g": 7054,
+    "role": "validation",
+    "output": {
+      "max_speed_mps": 36.78686329483435,
+      "max_acceleration_mps2": 61.431113369567484
+    },
+    "offline_label": {
+      "max_speed_mps": 17.278082498202416,
+      "max_acceleration_mps2": 0.5440338677224892
+    }
+  }
+]

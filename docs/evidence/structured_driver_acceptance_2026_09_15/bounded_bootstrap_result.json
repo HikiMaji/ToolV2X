@@ -1,0 +1,40 @@
+{
+  "status": "stopped_at_three_epoch_cap",
+  "max_epochs": 3,
+  "max_optimizer_steps": 24,
+  "formal_adaptation_started": false,
+  "epochs": [
+    {
+      "epoch": 1,
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/captured_bootstrap_epoch1/checkpoint_000008.pt",
+      "optimizer_steps": 8,
+      "fit_seconds": null,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "pass_gate": false
+    },
+    {
+      "epoch": 2,
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch2/checkpoint_000016.pt",
+      "optimizer_steps": 16,
+      "fit_seconds": 19.860790255945176,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "pass_gate": false
+    },
+    {
+      "epoch": 3,
+      "checkpoint": "/root/autodl-tmp/ToolV2X/outputs/structured_acceptance_2026_09_15_v1/bootstrap_epoch3/checkpoint_000024.pt",
+      "optimizer_steps": 24,
+      "fit_seconds": 18.875714221969247,
+      "initial_valid_frames": 0,
+      "passing_tasks": 0,
+      "audit_failures": 0,
+      "pass_gate": false
+    }
+  ],
+  "started_utc": "2026-09-15T05:55:36.158952+00:00",
+  "finished_utc": "2026-09-15T06:03:58.963282+00:00"
+}

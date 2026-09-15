@@ -276,8 +276,10 @@ def _seed(seed):
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
 
 
-def _version(seed, steps, training_run_id, config=None, data=None):
-    return dict(name='structured_planner_network', revision='v1', training=dict(
+def _version(seed, steps, training_run_id, config=None, data=None, driver_spec=None):
+    spec = driver_spec if driver_spec is not None else (config or {}).get('driver_spec', {})
+    revision = 'v2' if spec.get('version') == 'toolv2x_structured_driver_v2' else 'v1'
+    return dict(name='structured_planner_network', revision=revision, training=dict(
         status='trained' if steps else 'initialized_untrained', optimizer_steps=steps, seed=seed,
         training_run_id=training_run_id,
         config=config, data=data))
@@ -313,7 +315,8 @@ def initialize(checkpoint, driver_spec, *, seed=0):
         raise FileExistsError(checkpoint)
     _seed(seed)
     model = StructuredPlannerNetwork(StructuredDriverSpec.from_dict(driver_spec))
-    _atomic_torch(checkpoint, _state(model, _version(seed, 0, str(uuid.uuid4())), rng=_rng()))
+    _atomic_torch(checkpoint, _state(model, _version(seed, 0, str(uuid.uuid4()),
+        driver_spec=driver_spec), rng=_rng()))
     return Path(checkpoint)
 
 

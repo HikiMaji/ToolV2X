@@ -1,0 +1,8 @@
+{
+  "rows": 3095,
+  "all_whitelisted_fields_equal": true,
+  "source_index": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/episodes/selected_index.jsonl",
+  "package": "configs/structured_driver_readiness_v1",
+  "online_model_or_labels_read": false,
+  "meaning": "Actual local source check, separate from portable contract tests"
+}

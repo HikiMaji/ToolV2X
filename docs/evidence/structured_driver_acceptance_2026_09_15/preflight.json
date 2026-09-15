@@ -1,0 +1,368 @@
+{
+  "train": {
+    "role": "train",
+    "eligible_rows": 16,
+    "eligible_frames": 16,
+    "groups": [
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-10-09-50_0",
+        "g": 719,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-10-09-50_2",
+        "g": 2035,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-16-00-17_0",
+        "g": 2435,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-16-00-17_0",
+        "g": 2522,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "g": 2583,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "g": 2932,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "g": 3534,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "g": 3597,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "g": 3658,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "g": 3766,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-44-47_1",
+        "g": 3827,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-44-47_6",
+        "g": 4675,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "g": 4736,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "g": 4950,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-15-55-26_0",
+        "g": 5011,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-15-55-26_1",
+        "g": 5465,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      }
+    ],
+    "represented_frames": 16,
+    "missing_conditions": [
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-10-09-50_0",
+        "g": 719,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-10-09-50_2",
+        "g": 2035,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-16-00-17_0",
+        "g": 2435,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-15-16-00-17_0",
+        "g": 2522,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "g": 2583,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-10-43-13",
+        "g": 2932,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "g": 3534,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-04-22_0",
+        "g": 3597,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_0",
+        "g": 3658,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-12-14-33_1",
+        "g": 3766,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-44-47_1",
+        "g": 3827,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-44-47_6",
+        "g": 4675,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "g": 4736,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-14-59-30_0",
+        "g": 4950,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-15-55-26_0",
+        "g": 5011,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-15-55-26_1",
+        "g": 5465,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      }
+    ],
+    "scope": "Observed rows only; entirely absent frames require the collection coverage manifest. Zero-label rows have zero weight; eligible weights have dataset mean one. Fixed weights precede minibatch mean; shuffle and smaller last batches still affect optimization."
+  },
+  "validation": {
+    "role": "validation",
+    "eligible_rows": 4,
+    "eligible_frames": 4,
+    "groups": [
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "g": 5526,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "g": 5585,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "g": 7007,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "g": 7054,
+        "condition": "Ego",
+        "rows": 1,
+        "row_weight": 1.0,
+        "total_weight": 1.0
+      }
+    ],
+    "represented_frames": 4,
+    "missing_conditions": [
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "g": 5526,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-17-16-06-11_0",
+        "g": 5585,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "g": 7007,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      },
+      {
+        "scene": "testoutput_CAV_data_2022-03-21-09-50-20_10",
+        "g": 7054,
+        "conditions": [
+          "P",
+          "F",
+          "PF"
+        ]
+      }
+    ],
+    "scope": "Observed rows only; entirely absent frames require the collection coverage manifest. Zero-label rows have zero weight; eligible weights have dataset mean one. Fixed weights precede minibatch mean; shuffle and smaller last batches still affect optimization."
+  },
+  "eligible_labels_certified": true,
+  "training_started": false,
+  "epochs_cap": 3,
+  "note": "Initial 80 outcomes remain failures; this validates only retained Ego prepared inputs and offline labels."
+}

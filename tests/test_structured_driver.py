@@ -272,5 +272,80 @@ class StructuredDriverTests(unittest.TestCase):
                 revision='v1', training=dict(status='trained', optimizer_steps=1)))
 
 
+class StructuredDriverV2Tests(unittest.TestCase):
+    def batch(self):
+        spec = tiny_spec(version='toolv2x_structured_driver_v2')
+        prepared, _ = fixture(spec)
+        return spec, driver.collate_structured_inputs([features()], [prepared])
+
+    def test_seeded_initial_plan_is_legal_and_evidence_still_receives_gradients(self):
+        from tools.task_spec import validate_plan
+        torch.manual_seed(7)
+        spec, batch = self.batch()
+        batch['ego_motion'][0] = torch.tensor([27. / spec.position_scale_m, 0., 1., 0.])
+        for key in ('observations', 'forecasts'):
+            batch[key].requires_grad_()
+        model = driver.StructuredPlannerNetwork(spec)
+        path = model(batch)
+        validate_plan(path[0].detach().tolist(), ExecutionSpec())
+        self.assertLess((path[0, :, 0] - torch.arange(1, 7) * 13.5).abs().max().item(), 1.)
+        path.square().sum().backward()
+        for key in ('observations', 'forecasts'):
+            self.assertGreater(batch[key].grad.abs().sum().item(), 0.)
+
+    def test_causal_signed_velocity_missing_history_and_refinement_base(self):
+        spec, batch = self.batch()
+        model = driver.StructuredPlannerNetwork(spec)
+        # Isolate the base, including reverse/lateral motion and history gaps.
+        with torch.no_grad():
+            model.output_head[-1].weight.zero_()
+            model.output_head[-1].bias.zero_()
+        batch['ego_motion'][0] = torch.tensor([20. / spec.position_scale_m, 0., 1., 0.])
+        batch['ego_history_mask'][0, [8, 10]] = True
+        batch['ego_history'][0, 8] = torch.tensor([.4 / spec.position_scale_m, -.2 / spec.position_scale_m, 0., -.2 / spec.time_scale_s])
+        expected = torch.arange(1, 7)[:, None] * torch.tensor([[-1., .5]])
+        torch.testing.assert_close(model(batch)[0], expected)
+        batch['previous_plan'].copy_(expected[None] * 2)
+        batch['previous_plan_valid'].fill_(True)
+        torch.testing.assert_close(model(batch)[0], expected * 2)
+        batch['previous_plan_valid'].fill_(False)
+        batch['ego_history_mask'].fill_(False)
+        torch.testing.assert_close(model(batch)[0, :, 0], torch.arange(1, 7) * 10.)
+        batch['ego_motion'].zero_()
+        torch.testing.assert_close(model(batch), torch.zeros((1, 6, 2)))
+
+    def test_acceleration_residual_integrates_without_clipping(self):
+        spec, batch = self.batch()
+        batch['ego_motion'].zero_()
+        model = driver.StructuredPlannerNetwork(spec)
+        with torch.no_grad():
+            model.output_head[-1].weight.zero_()
+            model.output_head[-1].bias.copy_(torch.tensor([2., -1.]) * spec.time_scale_s**2 / spec.position_scale_m)
+        path = model(batch)[0]
+        velocity = torch.diff(torch.cat([torch.zeros((1, 2)), path]), dim=0) / .5
+        acceleration = torch.diff(torch.cat([torch.zeros((1, 2)), velocity]), dim=0) / .5
+        torch.testing.assert_close(acceleration, torch.tensor([[2., -1.]]).expand(6, 2))
+        from tools.task_spec import validate_plan
+        with torch.no_grad():
+            model.output_head[-1].bias.mul_(100.)
+        with self.assertRaisesRegex(ValueError, 'admissibility'):
+            validate_plan(model(batch)[0].detach().tolist(), ExecutionSpec())
+
+    def test_v2_checkpoint_roundtrip_preserves_spec_and_model_identity(self):
+        import tempfile
+        from planning.train_structured_driver import initialize, load_structured_planner
+        spec, batch = self.batch()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'initialized.pt'
+            initialize(path, spec.to_dict(), seed=7)
+            planner = load_structured_planner(path)
+            self.assertEqual(planner.provenance['model_version']['revision'], 'v2')
+            self.assertEqual(planner.provenance['model_version']['training']['optimizer_steps'], 0)
+            self.assertEqual(planner.spec.to_dict(), spec.to_dict())
+            torch.manual_seed(7)
+            expected = driver.StructuredPlannerNetwork(spec).eval()(batch)
+            torch.testing.assert_close(planner.model.eval()(batch), expected, rtol=0., atol=0.)
+
+
 if __name__ == '__main__':
     unittest.main()

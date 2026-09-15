@@ -1,0 +1,2264 @@
+{
+  "version": "toolv2x_structured_driver_fix_result_v1",
+  "status": "bounded_acceptance_finished",
+  "initialization": "seed7 untrained structured_planner_network v2",
+  "optimizer_steps": 0,
+  "real_training_started": false,
+  "full_collection_started": false,
+  "initial_valid_frames": 20,
+  "passing_tasks": 80,
+  "audit_failures": 0,
+  "pass_gate": true,
+  "all_four_arm_initial_outputs_equal": true,
+  "wall_seconds": 736.8243972740602,
+  "by_arm": {
+    "Ego": {
+      "tasks": 20,
+      "completed": 20,
+      "driver_attempts": 20,
+      "requests": {},
+      "tasks_with_direct_remote_fields": 0,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "revisions_changed": 0
+    },
+    "P": {
+      "tasks": 20,
+      "completed": 20,
+      "driver_attempts": 40,
+      "requests": {
+        "P": 20
+      },
+      "tasks_with_direct_remote_fields": 20,
+      "acquired_fields_by_kind": {
+        "anchor": 78,
+        "history": 78
+      },
+      "direct_fields_by_kind": {
+        "history": 68
+      },
+      "provider_model_targets": 0,
+      "request_bytes": 16900,
+      "response_bytes": 243103,
+      "revisions_changed": 20
+    },
+    "F": {
+      "tasks": 20,
+      "completed": 20,
+      "driver_attempts": 40,
+      "requests": {
+        "F": 20
+      },
+      "tasks_with_direct_remote_fields": 20,
+      "acquired_fields_by_kind": {
+        "anchor": 78,
+        "forecast": 78
+      },
+      "direct_fields_by_kind": {
+        "forecast": 78
+      },
+      "provider_model_targets": 266,
+      "request_bytes": 16900,
+      "response_bytes": 232260,
+      "revisions_changed": 20
+    },
+    "PF": {
+      "tasks": 20,
+      "completed": 20,
+      "driver_attempts": 60,
+      "requests": {
+        "P": 20,
+        "F": 20
+      },
+      "tasks_with_direct_remote_fields": 20,
+      "acquired_fields_by_kind": {
+        "anchor": 107,
+        "forecast": 78,
+        "history": 78
+      },
+      "direct_fields_by_kind": {
+        "history": 68,
+        "forecast": 68
+      },
+      "provider_model_targets": 266,
+      "request_bytes": 86833,
+      "response_bytes": 521937,
+      "revisions_changed": 40
+    }
+  },
+  "rows": [
+    {
+      "g": 719,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07393073872181932,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.5164530449546874,
+      "provider_completed": 0
+    },
+    {
+      "g": 719,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09399677028031309,
+      "provider_model_targets": 0,
+      "request_bytes": 841,
+      "response_bytes": 12133,
+      "wall_seconds": 6.969069042010233,
+      "provider_completed": 1
+    },
+    {
+      "g": 719,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09303673488158727,
+      "provider_model_targets": 6,
+      "request_bytes": 841,
+      "response_bytes": 11920,
+      "wall_seconds": 7.069211770081893,
+      "provider_completed": 1
+    },
+    {
+      "g": 719,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.11512076678620521,
+      "provider_model_targets": 6,
+      "request_bytes": 4389,
+      "response_bytes": 26235,
+      "wall_seconds": 14.582575818989426,
+      "provider_completed": 2
+    },
+    {
+      "g": 2035,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07048395763148564,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 1.9488560990430415,
+      "provider_completed": 0
+    },
+    {
+      "g": 2035,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 2,
+        "history": 2
+      },
+      "direct_fields_by_kind": {
+        "history": 2
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09022131000985129,
+      "provider_model_targets": 0,
+      "request_bytes": 839,
+      "response_bytes": 7850,
+      "wall_seconds": 6.10675188084133,
+      "provider_completed": 1
+    },
+    {
+      "g": 2035,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 2,
+        "forecast": 2
+      },
+      "direct_fields_by_kind": {
+        "forecast": 2
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 2,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 2,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09002659373831284,
+      "provider_model_targets": 2,
+      "request_bytes": 839,
+      "response_bytes": 6800,
+      "wall_seconds": 6.420447103912011,
+      "provider_completed": 1
+    },
+    {
+      "g": 2035,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 2,
+        "forecast": 2,
+        "history": 2
+      },
+      "direct_fields_by_kind": {
+        "history": 2,
+        "forecast": 2
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 2,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 2,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.11194688459661262,
+      "provider_model_targets": 2,
+      "request_bytes": 3038,
+      "response_bytes": 15748,
+      "wall_seconds": 13.289058910915628,
+      "provider_completed": 2
+    },
+    {
+      "g": 2435,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.06964087304042305,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.122271927073598,
+      "provider_completed": 0
+    },
+    {
+      "g": 2435,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08878072636534723,
+      "provider_model_targets": 0,
+      "request_bytes": 842,
+      "response_bytes": 10579,
+      "wall_seconds": 6.793460018932819,
+      "provider_completed": 1
+    },
+    {
+      "g": 2435,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08805521615990548,
+      "provider_model_targets": 3,
+      "request_bytes": 842,
+      "response_bytes": 11872,
+      "wall_seconds": 6.727131521096453,
+      "provider_completed": 1
+    },
+    {
+      "g": 2435,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10924692522966971,
+      "provider_model_targets": 3,
+      "request_bytes": 4405,
+      "response_bytes": 24644,
+      "wall_seconds": 13.97253789100796,
+      "provider_completed": 2
+    },
+    {
+      "g": 2522,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07169921369428059,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.0648993148934096,
+      "provider_completed": 0
+    },
+    {
+      "g": 2522,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.0914306703305867,
+      "provider_model_targets": 0,
+      "request_bytes": 844,
+      "response_bytes": 12847,
+      "wall_seconds": 7.073388074990362,
+      "provider_completed": 1
+    },
+    {
+      "g": 2522,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09065300385698222,
+      "provider_model_targets": 4,
+      "request_bytes": 844,
+      "response_bytes": 11850,
+      "wall_seconds": 6.7827075039967895,
+      "provider_completed": 1
+    },
+    {
+      "g": 2522,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.11231925415825642,
+      "provider_model_targets": 4,
+      "request_bytes": 4410,
+      "response_bytes": 26897,
+      "wall_seconds": 13.75082245701924,
+      "provider_completed": 2
+    },
+    {
+      "g": 2583,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07430965414628832,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.9910636430140585,
+      "provider_completed": 0
+    },
+    {
+      "g": 2583,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08004660556673825,
+      "provider_model_targets": 0,
+      "request_bytes": 851,
+      "response_bytes": 11362,
+      "wall_seconds": 9.360220943810418,
+      "provider_completed": 1
+    },
+    {
+      "g": 2583,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.0794551545715787,
+      "provider_model_targets": 27,
+      "request_bytes": 851,
+      "response_bytes": 11953,
+      "wall_seconds": 9.449805059935898,
+      "provider_completed": 1
+    },
+    {
+      "g": 2583,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 7,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.08602023981955019,
+      "provider_model_targets": 27,
+      "request_bytes": 4407,
+      "response_bytes": 25887,
+      "wall_seconds": 19.30108438897878,
+      "provider_completed": 2
+    },
+    {
+      "g": 2932,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.0773937122870465,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.6689554520417005,
+      "provider_completed": 0
+    },
+    {
+      "g": 2932,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08322317608881447,
+      "provider_model_targets": 0,
+      "request_bytes": 857,
+      "response_bytes": 12942,
+      "wall_seconds": 8.152070085983723,
+      "provider_completed": 1
+    },
+    {
+      "g": 2932,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08247631666978848,
+      "provider_model_targets": 18,
+      "request_bytes": 857,
+      "response_bytes": 11901,
+      "wall_seconds": 8.270445180125535,
+      "provider_completed": 1
+    },
+    {
+      "g": 2932,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.09155876090542667,
+      "provider_model_targets": 18,
+      "request_bytes": 4430,
+      "response_bytes": 27295,
+      "wall_seconds": 17.182616675039753,
+      "provider_completed": 2
+    },
+    {
+      "g": 3534,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07797396639289106,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.338942487956956,
+      "provider_completed": 0
+    },
+    {
+      "g": 3534,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08519458907398333,
+      "provider_model_targets": 0,
+      "request_bytes": 842,
+      "response_bytes": 10505,
+      "wall_seconds": 7.483621957944706,
+      "provider_completed": 1
+    },
+    {
+      "g": 3534,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08489941089860344,
+      "provider_model_targets": 11,
+      "request_bytes": 842,
+      "response_bytes": 11882,
+      "wall_seconds": 7.496466292999685,
+      "provider_completed": 1
+    },
+    {
+      "g": 3534,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.09244731637922195,
+      "provider_model_targets": 11,
+      "request_bytes": 4405,
+      "response_bytes": 24848,
+      "wall_seconds": 15.854731917148456,
+      "provider_completed": 2
+    },
+    {
+      "g": 3597,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07625122736445546,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.459400102030486,
+      "provider_completed": 0
+    },
+    {
+      "g": 3597,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08200964284610414,
+      "provider_model_targets": 0,
+      "request_bytes": 845,
+      "response_bytes": 12916,
+      "wall_seconds": 7.687667082995176,
+      "provider_completed": 1
+    },
+    {
+      "g": 3597,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.0813425208627176,
+      "provider_model_targets": 14,
+      "request_bytes": 845,
+      "response_bytes": 11870,
+      "wall_seconds": 7.876592646120116,
+      "provider_completed": 1
+    },
+    {
+      "g": 3597,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 7,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 3,
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.08821022347775141,
+      "provider_model_targets": 14,
+      "request_bytes": 4419,
+      "response_bytes": 27383,
+      "wall_seconds": 15.99077618517913,
+      "provider_completed": 2
+    },
+    {
+      "g": 3658,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07535119308904414,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.561384790809825,
+      "provider_completed": 0
+    },
+    {
+      "g": 3658,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09017703586941454,
+      "provider_model_targets": 0,
+      "request_bytes": 844,
+      "response_bytes": 12929,
+      "wall_seconds": 7.758642193861306,
+      "provider_completed": 1
+    },
+    {
+      "g": 3658,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.0899237096068218,
+      "provider_model_targets": 12,
+      "request_bytes": 844,
+      "response_bytes": 11833,
+      "wall_seconds": 7.870479486882687,
+      "provider_completed": 1
+    },
+    {
+      "g": 3658,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10559337591254551,
+      "provider_model_targets": 12,
+      "request_bytes": 4405,
+      "response_bytes": 27214,
+      "wall_seconds": 16.22591762803495,
+      "provider_completed": 2
+    },
+    {
+      "g": 3766,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.0776868181686033,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.701441687066108,
+      "provider_completed": 0
+    },
+    {
+      "g": 3766,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08277174964638198,
+      "provider_model_targets": 0,
+      "request_bytes": 860,
+      "response_bytes": 12960,
+      "wall_seconds": 8.396943045780063,
+      "provider_completed": 1
+    },
+    {
+      "g": 3766,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08185514465639913,
+      "provider_model_targets": 21,
+      "request_bytes": 860,
+      "response_bytes": 11886,
+      "wall_seconds": 8.39473979617469,
+      "provider_completed": 1
+    },
+    {
+      "g": 3766,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 7,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.08994080398242958,
+      "provider_model_targets": 21,
+      "request_bytes": 4439,
+      "response_bytes": 27430,
+      "wall_seconds": 17.984991798875853,
+      "provider_completed": 2
+    },
+    {
+      "g": 3827,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07743132086137834,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.65507232490927,
+      "provider_completed": 0
+    },
+    {
+      "g": 3827,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08939252419894023,
+      "provider_model_targets": 0,
+      "request_bytes": 845,
+      "response_bytes": 12961,
+      "wall_seconds": 7.98969532107003,
+      "provider_completed": 1
+    },
+    {
+      "g": 3827,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08942184607741199,
+      "provider_model_targets": 10,
+      "request_bytes": 845,
+      "response_bytes": 11797,
+      "wall_seconds": 8.353151010116562,
+      "provider_completed": 1
+    },
+    {
+      "g": 3827,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "history": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10132608578579427,
+      "provider_model_targets": 10,
+      "request_bytes": 4403,
+      "response_bytes": 27203,
+      "wall_seconds": 16.613027449930087,
+      "provider_completed": 2
+    },
+    {
+      "g": 4675,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07763930013740586,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.39415345992893,
+      "provider_completed": 0
+    },
+    {
+      "g": 4675,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.0884436832131236,
+      "provider_model_targets": 0,
+      "request_bytes": 846,
+      "response_bytes": 12989,
+      "wall_seconds": 7.742387789068744,
+      "provider_completed": 1
+    },
+    {
+      "g": 4675,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08800888670235625,
+      "provider_model_targets": 11,
+      "request_bytes": 846,
+      "response_bytes": 11951,
+      "wall_seconds": 7.801491043064743,
+      "provider_completed": 1
+    },
+    {
+      "g": 4675,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.09881840067701184,
+      "provider_model_targets": 11,
+      "request_bytes": 4411,
+      "response_bytes": 27132,
+      "wall_seconds": 15.970883249072358,
+      "provider_completed": 2
+    },
+    {
+      "g": 4736,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07624638100567617,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.499210703186691,
+      "provider_completed": 0
+    },
+    {
+      "g": 4736,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08527540874318017,
+      "provider_model_targets": 0,
+      "request_bytes": 843,
+      "response_bytes": 12933,
+      "wall_seconds": 7.972955147968605,
+      "provider_completed": 1
+    },
+    {
+      "g": 4736,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08483136749823743,
+      "provider_model_targets": 14,
+      "request_bytes": 843,
+      "response_bytes": 11876,
+      "wall_seconds": 7.829246670939028,
+      "provider_completed": 1
+    },
+    {
+      "g": 4736,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "history": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.09399062532000452,
+      "provider_model_targets": 14,
+      "request_bytes": 4403,
+      "response_bytes": 27262,
+      "wall_seconds": 16.691271896008402,
+      "provider_completed": 2
+    },
+    {
+      "g": 4950,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.0778098163118251,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.678344781976193,
+      "provider_completed": 0
+    },
+    {
+      "g": 4950,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09055393596168258,
+      "provider_model_targets": 0,
+      "request_bytes": 843,
+      "response_bytes": 12919,
+      "wall_seconds": 8.308483790140599,
+      "provider_completed": 1
+    },
+    {
+      "g": 4950,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.0901682610780218,
+      "provider_model_targets": 15,
+      "request_bytes": 843,
+      "response_bytes": 11848,
+      "wall_seconds": 8.154618283035234,
+      "provider_completed": 1
+    },
+    {
+      "g": 4950,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 5,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.1032694000719334,
+      "provider_model_targets": 15,
+      "request_bytes": 4411,
+      "response_bytes": 27095,
+      "wall_seconds": 16.427297787042335,
+      "provider_completed": 2
+    },
+    {
+      "g": 5011,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07624932481913312,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.170149999903515,
+      "provider_completed": 0
+    },
+    {
+      "g": 5011,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08162454112413217,
+      "provider_model_targets": 0,
+      "request_bytes": 844,
+      "response_bytes": 10475,
+      "wall_seconds": 7.21375000779517,
+      "provider_completed": 1
+    },
+    {
+      "g": 5011,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08073374021236353,
+      "provider_model_targets": 9,
+      "request_bytes": 844,
+      "response_bytes": 11829,
+      "wall_seconds": 7.003890817984939,
+      "provider_completed": 1
+    },
+    {
+      "g": 5011,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.08716978832613402,
+      "provider_model_targets": 9,
+      "request_bytes": 4409,
+      "response_bytes": 24765,
+      "wall_seconds": 14.921999241923913,
+      "provider_completed": 2
+    },
+    {
+      "g": 5465,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07722152898216492,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.786043696803972,
+      "provider_completed": 0
+    },
+    {
+      "g": 5465,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09039837218200938,
+      "provider_model_targets": 0,
+      "request_bytes": 845,
+      "response_bytes": 12943,
+      "wall_seconds": 8.688247313955799,
+      "provider_completed": 1
+    },
+    {
+      "g": 5465,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.09074793783500587,
+      "provider_model_targets": 11,
+      "request_bytes": 845,
+      "response_bytes": 11796,
+      "wall_seconds": 8.671163202030584,
+      "provider_completed": 1
+    },
+    {
+      "g": 5465,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 4,
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10419424792461036,
+      "provider_model_targets": 11,
+      "request_bytes": 4410,
+      "response_bytes": 26936,
+      "wall_seconds": 18.40490125119686,
+      "provider_completed": 2
+    },
+    {
+      "g": 5526,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07505256912872936,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.8403266530949622,
+      "provider_completed": 0
+    },
+    {
+      "g": 5526,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08771298838892287,
+      "provider_model_targets": 0,
+      "request_bytes": 840,
+      "response_bytes": 12925,
+      "wall_seconds": 9.09006907301955,
+      "provider_completed": 1
+    },
+    {
+      "g": 5526,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08741133680539542,
+      "provider_model_targets": 27,
+      "request_bytes": 840,
+      "response_bytes": 11799,
+      "wall_seconds": 8.876962082926184,
+      "provider_completed": 1
+    },
+    {
+      "g": 5526,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 5,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10061025911378767,
+      "provider_model_targets": 27,
+      "request_bytes": 4401,
+      "response_bytes": 27050,
+      "wall_seconds": 18.099819548195228,
+      "provider_completed": 2
+    },
+    {
+      "g": 5585,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07575420953235873,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.979805100010708,
+      "provider_completed": 0
+    },
+    {
+      "g": 5585,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08721798257337234,
+      "provider_model_targets": 0,
+      "request_bytes": 845,
+      "response_bytes": 12917,
+      "wall_seconds": 9.092491849092767,
+      "provider_completed": 1
+    },
+    {
+      "g": 5585,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08646520916868378,
+      "provider_model_targets": 20,
+      "request_bytes": 845,
+      "response_bytes": 11855,
+      "wall_seconds": 9.151273070136085,
+      "provider_completed": 1
+    },
+    {
+      "g": 5585,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 7,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 3,
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.09823550121282543,
+      "provider_model_targets": 20,
+      "request_bytes": 4409,
+      "response_bytes": 27357,
+      "wall_seconds": 18.776621112134308,
+      "provider_completed": 2
+    },
+    {
+      "g": 7007,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07576808867198358,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.705452776979655,
+      "provider_completed": 0
+    },
+    {
+      "g": 7007,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08808309704920737,
+      "provider_model_targets": 0,
+      "request_bytes": 841,
+      "response_bytes": 12992,
+      "wall_seconds": 8.411633641924709,
+      "provider_completed": 1
+    },
+    {
+      "g": 7007,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08756467313535225,
+      "provider_model_targets": 19,
+      "request_bytes": 841,
+      "response_bytes": 11886,
+      "wall_seconds": 8.9859426880721,
+      "provider_completed": 1
+    },
+    {
+      "g": 7007,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 5,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10027110454399495,
+      "provider_model_targets": 19,
+      "request_bytes": 4415,
+      "response_bytes": 27210,
+      "wall_seconds": 17.47562480904162,
+      "provider_completed": 2
+    },
+    {
+      "g": 7054,
+      "arm": "Ego",
+      "status": "completed",
+      "requests": [],
+      "driver_attempts": 1,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {},
+      "direct_fields_by_kind": {},
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 0,
+      "max_acceleration_mps2": 0.07367578436435615,
+      "provider_model_targets": 0,
+      "request_bytes": 0,
+      "response_bytes": 0,
+      "wall_seconds": 2.587368370965123,
+      "provider_completed": 0
+    },
+    {
+      "g": 7054,
+      "arm": "P",
+      "status": "completed",
+      "requests": [
+        "P"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 0,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 0,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08733181711610172,
+      "provider_model_targets": 0,
+      "request_bytes": 843,
+      "response_bytes": 12026,
+      "wall_seconds": 7.108681335113943,
+      "provider_completed": 1
+    },
+    {
+      "g": 7054,
+      "arm": "F",
+      "status": "completed",
+      "requests": [
+        "F"
+      ],
+      "driver_attempts": 2,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 4,
+        "forecast": 4
+      },
+      "direct_fields_by_kind": {
+        "forecast": 4
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 4,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 4,
+      "revisions_changed": 1,
+      "max_acceleration_mps2": 0.08722886792617912,
+      "provider_model_targets": 12,
+      "request_bytes": 843,
+      "response_bytes": 11856,
+      "wall_seconds": 7.142035927856341,
+      "provider_completed": 1
+    },
+    {
+      "g": 7054,
+      "arm": "PF",
+      "status": "completed",
+      "requests": [
+        "P",
+        "F"
+      ],
+      "driver_attempts": 3,
+      "all_output_valid": true,
+      "acquired_fields_by_kind": {
+        "anchor": 6,
+        "forecast": 4,
+        "history": 4
+      },
+      "direct_fields_by_kind": {
+        "history": 3,
+        "forecast": 3
+      },
+      "receiver_derived_fields": 0,
+      "remote_forecast_sets": 3,
+      "all_remote_forecasts_full_context": true,
+      "remote_forecast_sets_model_used": 3,
+      "revisions_changed": 2,
+      "max_acceleration_mps2": 0.10168050244779632,
+      "provider_model_targets": 12,
+      "request_bytes": 4414,
+      "response_bytes": 26346,
+      "wall_seconds": 14.68240179005079,
+      "provider_completed": 2
+    }
+  ],
+  "source_comparison": {
+    "rows": 3095,
+    "all_whitelisted_fields_equal": true,
+    "source_index": "/root/autodl-tmp/ToolV2X/outputs/framework_baseline_resume_v1/episodes/selected_index.jsonl",
+    "package": "configs/structured_driver_readiness_v1",
+    "online_model_or_labels_read": false,
+    "meaning": "Actual local source check, separate from portable contract tests"
+  },
+  "legacy_tensor_status": "Raw real-angle ufunc variation reproduced; original failure locals not captured; 300 strict replays did not fail. v1 encoding retained; v2 uses canonical scalar trigonometry.",
+  "conclusion_boundary": "Integration and evidence consumption only; fixed policies and untrained driver do not establish causal P/F benefit or sequential value."
+}

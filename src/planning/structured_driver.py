@@ -213,6 +213,26 @@ class StructuredPlannerNetwork(nn.Module):
                       self.null_ego_history, self.null_memory, self.waypoint_queries,
                       self.missing_prior):
             nn.init.normal_(value, std=.02)
+        if self.spec.version == 'toolv2x_structured_driver_v2':
+            # Small, nonzero residuals keep evidence gradients at initialization.
+            nn.init.normal_(self.output_head[-1].weight, std=.001)
+            nn.init.zeros_(self.output_head[-1].bias)
+
+    def _causal_motion_base(self, batch):
+        history, mask = batch['ego_history'], batch['ego_history_mask']
+        indices = torch.arange(10, device=history.device).expand(len(history), -1)
+        previous = indices.masked_fill(~mask[:, :10], -1).amax(dim=1)
+        past = history[torch.arange(len(history), device=history.device), previous.clamp_min(0)]
+        dt = (history[:, -1, 3] - past[:, 3]) * self.spec.time_scale_s
+        valid = (previous >= 0) & mask[:, -1] & (dt > 0)
+        velocity = ((history[:, -1, :2] - past[:, :2]) * self.spec.position_scale_m /
+                    torch.where(valid, dt, torch.ones_like(dt))[:, None])
+        speed = torch.where(batch['ego_motion'][:, 2].bool(),
+            batch['ego_motion'][:, 0] * self.spec.position_scale_m, torch.zeros_like(dt))
+        fallback = torch.stack([speed, torch.zeros_like(speed)], dim=-1)
+        velocity = torch.where(valid[:, None], velocity, fallback)
+        times = torch.arange(1, 7, device=history.device, dtype=history.dtype) * .5
+        return velocity[:, None] * times[None, :, None]
 
     def _validate_batch(self, batch):
         if not isinstance(batch, dict) or set(batch) != set(_BATCH_KEYS):
@@ -278,6 +298,13 @@ class StructuredPlannerNetwork(nn.Module):
         decoded = self.waypoint_queries.unsqueeze(0) + prior
         for layer in self.interactions:
             decoded = layer(decoded, memory, memory_key_padding_mask=~memory_valid)
+        if self.spec.version == 'toolv2x_structured_driver_v2':
+            acceleration = self.output_head(decoded) * (
+                self.spec.position_scale_m / self.spec.time_scale_s ** 2)
+            residual = acceleration.cumsum(dim=1).cumsum(dim=1) * .5 ** 2
+            base = torch.where(previous_valid.unsqueeze(-1), batch['previous_plan'],
+                               self._causal_motion_base(batch))
+            return base + residual
         residual = self.output_head(decoded) * self.spec.position_scale_m
         base = torch.where(previous_valid.unsqueeze(-1), batch['previous_plan'],
                            torch.zeros_like(batch['previous_plan']))
@@ -315,8 +342,10 @@ class StructuredPlanner:
                 self.model.spec.to_dict() != spec.to_dict()):
             raise ValueError('numeric planner model/spec mismatch')
         self.model.to(self.device)
-        version = _validate_model_version(DEFAULT_MODEL_VERSION if model_version is None
-                                          else model_version)
+        default_version = copy.deepcopy(DEFAULT_MODEL_VERSION)
+        if spec.version == 'toolv2x_structured_driver_v2':
+            default_version['revision'] = 'v2'
+        version = _validate_model_version(default_version if model_version is None else model_version)
         self.provenance = dict(driver_kind='structured', driver_spec=spec.to_dict(),
                                decoding='numeric', model_version=version)
 
