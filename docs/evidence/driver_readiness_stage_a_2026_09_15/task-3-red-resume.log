@@ -1,0 +1,19 @@
+E
+======================================================================
+ERROR: test_v2_resume_earlier_checkpoint_does_not_import_future_checkpoints (test_structured_training.StructuredTrainingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_structured_training.py", line 553, in test_v2_resume_earlier_checkpoint_does_not_import_future_checkpoints
+    resumed=train.fit(rows,root/'resumed',config,resume=root/'full'/'checkpoint_000001.pt')
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/src/planning/train_structured_driver.py", line 579, in fit
+    save()
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/src/planning/train_structured_driver.py", line 542, in save
+    _atomic_torch(last, _state(model, version, config=config, data_binding=binding,
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/src/planning/train_structured_driver.py", line 242, in _atomic_torch
+    raise FileExistsError(path)
+FileExistsError: /tmp/tmp83uel7fa/resumed/checkpoint_000002.pt
+
+----------------------------------------------------------------------
+Ran 1 test in 2.308s
+
+FAILED (errors=1)

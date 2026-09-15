@@ -1,5 +1,9 @@
 # GitHub 审查入口
 
+**当前本地审查批次（09-15，Stage A）：** 先读[审查要求](9-15-1.md)、[核验与批准范围](review_9_15_1_response.md)、[实施记录](driver_readiness_stage_a_2026_09_15.md)和[实施计划](superpowers/plans/2026-09-15-driver-readiness.md)。四项已过独立审查，整批审查及最终验证进行中，尚未发布本批到GitHub。不要将历史322/416当作本批回归通过。
+
+本批重点：全部实际请求决策的计费与未知费用；真实receipt-acquired和receiver-derived分别统计，direct字段以真实tensor location/mask为准；v1兼容、v2所选阶段监督/固定帧条件权重、严格失败分母/验证选模/精确恢复；3095帧既有因果索引与录制组、20帧固定验收、单轮总预算、四条件诊断入口和未执行边界。普通数值驾驶网络与本批工程准备均不包装为ToolV2X创新。
+
 **当前审查准备（09-15，数值驾驶分支）：** 先读 [实现记录](structured_driver_implementation_2026_09_15.md)、[源码映射](structured_driver_source_mapping_2026_09_14.md)、[计划](superpowers/plans/2026-09-14-structured-driver.md) 和 [审查记录](structured_driver_review_2026_09_15.md)。四项实现、独立审查与修复复审完成；轻量 322/322、本地 main 完整模型环境 416/416 通过。代码已同步本地 main，尚未推送 GitHub。以下旧条目是当时快照，不代表新分支已经训练或执行过真实数据。
 
 新分支审查重点：

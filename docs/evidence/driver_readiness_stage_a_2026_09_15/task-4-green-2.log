@@ -1,0 +1,40 @@
+test_altered_acceptance_identity_fails (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_bootstrap_is_expected_only_and_cannot_certify_eligible_labels (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_driver_mode_and_actual_budget_mutations_fail (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_frame_contract_rejects_role_forbidden_field_and_source_drift (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_frozen_package_validates_actual_configs_selection_and_budget (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_interact_forbids_labels_uses_one_driver_and_archives_real_boundaries (test_method_episode.InteractionRunnerTests) ... ok
+test_interruption_resume_reuses_only_first_terminal_sample_without_loading_its_model_again (test_method_episode.InteractionRunnerTests) ... ok
+test_resume_reuses_terminal_prefix_including_failures_and_preserves_partial_tail (test_method_episode.InteractionRunnerTests) ... ok
+test_actual_response_drives_revision_then_second_change_request (test_method_episode.MethodEpisodeTests) ... ok
+test_budget_preflight_uses_full_manifest_and_never_reads_unpaid_peer (test_method_episode.MethodEpisodeTests) ... ok
+test_change_first_response_changes_second_action_to_stop (test_method_episode.MethodEpisodeTests) ... ok
+test_first_change_and_unchanged_change_are_illegal (test_method_episode.MethodEpisodeTests) ... ok
+test_fixed_diagnostic_ids_schedule_only_current_receipt_count (test_method_episode.MethodEpisodeTests) ... ok
+test_invalid_initial_or_intermediate_answer_preserves_raw_and_stops (test_method_episode.MethodEpisodeTests) ... ok
+test_invalid_wire_keeps_raw_bytes_cost_and_never_becomes_a_revision (test_method_episode.MethodEpisodeTests) ... ok
+test_missing_response_cost_preserves_bytes_and_fails_without_new_plan (test_method_episode.MethodEpisodeTests) ... ok
+test_online_episode_does_not_open_future_labels (test_method_episode.MethodEpisodeTests) ... ok
+test_paid_response_and_e_survive_receiver_prediction_failure (test_method_episode.MethodEpisodeTests) ... ok
+test_parsed_but_abnormal_path_does_not_become_task_parameters (test_method_episode.MethodEpisodeTests) ... ok
+test_policy_gets_only_visible_snapshot_and_cannot_choose_a_path_or_manifest (test_method_episode.MethodEpisodeTests) ... ok
+test_response_persisted_before_receiver_and_interruption_is_not_completion (test_method_episode.MethodEpisodeTests) ... ok
+test_same_instance_configuration_cannot_drift_between_revisions (test_method_episode.MethodEpisodeTests) ... ok
+test_service_and_driver_failures_keep_spent_costs_without_fake_completion (test_method_episode.MethodEpisodeTests) ... ok
+test_zero_one_two_caps_and_stop_never_add_an_extra_generation (test_method_episode.MethodEpisodeTests) ... ok
+test_aggregate_response_exceeds_one_packet_cap_but_keeps_equal_total_budget (test_budget_review.BudgetReviewTests) ... ok
+test_cli_archives_both_budget_modes_with_distinct_branches (test_budget_review.BudgetReviewTests) ... ok
+test_control_compute_excludes_seven_seconds_of_decision_persistence (test_budget_review.BudgetReviewTests) ... ok
+test_default_one_shot_sends_a_budgeted_nonempty_summary (test_budget_review.BudgetReviewTests) ... ok
+test_large_local_context_does_not_force_ego_and_tiny_budget_records_forced_stop (test_budget_review.BudgetReviewTests) ... ok
+test_legacy_control_time_is_kept_as_diagnostic_but_not_used_as_compute (test_budget_review.BudgetReviewTests) ... ok
+test_payable_current_remains_available_when_change_exceeds_request_cap (test_budget_review.BudgetReviewTests) ... ok
+test_per_rpc_and_episode_aggregate_budgets_are_explicit_different_conditions (test_budget_review.BudgetReviewTests) ... ok
+test_public_aggregate_cap_does_not_raise_total_budget_or_allow_oversize_wire (test_budget_review.BudgetReviewTests) ... ok
+test_summary_byte_and_field_limits_are_explicit (test_budget_review.BudgetReviewTests) ... ok
+test_summary_selection_is_deterministic_and_keeps_local_fields_when_room_exists (test_budget_review.BudgetReviewTests) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 6.488s
+
+OK

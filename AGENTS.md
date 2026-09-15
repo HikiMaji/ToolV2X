@@ -1,6 +1,7 @@
 # ToolV2X repository guidance
 
-Start with `README.md`, `docs/github_review.md`, and `docs/structured_driver_implementation_2026_09_15.md`.
+Start with `README.md`, `docs/github_review.md`, and `docs/driver_readiness_stage_a_2026_09_15.md`.
+`docs/structured_driver_implementation_2026_09_15.md` records the preceding numeric-driver implementation; readiness configuration remains prepared, not executed.
 `docs/evidence_adaptation.md` records the retained GoT evidence path.
 `docs/framework_design.md` describes the approved target architecture; it is not a completion report.
 Older documents and `src/probe`/`src/oracle` retain historical experiments. Some probe validation utilities are still imported by the current tools, so inspect callers before removing them.

@@ -1,0 +1,41 @@
+EEEE
+======================================================================
+ERROR: test_v2_excludes_prefix_gradients_and_preserves_legacy_ratio (test_structured_training.StructuredTrainingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_structured_training.py", line 394, in test_v2_excludes_prefix_gradients_and_preserves_legacy_ratio
+    loss, report = train.training_loss(model, features, row, **kwargs)
+TypeError: training_loss() got an unexpected keyword argument 'objective'
+
+======================================================================
+ERROR: test_v2_fixed_frame_condition_weights_include_bundle_and_gaps (test_structured_training.StructuredTrainingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_structured_training.py", line 410, in test_v2_fixed_frame_condition_weights_include_bundle_and_gaps
+    from planning.structured_validation import frame_condition_weights
+ModuleNotFoundError: No module named 'planning.structured_validation'
+
+======================================================================
+ERROR: test_v2_periodic_validation_exact_resume_and_relocation (test_structured_training.StructuredTrainingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_structured_training.py", line 436, in test_v2_periodic_validation_exact_resume_and_relocation
+    full=train.fit(rows,root/'full',config)
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/src/planning/train_structured_driver.py", line 416, in fit
+    config = _config(config)
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/src/planning/train_structured_driver.py", line 335, in _config
+    raise ValueError('complete versioned structured training config required')
+ValueError: complete versioned structured training config required
+
+======================================================================
+ERROR: test_v2_metrics_invalid_denominators_and_selection (test_structured_training.StructuredTrainingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_structured_training.py", line 464, in test_v2_metrics_invalid_denominators_and_selection
+    from planning.structured_validation import summarize_measurements, select_checkpoint
+ModuleNotFoundError: No module named 'planning.structured_validation'
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.230s
+
+FAILED (errors=4)

@@ -1,0 +1,49 @@
+test_portable_validation_rejects_each_stable_identity_collision (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... test_public_validate_only_cli_needs_no_private_preparation_inputs (test_driver_readiness_preparation.DriverReadinessPreparationTests) ...
+======================================================================
+FAIL: test_portable_validation_rejects_each_stable_identity_collision (test_driver_readiness_preparation.DriverReadinessPreparationTests) (name='duplicate_sample_changed_g')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 99, in test_portable_validation_rejects_each_stable_identity_collision
+    module().validate_frames(changed, selected, config)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_portable_validation_rejects_each_stable_identity_collision (test_driver_readiness_preparation.DriverReadinessPreparationTests) (name='same_scene_g_alias')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 99, in test_portable_validation_rejects_each_stable_identity_collision
+    module().validate_frames(changed, selected, config)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_public_validate_only_cli_needs_no_private_preparation_inputs (test_driver_readiness_preparation.DriverReadinessPreparationTests) (source_comparison=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 110, in test_public_validate_only_cli_needs_no_private_preparation_inputs
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : usage: prepare_driver_readiness.py [-h] --source-frames SOURCE_FRAMES
+                                   --acceptance-preview ACCEPTANCE_PREVIEW
+                                   --source-metadata SOURCE_METADATA
+                                   [--validate-only]
+                                   out
+prepare_driver_readiness.py: error: the following arguments are required: --source-frames, --acceptance-preview, --source-metadata
+
+
+======================================================================
+FAIL: test_public_validate_only_cli_needs_no_private_preparation_inputs (test_driver_readiness_preparation.DriverReadinessPreparationTests) (source_comparison=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 110, in test_public_validate_only_cli_needs_no_private_preparation_inputs
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : usage: prepare_driver_readiness.py [-h] --source-frames SOURCE_FRAMES
+                                   --acceptance-preview ACCEPTANCE_PREVIEW
+                                   --source-metadata SOURCE_METADATA
+                                   [--validate-only]
+                                   out
+prepare_driver_readiness.py: error: the following arguments are required: --acceptance-preview, --source-metadata
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.081s
+
+FAILED (failures=4)

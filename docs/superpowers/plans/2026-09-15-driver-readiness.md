@@ -28,7 +28,7 @@
 
 **Interfaces:** `run_task_episode` and `_method_cost(task)` stay public/common paths. New episodes carry an explicit compute-accounting version independent of control kind. Every actually started decision/preflight interval has an auditable stage identity and either a complete duration or unknown/incomplete accounting. Keep `control_seconds`, `known_cost`, `cost_complete`, `total_compute_seconds` and `end_to_end_seconds` meanings; no duplicate nested timing.
 
-- [ ] RED: with a patched monotonic clock, policy advances 5 seconds then STOP. None and explicit feedback both report control_seconds >=5; previous None path yields 0. Assert evaluation rejects missing duration as unknown, retains known partial costs, and never labels it complete.
+- [x] RED: with a patched monotonic clock, policy advances 5 seconds then STOP. None and explicit feedback both report control_seconds >=5; previous None path yields 0. Assert evaluation rejects missing duration as unknown, retains known partial costs, and never labels it complete.
 
 ```python
 clock = [0.]
@@ -39,10 +39,10 @@ def policy(state):
 assert evaluated['control_seconds'] >= 5.
 ```
 
-- [ ] Cover no-call budget STOP, policy exceptions before decision append, dispatch failures, progress interruption between decision and completed accounting, valid prefix reuse, exact-repeat with only final actual decision, and old archives without timing. Do not charge stages which never attempted a decision; distinguish missing from actual zero. Existing explicit timing records remain usable. Persistence callbacks stay outside timed computation.
-- [ ] Implement one shared accounting contract; keep role/control configuration separate. Document which management/loading/network/I/O work remains excluded. Bind or validate the new version in affected consumers if they otherwise misinterpret its completeness.
-- [ ] Run covering tests and relevant existing method control/evaluation/query/bundle tests. Report commands and actual results. Avoid full suite until final integration.
-- [ ] Commit only owned files, subject `Account for every actual request decision`; write task report and get independent spec/quality review.
+- [x] Cover no-call budget STOP, policy exceptions before decision append, dispatch failures, progress interruption between decision and completed accounting, valid prefix reuse, exact-repeat with only final actual decision, and old archives without timing. Do not charge stages which never attempted a decision; distinguish missing from actual zero. Existing explicit timing records remain usable. Persistence callbacks stay outside timed computation.
+- [x] Implement one shared accounting contract; keep role/control configuration separate. Document which management/loading/network/I/O work remains excluded. Bind or validate the new version in affected consumers if they otherwise misinterpret its completeness.
+- [x] Run covering tests and relevant existing method control/evaluation/query/bundle tests. Report commands and actual results. Avoid full suite until final integration.
+- [x] Commit only owned files, subject `Account for every actual request decision`; write task report and get independent spec/quality review.
 
 ## Task 2: Derived structured evidence-use audit
 
@@ -50,7 +50,7 @@ assert evaluated['control_seconds'] >= 5.
 
 **Interfaces:** `audit_structured_episode(episode) -> list[dict]` returns JSON-native per-plan audit from a validated numeric episode. Integrate into ordinary method evaluation row output under an explicitly named structured audit field; old GoT rows remain compatible. No model, tokenizer, labels or filesystem reads in this helper.
 
-- [ ] RED using existing real synthetic P/F service fixtures: local x=10 /peer x=30, max_entities=1 gives acquired remote anchor+history, both dependency-closed, zero direct remote primary fields. Capacity2 gives a direct remote history at actual observation slot. Required module assertion fails before implementation.
+- [x] RED using existing real synthetic P/F service fixtures: local x=10 /peer x=30, max_entities=1 gives acquired remote anchor+history, both dependency-closed, zero direct remote primary fields. Capacity2 gives a direct remote history at actual observation slot. Required module assertion fails before implementation.
 
 ```python
 audit = audit_structured_episode(ep)
@@ -58,10 +58,10 @@ assert audit[stage]['direct_remote_primary_refs'] == []  # dropped by capacity
 # Exact published output keys additionally documented in task report.
 ```
 
-- [ ] Report new versus previously acquired remote refs at each ledger stage; remote/local direct primary refs from `use='tensor'`, valid mask and tensor_locations; observations/forecast sets/modes/timepoints coverage; capacities/ego filter; association/selection dependency closure; actual prior dependencies; indirect-only refs subtract direct refs. Preserve full field identities, allow overlapping causal roles, do not fabricate counterfactual usefulness.
-- [ ] Include actual tensor and prior changes versus preceding plan and actual output change/validity when available, without running a model. First-stage changes are undefined, not a comparison with fabricated zeros. Same-evidence repeat/refinement and reference-only receipts produce correct differences.
-- [ ] Cover remote-only/ambiguous, F multimodal sources/contexts, capacity and ego filtering, empty/masked inputs, full-P/local-derived equivalent F, prior-only dependencies, corrupt tensor locations/receipts rejected and old GoT dispatch unchanged. Reuse upstream validation rather than second receipt registry.
-- [ ] Run new torch-free tests plus structured input/method evaluation regression; commit `Audit direct and indirect structured evidence use`, report exact API and review.
+- [x] Report new versus previously acquired remote refs at each ledger stage; remote/local direct primary refs from `use='tensor'`, valid mask and tensor_locations; observations/forecast sets/modes/timepoints coverage; capacities/ego filter; association/selection dependency closure; actual prior dependencies; indirect-only refs subtract direct refs. Preserve full field identities, allow overlapping causal roles, do not fabricate counterfactual usefulness.
+- [x] Include actual tensor and prior changes versus preceding plan and actual output change/validity when available, without running a model. First-stage changes are undefined, not a comparison with fabricated zeros. Same-evidence repeat/refinement and reference-only receipts produce correct differences.
+- [x] Cover remote-only/ambiguous, F multimodal sources/contexts, capacity and ego filtering, empty/masked inputs, full-P/local-derived equivalent F, prior-only dependencies, corrupt tensor locations/receipts rejected and old GoT dispatch unchanged. Reuse upstream validation rather than second receipt registry.
+- [x] Run new torch-free tests plus structured input/method evaluation regression; commit `Audit direct and indirect structured evidence use`, report exact API and review.
 
 ## Task 3: Versioned stage objective, periodic validation and selection
 
@@ -85,14 +85,14 @@ Validation intervals are explicit processed-batch counts. V2 validates initial, 
 
 Checkpoint selection is lexicographic: lowest weighted invalid-plan rate among rows with valid labels, then lowest weighted valid-plan prefix-L2 average, then earliest processed batch. No eligible finite valid metric => checkpoint not eligible; no fabricated best path. Compare a common frozen validation set, one selected driver for all arms. Document that missing label horizons cannot enter the complete-prefix metric, though remaining labels can contribute other diagnostics. Preserve all interval checkpoints; selected checkpoint is a reference/record, not deletion or moving weights.
 
-- [ ] RED: hand-computed stage loss and gradient prove prior-prefix losses excluded; legacy11:5:2 unchanged; frame-condition duplicate balancing; invalid labels generate no updates; actual detached current-model prior used.
-- [ ] RED: periodic validation occurs before training completion, groups match literal trajectories, invalid plans keep denominator, selection ties choose earliest, all-invalid cannot invent an eligible checkpoint; validation preserves optimizer/RNG; interrupted+resumed equals continuous training weights/progress/validation history/selection with relocated paths.
-- [ ] Implement minimal shared objective/evaluation code, validate complete versioned config, bind exact resume including validation/weights. Add accurate help/examples; no actual resource training.
-- [ ] Run actual tiny CPU network/optimizer tests plus old training/episode tests. Commit `Add stage-weighted training and periodic validation`, report/review.
+- [x] RED: hand-computed stage loss and gradient prove prior-prefix losses excluded; legacy11:5:2 unchanged; frame-condition duplicate balancing; invalid labels generate no updates; actual detached current-model prior used.
+- [x] RED: periodic validation occurs before training completion, groups match literal trajectories, invalid plans keep denominator, selection ties choose earliest, all-invalid cannot invent an eligible checkpoint; validation preserves optimizer/RNG; interrupted+resumed equals continuous training weights/progress/validation history/selection with relocated paths.
+- [x] Implement minimal shared objective/evaluation code, validate complete versioned config, bind exact resume including validation/weights. Add accurate help/examples; no actual resource training.
+- [x] Run actual tiny CPU network/optimizer tests plus old training/episode tests. Commit `Add stage-weighted training and periodic validation`, report/review.
 
 ## Task 4: Frozen preparation package and bootstrap contract
 
-**Files:** `configs/structured_driver_readiness_v1/` JSON config/manifest files, `docs/structured_driver_readiness_2026_09_15.md`; one focused metadata-only preparation/validation helper and tests if executable validation is required. Consume exact APIs from tasks1–3. No generic experiment manager.
+**Files:** `configs/structured_driver_readiness_v1/` JSON config/manifest files, `docs/structured_driver_readiness_2026_09_15.md`; one focused metadata-only preparation/validation helper and tests if executable validation is required. Consume exact APIs from tasks1–3. No generic experiment manager. Verified preparation gap: extend the existing diagnostic selector and CLI whitelist with F-current-only and fixed P-current then F-current IDs, preserving the old IDs; use one shared diagnostic-ID constant and focused contract tests. This adds `src/planning/method_episode.py`, `src/planning/run_framework.py` and the focused diagnostic tests to Task4 ownership. It only makes all four promised collection conditions expressible, not a learned policy or new mechanism.
 
 **Preparation source:** Read the existing `outputs/framework_baseline_resume_v1` causal selected/index metadata and existing split manifest on main. Freeze all currently accepted physical-train frames and their existing train/validation recording identities, retain known existing discontinuity exclusions; never choose by labels or quality. Keep only causal identity/motion/path audit fields in frame manifest. Paths aid audit only. Do not read point clouds, images, labels or checkpoints to generate the preparation package. Controller supplies verified concrete source file paths and metadata counts before this task.
 
@@ -104,10 +104,10 @@ Collection/acceptance selection uses two deterministic evenly spread eligible fr
 
 Freeze bootstrap budget as a maximum of3epochs of v2 Ego rows, sameoptimizer/seed/caps, with acceptance after each epoch via explicit later commands; if gate remains unmet, stop real phase and diagnose. This is a contingency specification only, no training authorization this batch. Shortening/lengthening requires a new configuration record.
 
-- [ ] Validate literal files against StructuredDriverSpec, ExecutionSpec, Task3 _config and frozen metadata rules; invalid role, duplicate IDs, future/label fields, mismatched p_processing, invalid budgets or altered frame selection fail. CPU contract only.
-- [ ] Save exact source metadata counts/selection recipe, complete configs and copied causal identity manifests. Mark lifecycle `prepared_not_executed`, no fabricated runtime load identity/checkpoint, no fake ready-to-run real method spec before actual loading. Preflight chooses exact output paths later and refuses overwrite.
-- [ ] Write diagnostic/selection metric definitions and B/C/D gates; controls share weights and evidence rules, prior ablations distinguish direct versus historical total effects. Ordinary training/probe metrics are not paper superiority or closed-loop safety.
-- [ ] Commit `Freeze shared driver preparation and acceptance settings`, report/review. No real resource execution.
+- [x] Validate literal files against StructuredDriverSpec, ExecutionSpec, Task3 _config and frozen metadata rules; invalid role, duplicate IDs, future/label fields, mismatched p_processing, invalid budgets or altered frame selection fail. CPU contract only.
+- [x] Save exact source metadata counts/selection recipe, complete configs and copied causal identity manifests. Mark lifecycle `prepared_not_executed`, no fabricated runtime load identity/checkpoint, no fake ready-to-run real method spec before actual loading. Preflight chooses exact output paths later and refuses overwrite.
+- [x] Write diagnostic/selection metric definitions and B/C/D gates; controls share weights and evidence rules, prior ablations distinguish direct versus historical total effects. Ordinary training/probe metrics are not paper superiority or closed-loop safety.
+- [x] Commit `Freeze shared driver preparation and acceptance settings`, report/review. No real resource execution.
 
 ## Final delivery
 

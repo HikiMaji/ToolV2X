@@ -1,0 +1,21 @@
+{
+  "frame_counts": {
+    "train": 2987,
+    "validation": 108
+  },
+  "acceptance_counts": {
+    "train": 16,
+    "validation": 4
+  },
+  "one_shot": {
+    "request_bytes": 1813,
+    "outer_response_cap": 133120,
+    "candidate_ids": [
+      "initial",
+      "slower",
+      "constant_motion"
+    ]
+  },
+  "source_comparison": true
+}
+portable validation and resource-free review registration: PASS

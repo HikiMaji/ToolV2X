@@ -1,0 +1,11 @@
+test_altered_acceptance_identity_fails (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_bootstrap_is_expected_only_and_cannot_certify_eligible_labels (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_driver_mode_and_actual_budget_mutations_fail (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_frame_contract_rejects_role_forbidden_field_and_source_drift (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_frozen_package_validates_actual_configs_selection_and_budget (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_fixed_diagnostic_ids_schedule_only_current_receipt_count (test_method_episode.MethodEpisodeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.557s
+
+OK

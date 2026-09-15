@@ -1,0 +1,7 @@
+test_portable_validation_rejects_each_stable_identity_collision (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_public_validate_only_cli_needs_no_private_preparation_inputs (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.218s
+
+OK

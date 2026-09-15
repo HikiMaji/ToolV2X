@@ -1,0 +1,88 @@
+test_altered_acceptance_identity_fails (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ERROR
+/root/miniconda3/lib/python3.8/tempfile.py:818: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmpe1fwccvi'>
+  _warnings.warn(warn_message, ResourceWarning)
+test_bootstrap_is_expected_only_and_cannot_certify_eligible_labels (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ERROR
+test_driver_mode_and_actual_budget_mutations_fail (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ERROR
+/root/miniconda3/lib/python3.8/tempfile.py:818: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmphfm90r4q'>
+  _warnings.warn(warn_message, ResourceWarning)
+test_frame_contract_rejects_role_forbidden_field_and_source_drift (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ERROR
+/root/miniconda3/lib/python3.8/tempfile.py:818: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmpwrlxlx5k'>
+  _warnings.warn(warn_message, ResourceWarning)
+test_frozen_package_validates_actual_configs_selection_and_budget (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ERROR
+test_fixed_diagnostic_ids_schedule_only_current_receipt_count (test_method_episode.MethodEpisodeTests) ... ERROR
+
+======================================================================
+ERROR: test_altered_acceptance_identity_fails (test_driver_readiness_preparation.DriverReadinessPreparationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 60, in test_altered_acceptance_identity_fails
+    temporary, target = self.copy_package()
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 28, in copy_package
+    shutil.copytree(PACKAGE, target)
+  File "/root/miniconda3/lib/python3.8/shutil.py", line 555, in copytree
+    with os.scandir(src) as itr:
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/configs/structured_driver_readiness_v1'
+
+======================================================================
+ERROR: test_bootstrap_is_expected_only_and_cannot_certify_eligible_labels (test_driver_readiness_preparation.DriverReadinessPreparationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 84, in test_bootstrap_is_expected_only_and_cannot_certify_eligible_labels
+    bootstrap = json.loads((PACKAGE / 'bootstrap_training_expected_v2.json').read_text())
+  File "/root/miniconda3/lib/python3.8/pathlib.py", line 1236, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/root/miniconda3/lib/python3.8/pathlib.py", line 1222, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/root/miniconda3/lib/python3.8/pathlib.py", line 1078, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/configs/structured_driver_readiness_v1/bootstrap_training_expected_v2.json'
+
+======================================================================
+ERROR: test_driver_mode_and_actual_budget_mutations_fail (test_driver_readiness_preparation.DriverReadinessPreparationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 74, in test_driver_mode_and_actual_budget_mutations_fail
+    temporary, target = self.copy_package()
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 28, in copy_package
+    shutil.copytree(PACKAGE, target)
+  File "/root/miniconda3/lib/python3.8/shutil.py", line 555, in copytree
+    with os.scandir(src) as itr:
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/configs/structured_driver_readiness_v1'
+
+======================================================================
+ERROR: test_frame_contract_rejects_role_forbidden_field_and_source_drift (test_driver_readiness_preparation.DriverReadinessPreparationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 43, in test_frame_contract_rejects_role_forbidden_field_and_source_drift
+    temporary, target = self.copy_package()
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 28, in copy_package
+    shutil.copytree(PACKAGE, target)
+  File "/root/miniconda3/lib/python3.8/shutil.py", line 555, in copytree
+    with os.scandir(src) as itr:
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/configs/structured_driver_readiness_v1'
+
+======================================================================
+ERROR: test_frozen_package_validates_actual_configs_selection_and_budget (test_driver_readiness_preparation.DriverReadinessPreparationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 32, in test_frozen_package_validates_actual_configs_selection_and_budget
+    result = module().validate_package(PACKAGE, source_frames=SOURCE)
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_driver_readiness_preparation.py", line 20, in module
+    spec.loader.exec_module(value)
+  File "<frozen importlib._bootstrap_external>", line 844, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 980, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1037, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/scripts/prepare_driver_readiness.py'
+
+======================================================================
+ERROR: test_fixed_diagnostic_ids_schedule_only_current_receipt_count (test_method_episode.MethodEpisodeTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_method_episode.py", line 93, in test_fixed_diagnostic_ids_schedule_only_current_receipt_count
+    from planning.method_episode import DIAGNOSTIC_POLICY_IDS, diagnostic_policy
+ImportError: cannot import name 'DIAGNOSTIC_POLICY_IDS' from 'planning.method_episode' (/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/src/planning/method_episode.py)
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.010s
+
+FAILED (errors=6)

@@ -1,0 +1,13 @@
+test_altered_acceptance_identity_fails (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_bootstrap_is_expected_only_and_cannot_certify_eligible_labels (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_driver_mode_and_actual_budget_mutations_fail (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_frame_contract_rejects_role_forbidden_field_and_source_drift (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_frozen_package_validates_actual_configs_selection_and_budget (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_portable_validation_keeps_frozen_population_count (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_portable_validation_rejects_each_stable_identity_collision (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+test_public_validate_only_cli_needs_no_private_preparation_inputs (test_driver_readiness_preparation.DriverReadinessPreparationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.986s
+
+OK

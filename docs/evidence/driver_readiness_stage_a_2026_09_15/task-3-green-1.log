@@ -1,0 +1,14 @@
+.................F.
+======================================================================
+FAIL: test_v2_periodic_validation_exact_resume_and_relocation (test_structured_training.StructuredTrainingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/autodl-tmp/ToolV2X/.worktrees/driver-readiness/tests/test_structured_training.py", line 449, in test_v2_periodic_validation_exact_resume_and_relocation
+    self.assertEqual(a['report'],b['report'])
+AssertionError: {'sup[9856 chars]es': 2, 'epoch': 1, 'checkpoint': 'checkpoint_[15309 chars]None} != {'sup[9856 chars]es': 1, 'epoch': 0, 'checkpoint': 'checkpoint_[22983 chars]None}
+Diff is 108499 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 19 tests in 24.534s
+
+FAILED (failures=1)
