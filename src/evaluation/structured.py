@@ -85,14 +85,23 @@ def audit_structured_episode(episode):
         ledger = episode['ledger_snapshots'][plan['ledger_snapshot']]
         records, record_order = _record_index(ledger)
         local_source = ledger['local_source']
-        remote_records = ledger['acquired_fields'] + ledger['derived_fields']
-        known_remote = _unique_refs(record['ref'] for record in remote_records)
+        acquired_records = ledger['acquired_fields']
+        derived_records = ledger['derived_fields']
+        known_acquired = _unique_refs(record['ref'] for record in acquired_records)
+        known_derived = _unique_refs(record['ref'] for record in derived_records)
+        known_remote = _unique_refs(known_acquired + known_derived)
         known_local = _unique_refs(record['ref'] for record in ledger['local_fields'])
-        previous_remote_keys = (set() if previous_ledger is None else
-            {field_key(record['ref']) for record in
-             previous_ledger['acquired_fields'] + previous_ledger['derived_fields']})
+        previous_acquired_keys = (set() if previous_ledger is None else
+            {field_key(record['ref']) for record in previous_ledger['acquired_fields']})
+        previous_derived_keys = (set() if previous_ledger is None else
+            {field_key(record['ref']) for record in previous_ledger['derived_fields']})
+        previous_remote_keys = previous_acquired_keys | previous_derived_keys
         new_remote = [ref for ref in known_remote if field_key(ref) not in previous_remote_keys]
-        previous_remote = [ref for ref in known_remote if field_key(ref) in previous_remote_keys]
+        previously_known_remote = [ref for ref in known_remote if field_key(ref) in previous_remote_keys]
+        new_acquired = [ref for ref in known_acquired if field_key(ref) not in previous_acquired_keys]
+        previous_acquired = [ref for ref in known_acquired if field_key(ref) in previous_acquired_keys]
+        new_derived = [ref for ref in known_derived if field_key(ref) not in previous_derived_keys]
+        previous_derived = [ref for ref in known_derived if field_key(ref) in previous_derived_keys]
 
         remote_groups = report['field_groups']
         local_groups = report['local_field_groups']
@@ -152,7 +161,12 @@ def audit_structured_episode(episode):
             new_receipt_ids=[receipt for receipt in receipts if receipt not in previous_receipt_set],
             previous_receipt_ids=previous_receipts,
             known_remote_refs=known_remote, known_local_refs=known_local,
-            new_remote_refs=new_remote, previously_acquired_remote_refs=previous_remote,
+            new_remote_refs=new_remote, previously_known_remote_refs=previously_known_remote,
+            known_acquired_remote_refs=known_acquired, new_acquired_remote_refs=new_acquired,
+            previously_acquired_remote_refs=previous_acquired,
+            known_receiver_derived_remote_refs=known_derived,
+            new_receiver_derived_remote_refs=new_derived,
+            previously_receiver_derived_remote_refs=previous_derived,
             admitted_refs=copy.deepcopy(report['admitted_field_refs']),
             dropped_refs=copy.deepcopy(report['dropped_field_refs']),
             direct_primary_refs=direct, direct_remote_primary_refs=direct_remote,
@@ -164,7 +178,13 @@ def audit_structured_episode(episode):
             indirect_only_local_refs=indirect_local, prior_only_refs=prior_only,
             counts=dict(known_remote_refs=len(known_remote), known_local_refs=len(known_local),
                 new_remote_refs=len(new_remote),
-                previously_acquired_remote_refs=len(previous_remote),
+                previously_known_remote_refs=len(previously_known_remote),
+                known_acquired_remote_refs=len(known_acquired),
+                new_acquired_remote_refs=len(new_acquired),
+                previously_acquired_remote_refs=len(previous_acquired),
+                known_receiver_derived_remote_refs=len(known_derived),
+                new_receiver_derived_remote_refs=len(new_derived),
+                previously_receiver_derived_remote_refs=len(previous_derived),
                 admitted_refs=len(report['admitted_field_refs']),
                 dropped_refs=len(report['dropped_field_refs']), direct_primary_refs=len(direct),
                 direct_remote_primary_refs=len(direct_remote),

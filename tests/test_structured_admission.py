@@ -195,6 +195,22 @@ class StructuredAdmissionContractTests(LedgerFixture):
                           tools=('P', 'F'), p_processing='local_mtr')
         audit = audit_structured_episode(ep)
         after_p, after_f = audit[1], audit[2]
+        self.assertEqual({ref['field_kind'] for ref in after_p['known_acquired_remote_refs']},
+                         {'anchor', 'history'})
+        self.assertEqual({ref['field_kind'] for ref in after_p['new_acquired_remote_refs']},
+                         {'anchor', 'history'})
+        self.assertEqual(after_p['previously_acquired_remote_refs'], [])
+        self.assertEqual([ref['field_kind'] for ref in
+                          after_p['known_receiver_derived_remote_refs']], ['forecast'])
+        self.assertEqual(after_p['new_receiver_derived_remote_refs'],
+                         after_p['known_receiver_derived_remote_refs'])
+        self.assertEqual(after_p['previously_receiver_derived_remote_refs'], [])
+        self.assertEqual({key:after_p['counts'][key] for key in (
+            'new_acquired_remote_refs', 'previously_acquired_remote_refs',
+            'new_receiver_derived_remote_refs', 'previously_receiver_derived_remote_refs')},
+            dict(new_acquired_remote_refs=2, previously_acquired_remote_refs=0,
+                 new_receiver_derived_remote_refs=1,
+                 previously_receiver_derived_remote_refs=0))
         self.assertEqual([ref['field_kind'] for ref in after_p['direct_remote_primary_refs']],
                          ['history', 'forecast'])
         self.assertEqual({ref['field_kind'] for ref in after_p['direct_dependency_closure_refs']},
@@ -206,6 +222,19 @@ class StructuredAdmissionContractTests(LedgerFixture):
         self.assertEqual({ref['field_kind'] for ref in after_f['direct_remote_primary_refs']},
                          {'history', 'forecast'})
         self.assertTrue(after_f['prior_dependency_refs'])
+        self.assertEqual([ref['field_kind'] for ref in after_f['new_acquired_remote_refs']],
+                         ['forecast'])
+        self.assertEqual({ref['field_kind'] for ref in
+                          after_f['previously_acquired_remote_refs']}, {'anchor', 'history'})
+        self.assertEqual(after_f['new_receiver_derived_remote_refs'], [])
+        self.assertEqual(after_f['previously_receiver_derived_remote_refs'],
+                         after_f['known_receiver_derived_remote_refs'])
+        self.assertEqual(after_f['counts']['known_acquired_remote_refs'], 3)
+        self.assertEqual(after_f['counts']['known_receiver_derived_remote_refs'], 1)
+        self.assertEqual(after_f['counts']['new_acquired_remote_refs'], 1)
+        self.assertEqual(after_f['counts']['previously_acquired_remote_refs'], 2)
+        self.assertEqual(after_f['counts']['new_receiver_derived_remote_refs'], 0)
+        self.assertEqual(after_f['counts']['previously_receiver_derived_remote_refs'], 1)
 
     def test_repeat_refinement_prior_only_and_reference_only_differences(self):
         from evaluation.structured import audit_structured_episode
@@ -225,10 +254,17 @@ class StructuredAdmissionContractTests(LedgerFixture):
                 self.assertTrue(all(row['output_valid'] for row in audit))
 
         reference_only = audit_structured_episode(self.episode(
-            one_track('ego', 10.), one_track('peer', 30.), tools=('P', 'P')))
+            one_track('ego', 10.), one_track('peer', 30.), tools=('P', 'P'),
+            p_processing='local_mtr'))
         self.assertEqual(reference_only[2]['new_remote_refs'], [])
         self.assertEqual(reference_only[2]['previously_acquired_remote_refs'],
-                         reference_only[2]['known_remote_refs'])
+                         reference_only[2]['known_acquired_remote_refs'])
+        self.assertEqual(reference_only[2]['new_acquired_remote_refs'], [])
+        self.assertEqual(reference_only[2]['new_receiver_derived_remote_refs'], [])
+        self.assertEqual(reference_only[2]['previously_receiver_derived_remote_refs'],
+                         reference_only[2]['known_receiver_derived_remote_refs'])
+        self.assertEqual(reference_only[2]['counts']['new_acquired_remote_refs'], 0)
+        self.assertEqual(reference_only[2]['counts']['new_receiver_derived_remote_refs'], 0)
         self.assertEqual(len(reference_only[2]['new_receipt_ids']), 1)
         self.assertFalse(reference_only[2]['tensor_changed_from_previous'])
 
