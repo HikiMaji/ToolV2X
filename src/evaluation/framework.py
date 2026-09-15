@@ -365,7 +365,8 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
         final_plan_id=ep.get('final_plan_id'), raw_plan_id=None, ADE3=None, FDE3=None, raw_ADE3=None, raw_FDE3=None,
         label_status=label_status, valid_label_points=sum(usable_label['valid']), plans=[],
         stop_reason=ep.get('stop_reason'), error=task.get('error') or ep.get('error'),
-        execution_kind=ep.get('execution_kind'), control_spec=ep.get('control_spec'), reported_cost=ep.get('cost'), **cost)
+        execution_kind=ep.get('execution_kind'), control_spec=ep.get('control_spec'), reported_cost=ep.get('cost'),
+        structured_audit=None, **cost)
     result['compute_accounting_version'] = ep.get('compute_accounting_version')
     from evaluation.planning import GOT_PREFIX
     result.update({k: None for k in GOT_PREFIX})
@@ -378,9 +379,9 @@ def evaluate_method_task(task, label, *, policy_id=None, branch_id=None):
             any(ep.get(k) != result[k] for k in ('sample_id','scene','g','policy_id','branch_id'))):
         problems.append('episode identity/version mismatch')
     if ep.get('limits', {}).get('version') == 'toolv2x_interaction_v2':
-        from planning.driver_contract import validate_numeric_episode
+        from evaluation.structured import audit_structured_episode
         try:
-            validate_numeric_episode(ep)
+            result['structured_audit'] = audit_structured_episode(ep)
         except (ValueError, TypeError, KeyError) as exc:
             problems.append(str(exc))
     raw_plans = ep.get('plans', [])
