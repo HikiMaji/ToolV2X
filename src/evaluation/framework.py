@@ -177,8 +177,13 @@ def _method_cost(task):
     control_events=[e for e in charges if e['kind']=='control']
     control_stages={e['stage'] for e in control_events}
     expected_control={e['stage'] for e in events if e['kind']=='decision'} | control_stages
+    if ((ep.get('error') or {}).get('stage')=='request_preflight_or_policy' and events and
+            events[-1].get('kind')=='failed'):
+        expected_control.add(events[-1]['stage'])
     if len(control_stages)!=len(control_events):
         issues.append('duplicate control cost stage')
+    if expected_control-control_stages:
+        issues.append('missing control cost stage')
     accounting_version=ep.get('compute_accounting_version')
     recognized=accounting_version in (None, COMPUTE_ACCOUNTING_VERSION)
     if not recognized:
@@ -525,7 +530,9 @@ def evaluate_method(episodes_root, out, labels_root):
         issues.append('source run is incomplete or lacks progress record')
     if progress and progress.get('terminal_tasks') != len(expected):
         issues.append('source terminal count differs from expected samples')
-    accounting_versions=Counter(r.get('compute_accounting_version') or 'legacy_unspecified' for r in rows)
+    versions=(r.get('compute_accounting_version') for r in rows)
+    accounting_versions=Counter('legacy_unspecified' if value is None else
+        value if isinstance(value,str) else 'invalid_non_string' for value in versions)
     from planning.method_episode import COMPUTE_ACCOUNTING_VERSION
     report = dict(version='toolv2x_method_evaluation_v1', status='evaluation_completed',
         **summarize_method(rows), archive_issues=issues, source_progress=progress,

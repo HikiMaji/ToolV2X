@@ -86,6 +86,14 @@ class DecisionAccountingTests(unittest.TestCase):
         self.assertEqual(cost['known_cost']['control_seconds'], 3.)
         self.assertFalse(cost['cost_complete'])
 
+        legacy = copy.deepcopy(episode)
+        legacy.pop('compute_accounting_version')
+        legacy['cost_events'] = [e for e in legacy['cost_events'] if e['kind'] != 'control']
+        legacy_cost = self.cost(legacy)
+        self.assertIsNone(legacy_cost['control_seconds'])
+        self.assertEqual(legacy_cost['known_cost']['control_seconds'], 0)
+        self.assertIn('missing control cost stage', legacy_cost['cost_issues'])
+
     def test_dispatch_failure_keeps_decision_stage_incomplete(self):
         clock = [0.]
         driver = fixture.EvidenceDriver([])

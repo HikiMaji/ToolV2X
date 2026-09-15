@@ -315,6 +315,22 @@ class MethodArchiveTests(unittest.TestCase):
         (root/'labels/validation.jsonl').write_text(''.join(json.dumps(l)+'\n' for l in labels))
         return run, records
 
+    def test_non_string_accounting_version_is_retained_as_invalid_category(self):
+        module = self.api()
+        task, label = task_fixture(max_calls=0)
+        task['episode']['compute_accounting_version'] = ['unexpected']
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            run, _ = self.archive(root, [task], [label])
+            try:
+                report = module.evaluate_method(run, root/'eval', root/'labels')
+            except TypeError as exc:
+                self.fail('unhashable accounting version aborted archive evaluation: '+str(exc))
+            row = json.loads((root/'eval/rows.jsonl').read_text())
+            self.assertEqual(row['artifact_status'], 'invalid_artifact')
+            self.assertIn('unknown compute accounting version', row['artifact_errors'])
+            self.assertEqual(report['compute_accounting_versions'], {'invalid_non_string': 1})
+
     def test_expected_denominator_keeps_initial_invalid_missing_and_duplicate_artifacts(self):
         module = self.api()
         cases = [task_fixture(max_calls=0, invalid_stage=0, scene=SCENE),
