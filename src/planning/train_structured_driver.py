@@ -9,6 +9,8 @@ import tempfile
 import uuid
 
 VERSION = 'toolv2x_structured_training_v1'
+VERSION_V2 = 'toolv2x_structured_training_v2'
+OBJECTIVE_V2 = dict(name='selected_stage_and_refinement', reduction='mean')
 CHECKPOINT = 'toolv2x_structured_checkpoint_v1'
 
 
@@ -162,8 +164,15 @@ def _check_features(task, path):
         raise ValueError('feature active mask differs from actual numeric episode')
 
 
-def training_loss(model, features, row, *, refinement_depth=0, task=None):
-    """Supervise each ordered evidence prefix and detached same-evidence refinement."""
+def training_loss(model, features, row, *, refinement_depth=0, task=None, objective=None, evaluation=False):
+    """V1 supervises all prefixes; explicit v2 supervises selected stage/refinements.
+
+    Prior prefixes always use detached actual current-model predictions. V2 returns
+    JSON-native supervised measurements; evaluation retains nonfinite outputs as
+    failures instead of allowing them to disappear from validation denominators.
+    """
+    if objective is not None and objective != OBJECTIVE_V2:
+        raise ValueError('unsupported explicit structured objective')
     import torch
     from planning.structured_driver import collate_structured_inputs
     from tools.task_spec import validate_plan
@@ -179,6 +188,8 @@ def training_loss(model, features, row, *, refinement_depth=0, task=None):
     from planning.method_controls import uses_refinement
     previous, previous_batch, losses = None, None, []
     report = dict(supervised_forwards=0, invalid_prior_masks=0, invalid_prior_reasons={})
+    if objective is not None:
+        report['measurements'] = []
     for position, index in enumerate(indices + [indices[-1]] * refinement_depth):
         prepared = plans[index]['prepared']
         batch = collate_structured_inputs([features], [prepared], device=target.device)
@@ -202,11 +213,23 @@ def training_loss(model, features, row, *, refinement_depth=0, task=None):
             else:
                 batch['previous_plan'] = previous
                 batch['previous_plan_valid'].fill_(True)
-        predicted = model(batch)
-        loss = masked_trajectory_loss(predicted, target, valid)
-        if loss is not None:
-            losses.append(loss)
-            report['supervised_forwards'] += 1
+        supervised = objective is None or position >= len(indices) - 1
+        with torch.set_grad_enabled(torch.is_grad_enabled() and supervised):
+            predicted = model(batch)
+        loss = None
+        if supervised:
+            if not (evaluation and not torch.isfinite(predicted).all()):
+                loss = masked_trajectory_loss(predicted, target, valid)
+            if loss is not None:
+                losses.append(loss)
+                report['supervised_forwards'] += 1
+            if objective is not None:
+                # Null encodes a nonfinite output without writing nonstandard JSON.
+                points = predicted.detach()[0].cpu().tolist() if torch.isfinite(predicted).all() else None
+                report['measurements'].append(dict(
+                    output_kind='selected_stage' if position == len(indices)-1 else 'refinement',
+                    refinement=max(0, position-len(indices)+1), waypoints=points,
+                    loss=loss.detach().item() if loss is not None else None))
         previous = predicted.detach()
         previous_batch = batch
     return (torch.stack(losses).mean() if losses else None), report
@@ -331,9 +354,23 @@ def _config(config):
     from planning.structured_inputs import StructuredDriverSpec
     expected = {'version', 'driver_spec', 'seed', 'optimizer', 'batch_size', 'epochs',
                 'refinement_depth', 'save_interval', 'device'}
-    if set(config) != expected or config['version'] != VERSION:
+    if config.get('version') == VERSION_V2:
+        expected |= {'objective', 'row_weighting', 'validation', 'selection'}
+    if set(config) != expected or config['version'] not in (VERSION, VERSION_V2):
         raise ValueError('complete versioned structured training config required')
     StructuredDriverSpec.from_dict(config['driver_spec'])
+    if config['version'] == VERSION_V2:
+        validation = config['validation']
+        if (config['objective'] != OBJECTIVE_V2 or config['row_weighting'] != 'frame_condition_equal' or
+                not isinstance(validation, dict) or set(validation) != {'interval_batches', 'initial', 'final'} or
+                type(validation['interval_batches']) is not int or validation['interval_batches'] < 1 or
+                validation['initial'] is not True or validation['final'] is not True or
+                config['selection'] != dict(name='invalid_rate_prefix_l2_earliest', output='selected_stage')):
+            raise ValueError('complete explicit v2 objective/weighting/validation/selection required')
+        if type(config['seed']) is not int or not 0 <= config['seed'] < 2**32:
+            raise ValueError('invalid v2 seed')
+        if not isinstance(config['device'], str) or not config['device']:
+            raise ValueError('explicit training device required')
     for key in ('batch_size', 'epochs', 'save_interval', 'refinement_depth'):
         if type(config[key]) is not int or config[key] < (0 if key == 'refinement_depth' else 1):
             raise ValueError('invalid training integer: ' + key)
@@ -417,7 +454,15 @@ def fit(rows, out, config, *, resume=None, stop_after_steps=None):
     roles = _verify_rows(rows)
     if any(_json(row['source_task'])['episode']['limits']['receiver_spec'] != config['driver_spec'] for row in rows):
         raise ValueError('training architecture differs from collected numeric spec')
+    v2 = config['version'] == VERSION_V2
     binding = dict(rows=_semantic(rows), recordings=roles)
+    if v2:
+        from planning.structured_validation import (evidence_condition, frame_condition_weights,
+                                                   summarize_measurements, select_checkpoint)
+        weights, train_coverage = frame_condition_weights(rows, 'train')
+        validation_weights, validation_coverage = frame_condition_weights(rows, 'validation')
+        binding['weighting'] = dict(train=train_coverage, validation=validation_coverage,
+                                    train_weights=weights, validation_weights=validation_weights)
     saved = _load(resume) if resume is not None else None
     if saved is not None and (saved.get('config') != config or saved.get('data_binding') != binding):
         raise ValueError('resume model/data/optimizer configuration mismatch')
@@ -437,14 +482,58 @@ def fit(rows, out, config, *, resume=None, stop_after_steps=None):
         task = _json(row['source_task'])
         snapshot = task['episode']['plans'][row['stage']]['ledger_snapshot']
         receipts = task['episode']['ledger_snapshots'][snapshot]['receipts']
-        tools = ''.join(receipt['request']['tool'] for receipt in receipts) or 'Ego'
+        tools = (evidence_condition(row, task) if v2 else
+                 ''.join(receipt['request']['tool'] for receipt in receipts) or 'Ego')
         report['evidence_stages'][tools] = report['evidence_stages'].get(tools, 0) + 1
+    if v2:
+        report.update(weighting=copy.deepcopy(binding['weighting']), validation_history=[], selection=None)
     if saved is not None:
         model.load_state_dict(saved['model_state']); optimizer.load_state_dict(saved['optimizer_state'])
         progress = saved['progress']; report = saved['report']; _restore_rng(saved['rng'])
     training_run_id = saved['model_version']['training']['training_run_id'] if saved is not None else str(uuid.uuid4())
-    train_indices = [i for i, row in enumerate(rows) if row['role'] == 'train']
+    train_indices = [i for i, row in enumerate(rows)
+                     if row['role'] == 'train' and (not v2 or weights[i] > 0)]
     last = None
+    if v2 and saved is not None:
+        # Keep every existing interval and validation checkpoint addressable after
+        # relocating an entire run. Names and batch indices are portable identity.
+        import shutil
+        current_name = 'checkpoint_%06d.pt' % progress['batches']
+        for checkpoint in sorted(Path(resume).parent.glob('checkpoint_*.pt')):
+            if checkpoint.name != current_name and int(checkpoint.stem.split('_')[1]) < progress['batches']:
+                shutil.copy2(checkpoint, out / checkpoint.name)
+        for entry in report['validation_history']:
+            if entry['checkpoint'] != current_name and not (out / entry['checkpoint']).is_file():
+                raise ValueError('resume validation history checkpoint missing')
+
+    def validate():
+        if not v2 or any(entry['batches'] == progress['batches'] for entry in report['validation_history']):
+            return
+        state, mode = _rng(), model.training
+        records = []
+        try:
+            model.eval()
+            with torch.no_grad():
+                for index, row in enumerate(rows):
+                    if row['role'] != 'validation':
+                        continue
+                    features = _read_features(out / 'inputs' / ('feature_%06d.npz' % layout['row_features'][index]))
+                    task = _json(out / 'inputs' / ('task_%06d.json' % layout['row_sources'][index]))
+                    _, detail = training_loss(model, features, row, task=task,
+                        refinement_depth=config['refinement_depth'], objective=config['objective'], evaluation=True)
+                    records.extend(dict(measurement, stage=row['stage'], condition=evidence_condition(row, task),
+                        weight=validation_weights[index], label=row['supervision'],
+                        execution_spec=task['episode']['limits']['execution_spec'])
+                        for measurement in detail['measurements'])
+        finally:
+            _restore_rng(state)
+            model.train(mode)
+        summary = summarize_measurements(records, None)
+        name = 'checkpoint_%06d.pt' % progress['batches']
+        report['validation_history'].append(dict(batches=progress['batches'],
+            epoch=progress['epoch'], checkpoint=name, metrics=summary))
+        report['selection'] = select_checkpoint(report['selection'], summary, progress['batches'], name)
+
     def save():
         nonlocal last
         version = _version(config['seed'], progress['optimizer_steps'], training_run_id, config,
@@ -453,8 +542,10 @@ def fit(rows, out, config, *, resume=None, stop_after_steps=None):
         _atomic_torch(last, _state(model, version, config=config, data_binding=binding,
             input_layout=layout, optimizer_state=optimizer.state_dict(), progress=copy.deepcopy(progress),
             rng=_rng(), report=copy.deepcopy(report)))
+    if v2 and saved is None:
+        validate()
     save()
-    while progress['epoch'] < config['epochs']:
+    while progress['epoch'] < config['epochs'] and train_indices:
         if not progress['permutation']:
             progress['permutation'] = random.sample(train_indices, len(train_indices))
             progress['row_position'] = 0
@@ -465,13 +556,14 @@ def fit(rows, out, config, *, resume=None, stop_after_steps=None):
             row = rows[index]
             features = _read_features(out / 'inputs' / ('feature_%06d.npz' % layout['row_features'][index]))
             task = _json(out / 'inputs' / ('task_%06d.json' % layout['row_sources'][index]))
-            loss, detail = training_loss(model, features, row, task=task, refinement_depth=config['refinement_depth'])
+            loss, detail = training_loss(model, features, row, task=task, refinement_depth=config['refinement_depth'],
+                                         objective=config['objective'] if v2 else None)
             for key in ('supervised_forwards', 'invalid_prior_masks'):
                 report[key] += detail[key]
             for reason, count in detail['invalid_prior_reasons'].items():
                 report['invalid_prior_reasons'][reason] = report['invalid_prior_reasons'].get(reason, 0) + count
             if loss is None:report['unsupervised_rows'] += 1
-            else:losses.append(loss)
+            else:losses.append(loss * weights[index] if v2 else loss)
         if losses:
             torch.stack(losses).mean().backward(); optimizer.step()
             progress['optimizer_steps'] += 1
@@ -479,9 +571,19 @@ def fit(rows, out, config, *, resume=None, stop_after_steps=None):
         if progress['row_position'] == len(progress['permutation']):
             progress['epoch'] += 1; progress['permutation'] = []; progress['row_position'] = 0
         stopped = stop_after_steps is not None and progress['optimizer_steps'] >= stop_after_steps
-        if progress['batches'] % config['save_interval'] == 0 or stopped or progress['epoch'] == config['epochs']:
+        validation_due = v2 and (progress['batches'] % config['validation']['interval_batches'] == 0 or
+                                 progress['epoch'] == config['epochs'])
+        if validation_due:
+            validate()
+        if progress['batches'] % config['save_interval'] == 0 or stopped or progress['epoch'] == config['epochs'] or validation_due:
             save()
         if stopped:break
+    if v2:
+        (out / 'report.json').write_text(json.dumps(dict(report, progress=progress,
+            scope='offline trajectory imitation; synthetic tests are not method benefit evidence'),
+            indent=2, allow_nan=False))
+        (out / 'selection.json').write_text(json.dumps(report['selection'], indent=2, allow_nan=False))
+        return last
     # Validation uses held-out rows only and never updates optimizer state.
     model.eval(); validation = []
     with torch.no_grad():
@@ -508,7 +610,8 @@ def main():
     prepare.add_argument('--tasks', required=True, type=Path); prepare.add_argument('--labels', required=True, type=Path)
     prepare.add_argument('--out', required=True, type=Path)
     train = commands.add_parser('train', aliases=['fit'], help='explicit offline training in a new output directory')
-    train.add_argument('--rows', required=True, type=Path); train.add_argument('--config', required=True, type=Path)
+    train.add_argument('--rows', required=True, type=Path); train.add_argument('--config', required=True, type=Path,
+        help='complete v1 or v2 JSON; v2 selected-stage objective, frame_condition_equal weights, validation interval in processed batches, initial/final validation and strict checkpoint selection')
     train.add_argument('--out', required=True, type=Path); train.add_argument('--resume', type=Path)
     args = parser.parse_args()
     if args.command == 'initialize':initialize(args.checkpoint, _json(args.spec), seed=args.seed)

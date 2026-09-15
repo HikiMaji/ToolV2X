@@ -361,3 +361,205 @@ class StructuredTrainingTests(unittest.TestCase):
             torch.testing.assert_close(seen[-1][0]['observations'],seen[-2][0]['observations'])
             self.assertEqual(report['supervised_forwards'],4)
             self.assertGreater(model.prior_encoder[0].weight.grad.abs().sum(),0)
+
+    def config_v2(self):
+        return dict(self.config(), version='toolv2x_structured_training_v2',
+            objective=dict(name='selected_stage_and_refinement', reduction='mean'),
+            row_weighting='frame_condition_equal',
+            validation=dict(interval_batches=2, initial=True, final=True),
+            selection=dict(name='invalid_rate_prefix_l2_earliest', output='selected_stage'))
+
+    def test_v2_excludes_prefix_gradients_and_preserves_legacy_ratio(self):
+        train = self.training()
+        from planning.structured_driver import StructuredPlannerNetwork
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); _, label = self.archive(root)
+            label['waypoints'] = [[2., 2.]] * 6
+            rows = train.prepare_training_rows(root/'tasks.jsonl', [label])
+            model = StructuredPlannerNetwork(tiny_spec())
+            with torch.no_grad():
+                model.output_head[-1].weight.zero_(); model.output_head[-1].bias.zero_()
+            features = train._read_features(root/'ego_features.npz')
+            for objective, wanted in ((None, [11/6, 5/6, 1/3]),
+                    (self.config_v2()['objective'], [1., 1., 1.])):
+                gradients = [0., 0., 0.]
+                for row in rows:
+                    outputs = []
+                    def capture(module, args, value):
+                        if value.requires_grad:
+                            value.retain_grad()
+                        outputs.append(value)
+                    hook = model.register_forward_hook(capture)
+                    kwargs = {} if objective is None else dict(objective=objective)
+                    loss, report = train.training_loss(model, features, row, **kwargs)
+                    hook.remove()
+                    # Zero network gives SmoothL1(0, 2) = 1.5 for every coordinate.
+                    self.assertAlmostEqual(loss.item(), 1.5)
+                    loss.backward()
+                    for i, output in enumerate(outputs):
+                        if output.grad is not None:
+                            gradients[i] += output.grad.abs().sum().item()
+                np.testing.assert_allclose(gradients, wanted, atol=1e-6)
+            loss, report = train.training_loss(model, features, rows[-1],
+                objective=self.config_v2()['objective'], refinement_depth=1)
+            self.assertEqual(report['supervised_forwards'], 2)
+            self.assertEqual([r['output_kind'] for r in report['measurements']], ['selected_stage', 'refinement'])
+
+    def test_v2_fixed_frame_condition_weights_include_bundle_and_gaps(self):
+        train = self.training()
+        from planning.structured_validation import frame_condition_weights
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); tasks=[]; labels=[]
+            for name,control,scene in [('a','feedback',SCENE), ('b','one_shot',SCENE),
+                    ('c','feedback',SCENE.replace('09-50','09-51'))]:
+                (root/name).mkdir(); task,label=self.archive(root/name,control=control,scene=scene)
+                tasks.append(task)
+                if label['sample_id'] not in [x['sample_id'] for x in labels]:labels.append(label)
+            rows=train.prepare_training_rows(tasks,labels)
+            weights, coverage=frame_condition_weights(rows,'train')
+            self.assertAlmostEqual(sum(weights),9.)
+            self.assertEqual(coverage['eligible_frames'],2)
+            first=[g for g in coverage['groups'] if g['scene']==SCENE]
+            self.assertEqual({g['condition']:g['rows'] for g in first},{'Ego':2,'P':1,'PF':3})
+            for group in first:self.assertAlmostEqual(group['total_weight'],1.5)
+            self.assertEqual(coverage['missing_conditions'][0]['conditions'],['F'])
+
+    def test_v2_periodic_validation_exact_resume_and_relocation(self):
+        train=self.training()
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); (root/'data').mkdir(); tasks=[]; labels=[]
+            for name,scene,role in [('a',SCENE,'train'),('b',SCENE.replace('09-50','09-51'),'validation')]:
+                (root/'data'/name).mkdir()
+                task,label=self.archive(root/'data'/name,scene=scene,role=role)
+                tasks.append(task);labels.append(label)
+            rows=train.prepare_training_rows(tasks,labels); config=self.config_v2()
+            from planning.structured_driver import StructuredPlannerNetwork
+            def small_network(spec):
+                model=StructuredPlannerNetwork(spec)
+                with torch.no_grad():
+                    model.output_head[-1].weight.mul_(.001);model.output_head[-1].bias.mul_(.001)
+                return model
+            factory=patch('planning.structured_driver.StructuredPlannerNetwork',side_effect=small_network)
+            factory.start();self.addCleanup(factory.stop)
+            full=train.fit(rows,root/'full',config)
+            part=train.fit(rows,root/'part',config,stop_after_steps=1)
+            p=torch.load(part,weights_only=False)
+            self.assertEqual([x['batches'] for x in p['report']['validation_history']],[0])
+            shutil.copytree(root/'data',root/'moved'); shutil.copytree(root/'part',root/'moved_part')
+            moved_tasks=[]
+            for name in ('a','b'):
+                path=root/'moved'/name/'task.json'; task=json.loads(path.read_text())
+                task['inputs']['artifact_root']=str(path.parent);path.write_text(json.dumps(task));moved_tasks.append(task)
+            moved=train.prepare_training_rows(moved_tasks,labels)
+            resumed=train.fit(moved,root/'resumed',config,resume=root/'moved_part'/part.name)
+            a=torch.load(full,weights_only=False); b=torch.load(resumed,weights_only=False)
+            self.assertEqual(a['progress'],b['progress'])
+            self.assertEqual(a['report'],b['report'])
+            self.assertEqual([x['batches'] for x in a['report']['validation_history']],[0,2,4])
+            for key in a['model_state']:self.assertTrue(torch.equal(a['model_state'][key],b['model_state'][key]),key)
+            self.assertTrue(train._same(a['optimizer_state'],b['optimizer_state']))
+            self.assertTrue(train._same(a['rng'],b['rng']))
+            for entry in b['report']['validation_history']:
+                self.assertTrue((resumed.parent/entry['checkpoint']).is_file())
+            best=b['report']['selection']
+            self.assertIsNotNone(best)
+            self.assertTrue((resumed.parent/best['checkpoint']).is_file())
+            # Changing validation cadence cannot silently resume the same run.
+            changed=copy.deepcopy(config);changed['validation']['interval_batches']=1
+            with self.assertRaisesRegex(ValueError,'resume'):
+                train.fit(moved,root/'bad_cadence',changed,resume=part)
+
+    def test_v2_metrics_invalid_denominators_and_selection(self):
+        from planning.structured_validation import summarize_measurements, select_checkpoint
+        label=dict(waypoints=[[0.,0.]]*6,valid=[True]*6,times_seconds=[.5,1.,1.5,2.,2.5,3.])
+        from tools.task_spec import ExecutionSpec
+        spec=ExecutionSpec().to_dict()
+        records=[dict(stage=0,condition='Ego',weight=1.,label=label,output_kind='selected_stage',
+            refinement=0,waypoints=[[3.,4.]]*6,loss=3.),
+            dict(stage=1,condition='P',weight=1.,label=label,output_kind='selected_stage',
+            refinement=0,waypoints=[[1000.,1000.]]*6,loss=1000.)]
+        summary=summarize_measurements(records,spec)
+        self.assertEqual(summary['selected_stage']['labeled_rows'],2)
+        self.assertEqual(summary['selected_stage']['invalid_plans'],1)
+        self.assertEqual(summary['selected_stage']['weighted_invalid_plan_rate'],.5)
+        self.assertEqual(summary['selected_stage']['got_prefix_L2_avg'],5.)
+        self.assertEqual(summary['selected_stage']['ADE3'],5.)
+        self.assertEqual(summary['selected_stage']['FDE3'],5.)
+        best=select_checkpoint(None,summary,2,'checkpoint_000002.pt')
+        self.assertEqual(select_checkpoint(best,summary,4,'checkpoint_000004.pt'),best)
+        invalid=summarize_measurements(records[1:],spec)
+        self.assertIsNone(select_checkpoint(None,invalid,0,'checkpoint_000000.pt'))
+
+
+    def test_v2_validation_does_not_change_training_rng_or_optimizer(self):
+        train=self.training()
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'a').mkdir();(root/'b').mkdir()
+            task,label=self.archive(root/'a')
+            other,other_label=self.archive(root/'b',scene=SCENE.replace('09-50','09-51'),role='validation')
+            rows=train.prepare_training_rows([task,other],[label,other_label])
+            config=self.config_v2();config['epochs']=1
+            a=torch.load(train.fit(rows,root/'sparse',config),weights_only=False)
+            config['validation']['interval_batches']=1
+            b=torch.load(train.fit(rows,root/'frequent',config),weights_only=False)
+            self.assertTrue(train._same(a['model_state'],b['model_state']))
+            self.assertTrue(train._same(a['optimizer_state'],b['optimizer_state']))
+            self.assertTrue(train._same(a['rng'],b['rng']))
+            self.assertEqual([e['batches'] for e in b['report']['validation_history']],[0,1,2])
+            empty=dict(label,valid=[False]*6,waypoints=[None]*6)
+            empty_rows=train.prepare_training_rows([task],[empty])
+            result=torch.load(train.fit(empty_rows,root/'empty',config),weights_only=False)
+            self.assertEqual(result['progress']['optimizer_steps'],0)
+            self.assertEqual(result['optimizer_state']['state'],{})
+            self.assertIsNone(result['report']['selection'])
+
+    def test_v2_missing_horizons_and_no_labels_cannot_improve_selection(self):
+        from planning.structured_validation import summarize_measurements,select_checkpoint
+        from tools.task_spec import ExecutionSpec
+        partial=dict(waypoints=[[0.,0.]]*2+[None]*4,valid=[True]*2+[False]*4,
+                     times_seconds=[.5,1.,1.5,2.,2.5,3.])
+        empty=dict(partial,waypoints=[None]*6,valid=[False]*6)
+        records=[dict(stage=0,condition='Ego',weight=1.,label=partial,output_kind='selected_stage',
+                     refinement=0,waypoints=[[3.,4.]]*6,loss=3.),
+                 dict(stage=0,condition='Ego',weight=0.,label=empty,output_kind='selected_stage',
+                     refinement=0,waypoints=None,loss=None)]
+        summary=summarize_measurements(records,ExecutionSpec().to_dict())
+        main=summary['selected_stage']
+        self.assertEqual(main['labeled_rows'],1)
+        self.assertEqual(main['unlabeled_rows'],1)
+        self.assertEqual(main['all_invalid_outputs'],1)
+        self.assertEqual(main['weighted_invalid_plan_rate'],0.)
+        self.assertEqual(main['got_prefix_L2_1s'],5.)
+        self.assertIsNone(main['got_prefix_L2_avg'])
+        self.assertIsNone(main['FDE3'])
+        self.assertIsNone(select_checkpoint(None,summary,0,'checkpoint_000000.pt'))
+
+    def test_v2_current_model_priors_and_refinement_are_detached(self):
+        train=self.training()
+        from planning.structured_driver import StructuredPlannerNetwork
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);task,label=self.archive(root)
+            row=train.prepare_training_rows([task],[label])[-1]
+            model=StructuredPlannerNetwork(tiny_spec())
+            with torch.no_grad():model.output_head[-1].weight.mul_(.001);model.output_head[-1].bias.mul_(.001)
+            outputs=[]
+            hook=model.register_forward_hook(lambda m,args,value:outputs.append((args[0],value.detach().clone(),value.requires_grad)))
+            loss,detail=train.training_loss(model,train._read_features(root/'ego_features.npz'),row,
+                refinement_depth=1,objective=self.config_v2()['objective'])
+            hook.remove();loss.backward()
+            self.assertEqual([x[2] for x in outputs],[False,False,True,True])
+            for i in range(1,4):
+                torch.testing.assert_close(outputs[i][0]['previous_plan'],outputs[i-1][1],atol=0,rtol=0)
+                self.assertFalse(outputs[i][0]['previous_plan'].requires_grad)
+            self.assertEqual(detail['supervised_forwards'],2)
+
+    def test_v2_resume_earlier_checkpoint_does_not_import_future_checkpoints(self):
+        train=self.training()
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);task,label=self.archive(root)
+            rows=train.prepare_training_rows([task],[label]);config=self.config_v2();config['epochs']=1
+            full=train.fit(rows,root/'full',config)
+            resumed=train.fit(rows,root/'resumed',config,resume=root/'full'/'checkpoint_000001.pt')
+            a=torch.load(full,weights_only=False);b=torch.load(resumed,weights_only=False)
+            self.assertTrue(train._same(a['model_state'],b['model_state']))
+            self.assertEqual(a['report'],b['report'])
