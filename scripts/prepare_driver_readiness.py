@@ -209,18 +209,22 @@ def acceptance_rows(rows):
 
 
 def validate_frames(rows, selected, config):
-    seen = set()
+    sample_ids, scene_frames, scene_indices = set(), set(), set()
     roles = {}
     counts = Counter()
     for row in rows:
         _check_json_native(row)
         if set(row) != FRAME_FIELDS or row['role'] not in ('train', 'validation') or row['physical_split'] != 'train':
             raise ValueError('invalid or noncausal frame metadata fields')
-        identity = (row['sample_id'], row['scene'], row['g'], row['local_frame'])
-        if (identity in seen or not isinstance(row['sample_id'], str) or
+        identities = (row['sample_id'], (row['scene'], row['local_frame']),
+                      (row['scene'], row['g']))
+        if (identities[0] in sample_ids or identities[1] in scene_frames or
+                identities[2] in scene_indices or not isinstance(row['sample_id'], str) or
                 row['sample_id'] != '%s:%d' % (row['scene'], row['local_frame'])):
             raise ValueError('duplicate or invalid frame identity')
-        seen.add(identity)
+        sample_ids.add(identities[0])
+        scene_frames.add(identities[1])
+        scene_indices.add(identities[2])
         if type(row['g']) is not int or row['g'] < 0 or type(row['local_frame']) is not int or row['local_frame'] < 0:
             raise ValueError('invalid frame number')
         motion = row['ego_motion']
@@ -327,13 +331,21 @@ def prepare_package(source_frames, acceptance_preview, source_metadata, out):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('out', type=Path)
-    parser.add_argument('--source-frames', required=True, type=Path)
-    parser.add_argument('--acceptance-preview', required=True, type=Path)
-    parser.add_argument('--source-metadata', required=True, type=Path)
+    parser.add_argument('--source-frames', type=Path)
+    parser.add_argument('--acceptance-preview', type=Path)
+    parser.add_argument('--source-metadata', type=Path)
     parser.add_argument('--validate-only', action='store_true')
     args = parser.parse_args()
-    result = (validate_package(args.out, source_frames=args.source_frames) if args.validate_only else
-              prepare_package(args.source_frames, args.acceptance_preview, args.source_metadata, args.out))
+    if args.validate_only:
+        if args.acceptance_preview is not None or args.source_metadata is not None:
+            parser.error('--acceptance-preview and --source-metadata are preparation-only')
+        result = validate_package(args.out, source_frames=args.source_frames)
+    else:
+        missing = [name for name in ('source_frames', 'acceptance_preview', 'source_metadata')
+                   if getattr(args, name) is None]
+        if missing:
+            parser.error('preparation requires --source-frames, --acceptance-preview, and --source-metadata')
+        result = prepare_package(args.source_frames, args.acceptance_preview, args.source_metadata, args.out)
     print(json.dumps(result, indent=2, allow_nan=False))
 
 

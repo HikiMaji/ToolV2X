@@ -4,6 +4,8 @@ import importlib.util
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -81,6 +83,32 @@ class DriverReadinessPreparationTests(unittest.TestCase):
             readiness_path.write_text(json.dumps(module().readiness(source)))
             with self.assertRaises(ValueError):
                 module().validate_package(target)
+
+    def test_portable_validation_rejects_each_stable_identity_collision(self):
+        rows = module().read_jsonl(PACKAGE / 'frames.jsonl')
+        selected = json.loads((PACKAGE / 'acceptance_frames.json').read_text())
+        config = json.loads((PACKAGE / 'readiness.json').read_text())
+        duplicate_sample = copy.deepcopy(rows)
+        duplicate_sample[2] = copy.deepcopy(duplicate_sample[1])
+        duplicate_sample[2]['g'] = rows[2]['g']
+        same_scene_g = copy.deepcopy(rows)
+        same_scene_g[2]['g'] = same_scene_g[1]['g']
+        for name, changed in (('duplicate_sample_changed_g', duplicate_sample),
+                              ('same_scene_g_alias', same_scene_g)):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                module().validate_frames(changed, selected, config)
+
+    def test_public_validate_only_cli_needs_no_private_preparation_inputs(self):
+        commands = (
+            [sys.executable, str(HELPER), str(PACKAGE), '--validate-only'],
+            [sys.executable, str(HELPER), str(PACKAGE), '--validate-only',
+             '--source-frames', str(SOURCE)],
+        )
+        for command, compared in zip(commands, (False, True)):
+            result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+            with self.subTest(source_comparison=compared):
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(json.loads(result.stdout)['source_comparison'], compared)
 
     def test_driver_mode_and_actual_budget_mutations_fail(self):
         for filename, mutate in (

@@ -13,7 +13,7 @@ The package is under `configs/structured_driver_readiness_v1/`:
 - `bootstrap_training_expected_v2.json` freezes the conditional maximum-three-epoch recipe with the expected 16 eligible train rows and interval 8. Metadata cannot certify label eligibility. Before any real bootstrap, calculate the actual eligible train-row count and save a new complete concrete config with `validation.interval_batches = ceil(eligible_train_rows / 2)`. Never rewrite a running config.
 - `readiness.json` binds the common execution/driver specs, fixed collection recipes, controls, metrics, stage gates and all unexecuted flags. `runtime_load_identity` is null. A runnable `method_run_spec` is intentionally absent until the actual driver and predictor loads provide their required identities.
 
-The local validator can compare all 3,095 rows directly with the controller-whitelisted JSON source. Away from that workstation source, it still performs strict structural, count, role and deterministic-selection validation, but cannot independently prove the package came from the external 4.6 MB selected index. The original index, split manifest and exclusion config paths remain disclosed for that local audit.
+The optional local validator comparison checks all 3,095 packaged rows against the controller-whitelisted JSON copy. Away from that batch-private copy, the retained command still performs strict structural, count, stable-identity, role and deterministic-selection validation, but cannot independently prove the package came from the external 4.6 MB selected index. The original index, split manifest and exclusion config paths remain disclosed for a separate local provenance audit.
 
 ## Collection and budget contract
 
@@ -48,8 +48,9 @@ Resource-free validation:
 ```bash
 PYTHONPATH=src python scripts/prepare_driver_readiness.py \
   configs/structured_driver_readiness_v1 \
-  --source-frames .superpowers/sdd/2026-09-15-driver-readiness/source_causal_frames.jsonl \
-  --acceptance-preview .superpowers/sdd/2026-09-15-driver-readiness/acceptance-identity-preview.json \
-  --source-metadata .superpowers/sdd/2026-09-15-driver-readiness/task-4-source-metadata.json \
   --validate-only
 ```
+
+When the controller-whitelisted batch copy is still present, append
+`--source-frames .superpowers/sdd/2026-09-15-driver-readiness/source_causal_frames.jsonl`
+for an exact copy comparison. That comparison does not independently certify the external index's provenance.
